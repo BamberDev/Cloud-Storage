@@ -102,6 +102,7 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
                     <Image
                       src="/assets/icons/file-loader.gif"
                       alt="loader"
+                      unoptimized
                       width={80}
                       height={26}
                     />
