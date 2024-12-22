@@ -149,7 +149,7 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel className="maxw-[200px] truncate">
+          <DropdownMenuLabel className="max-w-[200px] truncate">
             {file.name}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
