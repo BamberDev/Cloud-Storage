@@ -4,7 +4,7 @@ import { getFiles } from "@/lib/actions/file.actions";
 import { Models } from "node-appwrite";
 import { getFileTypesParams } from "@/lib/utils";
 
-export default async function Dashboard({
+export default async function FileTypePage({
   searchParams,
   params,
 }: SearchParamProps) {
