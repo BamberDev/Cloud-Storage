@@ -56,7 +56,7 @@ export default async function Dashboard() {
       </section>
 
       <section className="dashboard-recent-files">
-        <h2 className="h3 xl:h2 text-light-100">Recent files uploaded</h2>
+        <h2 className="h3 xl:h2 text-light-100">Recently uploaded</h2>
         {files.documents.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">
             {files.documents.map((file: Models.Document) => (
@@ -80,7 +80,9 @@ export default async function Dashboard() {
                       className="caption"
                     />
                   </div>
-                  <ActionDropdown file={file} />
+                  <div className="flex items-center min-w-[34px]">
+                    <ActionDropdown file={file} />
+                  </div>
                 </div>
               </Link>
             ))}
