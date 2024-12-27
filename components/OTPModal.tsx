@@ -53,7 +53,7 @@ export default function OTPModal({
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogContent className="shad-alert-dialog">
-        <AlertDialogHeader className="relative flex justify-center">
+        <AlertDialogHeader className="relative">
           <AlertDialogTitle className="h2 text-center">
             Enter Your OTP
             <Image
@@ -66,7 +66,7 @@ export default function OTPModal({
             />
           </AlertDialogTitle>
           <AlertDialogDescription className="subtitle-2 text-center text-light-100">
-            We&apos;ve sent a one-time password to your
+            We&apos;ve sent a one-time password to
             <span className="pl-1 text-brand">{email}</span>
           </AlertDialogDescription>
         </AlertDialogHeader>
