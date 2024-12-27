@@ -158,7 +158,7 @@
     @apply text-red body-2 ml-4 !important;
   }
   .shad-alert-dialog {
-    @apply space-y-4 max-w-[95%] sm:w-fit rounded-xl md:rounded-[30px] px-4 md:px-8 py-10 bg-white outline-none !important;
+    @apply flex flex-col space-y-4 max-w-[95%] sm:w-fit rounded-xl md:rounded-[30px] px-4 md:px-8 py-10 bg-white outline-none !important;
   }
   .shad-submit-btn {
     @apply bg-brand button hover:bg-brand-100 transition-all rounded-full !important;
@@ -228,10 +228,10 @@
     @apply h-full rounded-[20px] bg-white p-5 xl:p-8 !important;
   }
   .recent-file-details {
-    @apply flex w-full flex-col xl:flex-row xl:justify-between !important;
+    @apply flex flex-row w-full justify-between !important;
   }
   .recent-file-name {
-    @apply subtitle-2 line-clamp-1 w-full text-light-100 sm:max-w-[200px] lg:max-w-[250px] !important;
+    @apply subtitle-2 line-clamp-1 w-full text-light-100 !important;
   }
   .recent-file-date {
     @apply body-2 text-light-100/80 !important;
@@ -300,7 +300,7 @@
     @apply flex max-h-[800px] w-full max-w-[580px] flex-col justify-center space-y-6 transition-all lg:h-full lg:space-y-8 !important;
   }
   .form-title {
-    @apply h1 text-center text-light-100 md:text-left !important;
+    @apply h1 text-center text-light-100 !important;
   }
   .form-submit-button {
     @apply primary-btn h-[66px] !important;
@@ -319,30 +319,30 @@
 
   /* Chart */
   .chart {
-    @apply flex items-center rounded-[20px] bg-brand p-5 text-white md:flex-col xl:flex-row !important;
+    @apply flex flex-col items-center rounded-[20px] bg-brand p-5 text-white !important;
   }
   .chart-container {
-    @apply mx-auto aspect-square w-[180px] text-white xl:w-[250px] !important;
+    @apply mx-auto aspect-square w-[180px] text-white !important;
   }
   .polar-grid {
     @apply first:fill-white/20 last:fill-brand !important;
   }
   .chart-details {
-    @apply flex-1 items-start px-3 py-0 sm:px-5 lg:p-3 xl:pr-5 !important;
+    @apply flex-1 items-start py-0 mt-2 !important;
   }
   .chart-total-percentage {
     @apply fill-white text-4xl font-bold !important;
   }
   .chart-title {
-    @apply h3 font-bold md:text-center lg:text-left !important;
+    @apply h3 font-bold text-center !important;
   }
   .chart-description {
-    @apply subtitle-1 mt-2 w-full text-white/70 md:text-center lg:text-left !important;
+    @apply subtitle-1 mt-2 w-full text-white/70 text-center !important;
   }
 
   /* FileUploader */
   .uploader-button {
-    @apply primary-btn h-[52px] gap-2 px-10 shadow-drop-1 !important;
+    @apply primary-btn h-[52px] w-full gap-2 px-10 shadow-drop-1 !important;
   }
   .uploader-preview-list {
     @apply fixed bottom-10 right-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7 shadow-drop-3 !important;

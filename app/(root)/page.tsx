@@ -4,12 +4,17 @@ import FormattedDateTime from "@/components/FormattedDateTime";
 import Thumbnail from "@/components/Thumbnail";
 import { Separator } from "@/components/ui/separator";
 import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.actions";
+import { getCurrentUser } from "@/lib/actions/user.actions";
 import { convertFileSize, getUsageSummary } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { Models } from "node-appwrite";
 
 export default async function Dashboard() {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) return null;
+
   const [files, totalSpace] = await Promise.all([
     getFiles({ types: [], limit: 10 }),
     getTotalSpaceUsed(),
@@ -56,10 +61,10 @@ export default async function Dashboard() {
       </section>
 
       <section className="dashboard-recent-files">
-        <h2 className="h3 xl:h2 text-light-100">Recent files uploaded</h2>
+        <h2 className="h3 xl:h2 text-light-100">Recently uploaded</h2>
         {files.documents.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">
-            {files.documents.map((file: Models.Document) => (
+            {files.documents.slice(0, 9).map((file: Models.Document) => (
               <Link
                 href={file.url}
                 target="_blank"
@@ -80,7 +85,9 @@ export default async function Dashboard() {
                       className="caption"
                     />
                   </div>
-                  <ActionDropdown file={file} />
+                  <div className="flex items-center min-w-[34px]">
+                    <ActionDropdown file={file} />
+                  </div>
                 </div>
               </Link>
             ))}

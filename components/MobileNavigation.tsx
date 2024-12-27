@@ -41,9 +41,10 @@ export default function MobileNavigation({
       <Image
         src="/assets/icons/logo-full-brand.svg"
         alt="logo"
-        width={120}
-        height={52}
-        className="h-auto"
+        width={224}
+        height={82}
+        priority
+        className="h-auto w-[124px]"
       />
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger>

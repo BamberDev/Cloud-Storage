@@ -22,9 +22,10 @@ export default function Sidebar({
         <Image
           src="/assets/icons/logo-full-brand.svg"
           alt="logo"
-          width={160}
-          height={50}
-          className="hidden h-auto lg:block"
+          width={224}
+          height={82}
+          priority
+          className="hidden h-auto w-[160px] lg:block"
         />
         <Image
           src="/assets/icons/logo-brand.svg"
