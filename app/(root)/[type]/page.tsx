@@ -3,7 +3,7 @@ import Sort from "@/components/Sort";
 import { getFiles } from "@/lib/actions/file.actions";
 import { Models } from "node-appwrite";
 import { getFileTypesParams } from "@/lib/utils";
-import { getCurrentUser } from "@/lib/actions/user.actions";
+// import { getCurrentUser } from "@/lib/actions/user.actions";
 
 export default async function FileTypePage({
   searchParams,
@@ -12,9 +12,9 @@ export default async function FileTypePage({
   const type = ((await params)?.type as string) || "";
   const searchText = ((await searchParams)?.query as string) || "";
   const sort = ((await searchParams)?.sort as string) || "";
-  const currentUser = await getCurrentUser();
+  // const currentUser = await getCurrentUser();
 
-  if (!currentUser) return null;
+  // if (!currentUser) return null;
 
   const types = getFileTypesParams(type) as FileType[];
   const files = await getFiles({ types, searchText, sort });
