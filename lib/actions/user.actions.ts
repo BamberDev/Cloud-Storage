@@ -75,33 +75,17 @@ export const verifySecret = async ({
   password: string;
 }) => {
   try {
+    console.log("verifySecret called with accountId:", accountId);
     const { account } = await createAdminClient();
 
     const session = await account.createSession(accountId, password);
-    const origin =
-      typeof window !== "undefined"
-        ? window.location.origin
-        : process.env.NEXT_PUBLIC_APP_URL;
-
-    if (!origin) {
-      throw new Error("App URL is not defined");
-    }
-
-    const response = await fetch(`${origin}/api/set-session`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ secret: session.secret }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to set session: ${response.statusText}`);
-    }
+    console.log("Session created:", session);
 
     return parseStringify({ sessionId: session.$id, secret: session.secret });
   } catch (error) {
+    console.error("Error in verifySecret:", error);
     handleError(error, "Failed to verify secret");
+    throw error;
   }
 };
 
