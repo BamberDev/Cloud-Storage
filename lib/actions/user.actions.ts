@@ -78,24 +78,36 @@ export const verifySecret = async ({
     const { account } = await createAdminClient();
 
     const session = await account.createSession(accountId, password);
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : process.env.NEXT_PUBLIC_APP_URL;
 
-    (await cookies()).set("appwrite-session", session.secret, {
-      path: "/",
-      httpOnly: true,
-      sameSite: "lax",
-      secure: true,
+    if (!origin) {
+      throw new Error("App URL is not defined");
+    }
+
+    const response = await fetch(`${origin}/api/set-session`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ secret: session.secret }),
     });
 
-    return parseStringify({ sessionId: session.$id });
+    if (!response.ok) {
+      throw new Error(`Failed to set session: ${response.statusText}`);
+    }
+
+    return parseStringify({ sessionId: session.$id, secret: session.secret });
   } catch (error) {
-    handleError(error, "Failed to verify OTP");
+    handleError(error, "Failed to verify secret");
   }
 };
 
 export const getCurrentUser = async () => {
   try {
     const { databases, account } = await createSessionClient();
-
     const result = await account.get();
 
     const user = await databases.listDocuments(
@@ -104,7 +116,10 @@ export const getCurrentUser = async () => {
       [Query.equal("accountId", [result.$id])]
     );
 
-    if (user.total <= 0) return null;
+    if (user.total <= 0) {
+      console.log("No user found in database");
+      return null;
+    }
 
     return parseStringify(user.documents[0]);
   } catch (error: unknown) {

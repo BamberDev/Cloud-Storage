@@ -37,8 +37,17 @@ export default function OTPModal({
     setIsLoading(true);
 
     try {
-      const sessionId = await verifySecret({ accountId, password });
-      if (sessionId) router.push("/");
+      const result = await verifySecret({ accountId, password });
+      if (result && result.secret) {
+        await fetch("/api/set-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ secret: result.secret }),
+        });
+        router.push("/");
+      }
     } catch (error) {
       console.error("Failed to verify OTP", error);
     } finally {
