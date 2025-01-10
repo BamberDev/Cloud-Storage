@@ -78,8 +78,13 @@ export const verifySecret = async ({
     console.log("verifySecret called with accountId:", accountId);
     const { account } = await createAdminClient();
 
-    const session = await account.createSession(accountId, password);
+    const session = await account.updateMagicURLSession(accountId, password);
     console.log("Session created:", session);
+
+    if (!session.secret) {
+      console.error("Session created without a secret");
+      throw new Error("Unable to retrieve session secret");
+    }
 
     return parseStringify({ sessionId: session.$id, secret: session.secret });
   } catch (error) {

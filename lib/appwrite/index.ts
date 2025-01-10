@@ -12,6 +12,8 @@ export const createSessionClient = async () => {
   const session = cookieStore.get("appwrite-session");
   if (!session || !session.value) throw new Error("No session found");
 
+  console.log("Session cookie value:", session.value);
+
   client.setSession(session.value);
 
   return {
