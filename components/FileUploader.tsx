@@ -9,6 +9,7 @@ import { MAX_FILE_SIZE } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
 import { uploadFile } from "@/lib/actions/file.actions";
 import { usePathname } from "next/navigation";
+import { Loader2Icon } from "lucide-react";
 
 interface Props {
   ownerId: string;
@@ -90,31 +91,24 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
                 key={`${index}-${file.name}`}
                 className="uploader-preview-item"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center w-full max-w-[70%] md:max-w-[325px] subtitle-2">
                   <Thumbnail
                     type={type}
                     extension={extension}
                     url={convertFileToUrl(file)}
                   />
-
-                  <div className="preview-item-name">
-                    <p>{file.name}</p>
-                    <Image
-                      src="/assets/icons/file-loader.gif"
-                      alt="loader"
-                      unoptimized
-                      width={80}
-                      height={26}
-                    />
-                  </div>
+                  <p className="ml-2 truncate">{file.name}</p>
                 </div>
-                <Image
-                  src="/assets/icons/remove.svg"
-                  alt="remove"
-                  width={24}
-                  height={24}
-                  onClick={(e) => handleRemoveFile(e, file.name)}
-                />
+                <div className="flex gap-1 md:gap-2">
+                  <Loader2Icon size={24} className="animate-spin" />
+                  <Image
+                    src="/assets/icons/remove.svg"
+                    alt="remove"
+                    width={24}
+                    height={24}
+                    onClick={(e) => handleRemoveFile(e, file.name)}
+                  />
+                </div>
               </li>
             );
           })}
