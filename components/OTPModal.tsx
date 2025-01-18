@@ -35,33 +35,10 @@ export default function OTPModal({
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("OTP submission started");
 
     try {
-      console.log("Calling verifySecret");
-      const result = await verifySecret({ accountId, password });
-      console.log("verifySecret result:", result);
-
-      if (result && result.secret) {
-        console.log("Session verified, setting cookie");
-        const response = await fetch("/api/set-session", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ secret: result.secret }),
-        });
-        console.log("Set-session API response:", response);
-
-        if (response.ok) {
-          console.log("Cookie set successfully, redirecting to home");
-          router.push("/");
-        } else {
-          console.error("Failed to set session cookie");
-        }
-      } else {
-        console.error("Invalid result from verifySecret");
-      }
+      const sessionId = await verifySecret({ accountId, password });
+      if (sessionId) router.push("/");
     } catch (error) {
       console.error("Failed to verify OTP", error);
     } finally {
