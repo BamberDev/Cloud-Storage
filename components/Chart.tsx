@@ -49,7 +49,7 @@ export default function Chart({ used = 0 }: { used: number }) {
               radialLines={false}
               stroke="none"
               className="polar-grid"
-              polarRadius={[86, 74]}
+              polarRadius={[85, 75]}
             />
             <RadialBar dataKey="value" background cornerRadius={10} />
             <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
@@ -90,9 +90,11 @@ export default function Chart({ used = 0 }: { used: number }) {
         </ChartContainer>
       </CardContent>
       <CardHeader className="chart-details">
-        <CardTitle className="chart-title">Available Storage</CardTitle>
+        <CardTitle className="chart-title">
+          {used ? "Space Used" : "Available Storage"}
+        </CardTitle>
         <CardDescription className="chart-description">
-          {used ? convertFileSize(used) : "2GB"} / 2GB
+          {used ? `${convertFileSize(used)} / 2 GB` : "2 GB"}
         </CardDescription>
       </CardHeader>
     </Card>
