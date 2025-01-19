@@ -62,7 +62,13 @@ export default function AuthForm({ type }: { type: FormType }) {
 
       setAccountId(user.accountId);
     } catch {
-      setErrorMessage("Failed to create account. Please try again.");
+      setErrorMessage(
+        `${
+          type === "sign-in"
+            ? "Failed to sign in."
+            : "Failed to create account."
+        } Please try again.`
+      );
     } finally {
       setIsLoading(false);
     }
