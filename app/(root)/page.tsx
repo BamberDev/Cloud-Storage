@@ -52,7 +52,7 @@ export default async function Dashboard() {
                 <Separator className="bg-light-400" />
                 <FormattedDateTime
                   date={summary.latestDate}
-                  className="text-center"
+                  className="text-center caption"
                 />
               </div>
             </Link>
@@ -78,7 +78,7 @@ export default async function Dashboard() {
                 />
 
                 <div className="recent-file-details">
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 min-w-0">
                     <p className="recent-file-name">{file.name}</p>
                     <FormattedDateTime
                       date={file.$createdAt}
