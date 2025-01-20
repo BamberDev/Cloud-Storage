@@ -228,13 +228,10 @@
     @apply h-full rounded-[20px] bg-white p-5 xl:p-8 !important;
   }
   .recent-file-details {
-    @apply flex flex-row w-full justify-between !important;
+    @apply flex flex-row w-full justify-between min-w-0 !important;
   }
   .recent-file-name {
-    @apply subtitle-2 line-clamp-1 w-full text-light-100 !important;
-  }
-  .recent-file-date {
-    @apply body-2 text-light-100/80 !important;
+    @apply subtitle-2 truncate w-full overflow-hidden text-ellipsis whitespace-nowrap text-light-100 !important;
   }
   .empty-list {
     @apply body-1 mt-10 text-center text-light-200 !important;

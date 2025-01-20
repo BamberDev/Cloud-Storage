@@ -1,9 +1,13 @@
 import FileCard from "@/components/FileCard";
 import Sort from "@/components/Sort";
-import { getFiles } from "@/lib/actions/file.actions";
+import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.actions";
 import { Models } from "node-appwrite";
-import { getFileTypesParams } from "@/lib/utils";
-// import { getCurrentUser } from "@/lib/actions/user.actions";
+import {
+  convertFileSize,
+  getFileTypesParams,
+  getUsageSummary,
+} from "@/lib/utils";
+import { getCurrentUser } from "@/lib/actions/user.actions";
 
 export default async function FileTypePage({
   searchParams,
@@ -12,12 +16,24 @@ export default async function FileTypePage({
   const type = ((await params)?.type as string) || "";
   const searchText = ((await searchParams)?.query as string) || "";
   const sort = ((await searchParams)?.sort as string) || "";
-  // const currentUser = await getCurrentUser();
+  const currentUser = await getCurrentUser();
 
-  // if (!currentUser) return null;
+  if (!currentUser) return null;
 
   const types = getFileTypesParams(type) as FileType[];
-  const files = await getFiles({ types, searchText, sort });
+  const [files, totalSpace] = await Promise.all([
+    getFiles({ types, searchText, sort }),
+    getTotalSpaceUsed(),
+  ]);
+  const usageSummary = getUsageSummary(totalSpace);
+
+  const currentTypeSummary = usageSummary.find(
+    (item) => item.title.toLowerCase() === type.toLowerCase()
+  );
+
+  const currentTypeSize = currentTypeSummary
+    ? convertFileSize(currentTypeSummary.size)
+    : "0";
 
   return (
     <div className="page-container">
@@ -25,7 +41,7 @@ export default async function FileTypePage({
         <h1 className="h1 capitalize">{type}</h1>
         <div className="total-size-section">
           <p className="body-1">
-            Total: <span className="h5">totalSize</span>
+            Total: <span className="h5">{currentTypeSize}</span>
           </p>
           <div className="sort-container">
             <p className="body-1 hidden sm:block text-light-100">Sort by:</p>
