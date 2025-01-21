@@ -84,4 +84,4 @@ export const sortTypes = [
 export const avatarPlaceholderUrl =
   "https://aui.atlassian.com/aui/latest/docs/images/avatar-person.svg";
 
-export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+export const MAX_FILE_SIZE = 45 * 1024 * 1024; // 45MB
