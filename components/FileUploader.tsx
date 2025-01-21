@@ -36,7 +36,7 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
             description: (
               <p className="body-2 text-white">
                 <span className="font-semibold">{file.name}</span> is too large.
-                Max file size is 50MB.
+                Max file size is 45MB.
               </p>
             ),
 
