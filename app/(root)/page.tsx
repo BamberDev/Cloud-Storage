@@ -86,7 +86,7 @@ export default async function Dashboard() {
                     />
                   </div>
                   <div className="flex items-center min-w-[34px]">
-                    <ActionDropdown file={file} />
+                    <ActionDropdown file={file} currentUser={currentUser} />
                   </div>
                 </div>
               </Link>
