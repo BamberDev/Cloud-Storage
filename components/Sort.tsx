@@ -27,7 +27,7 @@ export default function Sort() {
         {sortTypes.map((sort) => (
           <SelectItem
             key={sort.label}
-            className="shad-select-item"
+            className="cursor-pointer"
             value={sort.value}
           >
             {sort.label}

@@ -10,7 +10,7 @@ const ImageThumbnail = ({ file }: { file: Models.Document }) => (
   <div className="file-details-thumbnail">
     <Thumbnail type={file.type} extension={file.extension} url={file.url} />
     <div className="flex flex-col">
-      <p className="subtitle-2 mb-1">{file.name}</p>
+      <p className="file-details-name">{file.name}</p>
       <FormattedDateTime date={file.$createdAt} className="caption" />
     </div>
   </div>
@@ -47,7 +47,7 @@ export function ShareFile({ file, onInputChange, onRemove }: ShareFileProps) {
   return (
     <>
       <ImageThumbnail file={file} />
-      <div className="share-wrapper">
+      <div className="space-y-2">
         <p className="subtitle-2 pl-1 text-light-100">
           Share file with other users
         </p>

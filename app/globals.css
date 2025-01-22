@@ -108,7 +108,7 @@
     @apply text-[16px] leading-[24px] font-semibold;
   }
   .subtitle-1 {
-    @apply text-[16px] leading-[24px] font-medium;
+    @apply text-[16px] leading-[24px] font-semibold;
   }
   .subtitle-2 {
     @apply text-[14px] leading-[20px] font-semibold;
@@ -124,9 +124,6 @@
   }
   .caption {
     @apply text-[12px] leading-[16px] font-normal;
-  }
-  .overline {
-    @apply text-[10px] leading-[14px] font-normal;
   }
 
   /* ===== HELPER CLASSES */
@@ -147,7 +144,6 @@
   .shad-input {
     @apply border-none shadow-none p-0 shad-no-focus placeholder:text-light-200 body-2 !important;
   }
-
   .shad-form-item {
     @apply flex h-[78px] flex-col justify-center rounded-xl border border-light-300 px-4 shadow-drop-1;
   }
@@ -177,17 +173,8 @@
   .shad-dialog button {
     @apply focus:ring-0 focus:ring-offset-0 focus-visible:border-none outline-none focus-visible:outline-none focus-visible:ring-transparent focus-visible:ring-offset-0 !important;
   }
-  .shad-dropdown-item {
-    @apply cursor-pointer !important;
-  }
   .shad-dialog {
     @apply rounded-[26px] w-[90%] max-w-[400px] px-6 py-8   !important;
-  }
-  .shad-chart-title {
-    @apply text-white !important;
-  }
-  .shad-select-item {
-    @apply cursor-pointer !important;
   }
 
   /* Sidebar & MobileNavigation */
@@ -256,10 +243,10 @@
     @apply body-2 shad-no-focus h-[52px] w-full rounded-full border px-4 shadow-drop-1 !important;
   }
   .delete-confirmation {
-    @apply text-center text-light-100 !important;
+    @apply text-center text-light-100 break-all !important;
   }
   .delete-file-name {
-    @apply font-medium text-brand-100 !important;
+    @apply font-medium text-brand-100 line-clamp-2 !important;
   }
   .modal-cancel-button {
     @apply h-[52px] flex-1 rounded-full border bg-white text-light-100 hover:bg-gray-100 !important;
@@ -272,6 +259,9 @@
   .file-details-thumbnail {
     @apply !mb-1 flex items-center gap-3 rounded-xl border border-light-200/40 bg-light-400/50 p-3 !important;
   }
+  .file-details-name {
+    @apply subtitle-2 mb-1 break-all text-left line-clamp-3 !important;
+  }
   .file-details-label {
     @apply body-2 w-[30%] text-light-100 !important;
   }
@@ -279,9 +269,6 @@
     @apply subtitle-2 flex-1 !important;
   }
 
-  .share-wrapper {
-    @apply !mt-2 space-y-2 !important;
-  }
   .share-input-field {
     @apply body-2 shad-no-focus h-[52px] w-full rounded-full border px-4 shadow-drop-1 !important;
   }
@@ -308,10 +295,10 @@
 
   /* Card */
   .file-card {
-    @apply flex cursor-pointer flex-col gap-6 rounded-[18px] bg-white p-5 shadow-sm transition-all hover:shadow-drop-3 !important;
+    @apply flex cursor-pointer min-w-0 flex-col gap-6 rounded-[18px] bg-white p-5 shadow-sm transition-all hover:shadow-drop-3 !important;
   }
   .file-card-details {
-    @apply flex flex-col gap-2 text-light-100 !important;
+    @apply flex flex-col gap-1 text-light-100 !important;
   }
 
   /* Chart */
