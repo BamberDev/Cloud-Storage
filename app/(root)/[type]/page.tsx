@@ -52,7 +52,7 @@ export default async function FileTypePage({
       {files.total > 0 ? (
         <section className="file-list">
           {files.documents.map((file: Models.Document) => (
-            <FileCard key={file.$id} file={file} />
+            <FileCard key={file.$id} file={file} currentUser={currentUser} />
           ))}
         </section>
       ) : (
