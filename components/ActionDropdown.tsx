@@ -32,7 +32,13 @@ import {
 import { usePathname } from "next/navigation";
 import { FileDetails, ShareFile } from "./ActionsModalContent";
 
-export default function ActionDropdown({ file }: { file: Models.Document }) {
+export default function ActionDropdown({
+  file,
+  currentUser,
+}: {
+  file: Models.Document;
+  currentUser: { $id: string };
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [action, setAction] = useState<ActionType | null>(null);
@@ -40,6 +46,7 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
   const [emails, setEmails] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const path = usePathname();
+  const isOwner = file.owner.$id === currentUser.$id;
 
   const closeAllModals = () => {
     setIsModalOpen(false);
@@ -49,7 +56,7 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
   };
 
   const handleAction = async () => {
-    if (!action) return;
+    if (!action || !isOwner) return;
     setIsLoading(true);
     let success = false;
 
@@ -69,6 +76,7 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
   };
 
   const handleRemoveUser = async (email: string) => {
+    if (!isOwner) return;
     const updatedEmails = emails.filter((e) => e !== email);
     const success = await updateFileUsers({
       fileId: file.$id,
@@ -153,37 +161,28 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
             {file.name}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {actionsDropdownItems.map((actionItem) => (
-            <DropdownMenuItem
-              key={actionItem.value}
-              className="shad-dropdown-item"
-              onClick={() => {
-                setAction(actionItem);
-                setIsDropDownOpen(false);
-                if (
-                  ["rename", "details", "share", "delete"].includes(
-                    actionItem.value
-                  )
-                ) {
-                  setIsModalOpen(true);
-                }
-              }}
-            >
-              {actionItem.value === "download" ? (
-                <Link
-                  href={constructDownloadUrl(file.bucketFileId)}
-                  download={file.name}
-                  className="flex items-center gap-2"
-                >
-                  <Image
-                    src={actionItem.icon}
-                    alt={actionItem.label}
-                    width={30}
-                    height={30}
-                  />
-                  {actionItem.label}
-                </Link>
-              ) : (
+          {actionsDropdownItems
+            .filter(
+              (actionItem) =>
+                isOwner ||
+                !["rename", "share", "delete"].includes(actionItem.value)
+            )
+            .map((actionItem) => (
+              <DropdownMenuItem
+                key={actionItem.value}
+                className="cursor-pointer py-1"
+                onClick={() => {
+                  setAction(actionItem);
+                  setIsDropDownOpen(false);
+                  if (
+                    ["rename", "details", "share", "delete"].includes(
+                      actionItem.value
+                    )
+                  ) {
+                    setIsModalOpen(true);
+                  }
+                }}
+              >
                 <div className="flex items-center gap-2">
                   <Image
                     src={actionItem.icon}
@@ -191,11 +190,20 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
                     width={30}
                     height={30}
                   />
-                  <p>{actionItem.label}</p>
+                  {actionItem.value === "download" ? (
+                    <Link
+                      href={constructDownloadUrl(file.bucketFileId)}
+                      download={file.name}
+                      className="flex items-center"
+                    >
+                      {actionItem.label}
+                    </Link>
+                  ) : (
+                    <p>{actionItem.label}</p>
+                  )}
                 </div>
-              )}
-            </DropdownMenuItem>
-          ))}
+              </DropdownMenuItem>
+            ))}
         </DropdownMenuContent>
       </DropdownMenu>
 
