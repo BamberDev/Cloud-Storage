@@ -16,7 +16,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import FileUploader from "./FileUploader";
-import { signOutUser } from "@/lib/actions/user.actions";
+import LogoutDialog from "./LogoutDialog";
 
 interface Props {
   $id: string;
@@ -34,6 +34,7 @@ export default function MobileNavigation({
   avatar,
 }: Props) {
   const [open, setOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -101,19 +102,25 @@ export default function MobileNavigation({
           <Separator className="my-5 bg-light-200/20" />
           <div className="flex flex-col justify-between gap-5">
             <FileUploader ownerId={ownerId} accountId={accountId} />
-            <Button
-              type="submit"
-              className="mobile-sign-out-button"
-              onClick={async () => await signOutUser()}
-            >
-              <Image
-                src="/assets/icons/logout.svg"
-                alt="sign-out"
-                width={24}
-                height={24}
-              />
-              <p>Sign out</p>
-            </Button>
+            <LogoutDialog
+              isOpen={isLogoutModalOpen}
+              onOpenChange={setIsLogoutModalOpen}
+              trigger={
+                <Button
+                  type="submit"
+                  className="mobile-sign-out-button"
+                  onClick={() => setIsLogoutModalOpen(true)}
+                >
+                  <Image
+                    src="/assets/icons/logout.svg"
+                    alt="sign-out"
+                    width={24}
+                    height={24}
+                  />
+                  <p>Sign out</p>
+                </Button>
+              }
+            />
           </div>
           <SheetDescription className="sr-only">
             Mobile Navigation
