@@ -9,6 +9,20 @@ import {
 } from "@/lib/utils";
 import { getCurrentUser } from "@/lib/actions/user.actions";
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ type: string }>;
+}) {
+  const { type } = (await params) || "Files";
+  const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
+
+  return {
+    title: `${capitalizedType} | Cloud Storage`,
+    description: `View and manage your ${type} files on Cloud Storage. Upload, sort, delete and organize your files with ease.`,
+  };
+}
+
 export default async function FileTypePage({
   searchParams,
   params,
