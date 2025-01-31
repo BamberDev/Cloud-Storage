@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import FileUploader from "./FileUploader";
 import LogoutDialog from "./LogoutDialog";
+import Search from "./Search";
 
 interface Props {
   $id: string;
@@ -72,6 +73,8 @@ export default function MobileNavigation({
               </div>
             </div>
             <Separator className="mb-4 bg-light-200/20" />
+            <Search />
+            <Separator className="my-4 bg-light-200/20" />
           </SheetTitle>
           <nav className="mobile-nav">
             <ul className="mobile-nav-list">
@@ -99,8 +102,8 @@ export default function MobileNavigation({
               ))}
             </ul>
           </nav>
-          <Separator className="my-5 bg-light-200/20" />
-          <div className="flex flex-col justify-between gap-5">
+          <Separator className="my-4 bg-light-200/20" />
+          <div className="flex flex-col justify-between gap-4">
             <FileUploader ownerId={ownerId} accountId={accountId} />
             <LogoutDialog
               isOpen={isLogoutModalOpen}
