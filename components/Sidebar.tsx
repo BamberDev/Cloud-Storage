@@ -67,7 +67,7 @@ export default function Sidebar({
         alt="files"
         width={506}
         height={418}
-        className="w-full"
+        className="w-full hidden lg:block lg:mt-4"
       />
 
       <div className="sidebar-user-info">
