@@ -70,6 +70,7 @@ export default function Search() {
           value={query}
           placeholder="Search..."
           className="search-input"
+          tabIndex={-1}
           onChange={(e) => setQuery(e.target.value)}
         />
         {open && (
