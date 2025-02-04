@@ -17,7 +17,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import FileUploader from "./FileUploader";
 import LogoutDialog from "./LogoutDialog";
-import Search from "./Search";
 
 interface Props {
   $id: string;
@@ -73,8 +72,6 @@ export default function MobileNavigation({
               </div>
             </div>
             <Separator className="mb-4 bg-light-200/20" />
-            <Search />
-            <Separator className="my-4 bg-light-200/20" />
           </SheetTitle>
           <nav className="mobile-nav">
             <ul className="mobile-nav-list">
