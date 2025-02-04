@@ -9,7 +9,7 @@ import Thumbnail from "./Thumbnail";
 import FormattedDateTime from "./FormattedDateTime";
 import { useDebounce } from "use-debounce";
 
-export default function Search() {
+export default function Search({ className }: { className?: string }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Models.Document[]>([]);
   const [open, setOpen] = useState(false);
@@ -58,7 +58,7 @@ export default function Search() {
   };
 
   return (
-    <div className="search">
+    <div className={`search ${className}`}>
       <div className="search-input-wrapper">
         <Image
           src="/assets/icons/search.svg"
