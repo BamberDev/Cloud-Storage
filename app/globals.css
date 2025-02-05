@@ -293,7 +293,7 @@
 
   /* Chart */
   .chart {
-    @apply flex flex-col items-center rounded-[20px] bg-brand p-5 text-white !important;
+    @apply flex flex-col items-center rounded-[20px] bg-brand p-5 mt-2 sm:mt-0 text-white !important;
   }
   .chart-container {
     @apply mx-auto aspect-square w-[180px] text-white !important;
