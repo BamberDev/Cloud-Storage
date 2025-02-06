@@ -87,6 +87,7 @@ export const verifySecret = async ({
       httpOnly: true,
       sameSite: "strict",
       secure: true,
+      expires: new Date(Date.now() + 60 * 60 * 24 * 30 * 1000),
     });
 
     return parseStringify({ sessionId: session.$id });
