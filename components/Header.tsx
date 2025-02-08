@@ -31,11 +31,11 @@ export default function Header({
               onClick={() => setIsLogoutModalOpen(true)}
             >
               <Image
-                src="/assets/icons/logout.svg"
+                src="/assets/icons/logout.png"
                 alt="sign-out"
-                width={24}
-                height={24}
-                className="w-6"
+                width={64}
+                height={64}
+                className="w-8"
               />
             </Button>
           }
