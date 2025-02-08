@@ -79,7 +79,7 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
           width={24}
           height={24}
         />
-        <p>Upload</p>
+        <p className="h5">Upload</p>
       </Button>
       {files.length > 0 && (
         <ul className="uploader-preview-list">
