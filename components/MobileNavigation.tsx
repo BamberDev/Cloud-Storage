@@ -40,12 +40,12 @@ export default function MobileNavigation({
   return (
     <header className="mobile-header">
       <Image
-        src="/assets/icons/logo-full-brand.svg"
+        src="/assets/images/logo-black.png"
         alt="logo"
-        width={224}
-        height={82}
+        width={276}
+        height={100}
         priority
-        className="h-auto w-[124px]"
+        className="h-[54px] w-auto my-auto"
       />
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger>
@@ -117,10 +117,11 @@ export default function MobileNavigation({
                   onClick={() => setIsLogoutModalOpen(true)}
                 >
                   <Image
-                    src="/assets/icons/logout.svg"
+                    src="/assets/icons/logout.png"
                     alt="sign-out"
-                    width={24}
-                    height={24}
+                    width={64}
+                    height={64}
+                    className="w-8"
                   />
                   <p>Sign out</p>
                 </Button>
