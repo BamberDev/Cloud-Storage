@@ -152,7 +152,7 @@ export default function AuthForm({ type }: { type: FormType }) {
             </p>
             <Link
               href={type === "sign-in" ? "/sign-up" : "/sign-in"}
-              className="ml-1 font-medium text-brand"
+              className="ml-1 font-medium underline"
             >
               {type === "sign-in" ? "Sign Up" : "Sign In"}
             </Link>
