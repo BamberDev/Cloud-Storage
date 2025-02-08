@@ -18,20 +18,20 @@ export default function Sidebar({
 
   return (
     <aside className="sidebar">
-      <Link href="/">
+      <Link href="/" className="flex items-center justify-center">
         <Image
-          src="/assets/icons/logo-full-brand.svg"
+          src="/assets/images/logo-black.png"
           alt="logo"
-          width={224}
-          height={82}
+          width={276}
+          height={100}
           priority
-          className="hidden h-auto w-[160px] lg:block"
+          className="hidden lg:block h-[60px] w-auto"
         />
         <Image
-          src="/assets/icons/logo-brand.svg"
+          src="/assets/images/logo-icon.png"
           alt="logo"
-          width={52}
-          height={52}
+          width={50}
+          height={50}
           className="lg:hidden"
         />
       </Link>
@@ -61,14 +61,6 @@ export default function Sidebar({
           ))}
         </ul>
       </nav>
-
-      <Image
-        src="/assets/images/files-2.png"
-        alt="files"
-        width={506}
-        height={418}
-        className="w-full hidden lg:block lg:mt-4"
-      />
 
       <div className="sidebar-user-info">
         <Image
