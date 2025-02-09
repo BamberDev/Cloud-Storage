@@ -38,9 +38,9 @@ export const metadata: Metadata = {
     siteName: "Cloud Storage",
     images: [
       {
-        url: "https://cloud-storage-v1.vercel.app/assets/icons/cloud_storage_logo.png",
-        width: 560,
-        height: 485,
+        url: "https://cloud-storage-v1.vercel.app/assets/images/logo-icon.png",
+        width: 200,
+        height: 200,
         alt: "Cloud Storage Logo",
       },
     ],

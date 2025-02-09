@@ -8,8 +8,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Image
             src="/assets/images/logo-white.png"
             alt="logo"
-            width={276}
-            height={100}
+            width={725}
+            height={250}
             priority
             className="h-[70px] w-auto"
           />
@@ -31,10 +31,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <section className="flex flex-1 flex-col items-center bg-white p-4 py-10 lg:justify-center lg:p-10 lg:py-0">
         <div className="mb-16 lg:hidden">
           <Image
-            src="/assets/images/logo-black.png"
+            src="/assets/images/logo-dark.png"
             alt="logo"
-            width={276}
-            height={100}
+            width={725}
+            height={250}
             priority
             className="h-[70px] w-auto"
           />

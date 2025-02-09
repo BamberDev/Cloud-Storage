@@ -39,14 +39,16 @@ export default function MobileNavigation({
 
   return (
     <header className="mobile-header">
-      <Image
-        src="/assets/images/logo-black.png"
-        alt="logo"
-        width={276}
-        height={100}
-        priority
-        className="h-[54px] w-auto my-auto"
-      />
+      <Link href="/" className="flex items-center justify-center">
+        <Image
+          src="/assets/images/logo-dark.png"
+          alt="logo"
+          width={725}
+          height={250}
+          priority
+          className="h-[52px] w-auto my-auto"
+        />
+      </Link>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger>
           <Image
