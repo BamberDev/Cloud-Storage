@@ -385,10 +385,10 @@
 
   /* Sidebar */
   .sidebar {
-    @apply remove-scrollbar hidden h-screen w-[90px] flex-col overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[300px] !important;
+    @apply remove-scrollbar hidden h-screen w-[92px] flex-col overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[300px] !important;
   }
   .sidebar-nav {
-    @apply h5 mt-[14px] sm:mt-7 lg:mt-5 flex-1 gap-1 text-brand !important;
+    @apply h5 mt-[14px] sm:mt-7 flex-1 gap-1 text-brand !important;
   }
   .nav-icon {
     @apply w-6 filter invert opacity-25 !important;
@@ -406,10 +406,10 @@
     @apply invert-0 opacity-100 !important;
   }
   .sidebar-user-info {
-    @apply mt-4 flex items-center justify-center gap-2 rounded-full bg-brand p-1 text-white lg:justify-start lg:p-3 !important;
+    @apply flex items-center justify-center gap-2 rounded-full bg-brand p-1 text-white lg:justify-start lg:p-2 !important;
   }
   .sidebar-user-avatar {
-    @apply aspect-square w-10 rounded-full object-cover !important;
+    @apply aspect-square w-11 lg:w-10 rounded-full object-cover !important;
   }
   .shad-active {
     @apply bg-brand text-white shadow-drop-2 !important;
