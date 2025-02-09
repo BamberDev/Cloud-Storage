@@ -20,19 +20,19 @@ export default function Sidebar({
     <aside className="sidebar">
       <Link href="/" className="flex items-center justify-center">
         <Image
-          src="/assets/images/logo-black.png"
+          src="/assets/images/logo-dark.png"
           alt="logo"
-          width={276}
-          height={100}
+          width={725}
+          height={250}
           priority
-          className="hidden lg:block h-[60px] w-auto"
+          className="hidden lg:block h-[52px] w-auto"
         />
         <Image
           src="/assets/images/logo-icon.png"
           alt="logo"
-          width={50}
-          height={50}
-          className="lg:hidden"
+          width={100}
+          height={100}
+          className="lg:hidden h-[52px] w-auto"
         />
       </Link>
       <nav className="sidebar-nav">
