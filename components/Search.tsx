@@ -8,6 +8,7 @@ import { Models } from "node-appwrite";
 import Thumbnail from "./Thumbnail";
 import FormattedDateTime from "./FormattedDateTime";
 import { useDebounce } from "use-debounce";
+import { XIcon } from "lucide-react";
 
 export default function Search({ className }: { className?: string }) {
   const [results, setResults] = useState<Models.Document[]>([]);
@@ -27,12 +28,16 @@ export default function Search({ className }: { className?: string }) {
         return router.push(path.replace(searchParams.toString(), ""));
       }
 
-      const files = await getFiles({
-        types: [],
-        searchText: debouncedQuery,
-      });
-      setResults(files.documents);
-      setOpen(true);
+      try {
+        const files = await getFiles({
+          types: [],
+          searchText: debouncedQuery,
+        });
+        setResults(files.documents);
+        setOpen(true);
+      } catch (error) {
+        console.error("Error fetching files:", error);
+      }
     };
 
     fetchFiles();
@@ -48,13 +53,17 @@ export default function Search({ className }: { className?: string }) {
     setOpen(false);
     setResults([]);
 
-    router.push(
-      `/${
-        file.type === "video" || file.type === "audio"
-          ? "media"
-          : file.type + "s"
-      }?query=${query}`
-    );
+    const route =
+      file.type === "video" || file.type === "audio"
+        ? "media"
+        : file.type + "s";
+    router.push(`/${route}?query=${encodeURIComponent(query)}`);
+  };
+
+  const clearSearch = () => {
+    setQuery("");
+    setResults([]);
+    setOpen(false);
   };
 
   return (
@@ -73,6 +82,11 @@ export default function Search({ className }: { className?: string }) {
           tabIndex={-1}
           onChange={(e) => setQuery(e.target.value)}
         />
+        {query && (
+          <button onClick={clearSearch}>
+            <XIcon size={24} />
+          </button>
+        )}
         {open && (
           <ul className="search-result">
             {results.length > 0 ? (
