@@ -23,6 +23,12 @@ export const uploadFile = async ({
 
   try {
     const inputFile = InputFile.fromBuffer(file, file.name);
+    const totalSpaceUsed = await getTotalSpaceUsed();
+    const remainingSpace = totalSpaceUsed.all - totalSpaceUsed.used;
+
+    if (file.size > remainingSpace) {
+      throw new Error("Storage limit reached.");
+    }
 
     const bucketFile = await storage.createFile(
       appwriteConfig.bucketId,
@@ -214,7 +220,7 @@ export async function getTotalSpaceUsed() {
       audio: { size: 0, latestDate: "" },
       other: { size: 0, latestDate: "" },
       used: 0,
-      all: 2 * 1024 * 1024 * 1024 /* 2GB available bucket storage */,
+      all: 1_000_000_000, // Exactly 1GB (To show it in the chart)
     };
 
     files.documents.forEach((file) => {

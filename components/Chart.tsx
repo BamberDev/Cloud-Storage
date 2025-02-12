@@ -94,7 +94,7 @@ export default function Chart({ used = 0 }: { used: number }) {
           {used ? "Space Used" : "Available Storage"}
         </CardTitle>
         <CardDescription className="chart-description">
-          {used ? `${convertFileSize(used)} / 2 GB` : "2 GB"}
+          {used ? `${convertFileSize(used)} / 1 GB` : "1 GB"}
         </CardDescription>
       </CardHeader>
     </Card>

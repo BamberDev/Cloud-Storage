@@ -22,15 +22,19 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
   const { toast } = useToast();
   const path = usePathname();
 
+  const clearUploads = useCallback((fileName: string) => {
+    setFiles((prevFiles) =>
+      prevFiles.filter((prevFile) => prevFile.name !== fileName)
+    );
+  }, []);
+
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       setFiles(acceptedFiles);
 
       const uploadPromises = acceptedFiles.map(async (file) => {
         if (file.size > MAX_FILE_SIZE) {
-          setFiles((prevFiles) =>
-            prevFiles.filter((file) => file.name !== file.name)
-          );
+          clearUploads(file.name);
 
           return toast({
             description: (
@@ -39,25 +43,50 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
                 Max file size is 45MB.
               </p>
             ),
-
             className: "error-toast",
           });
         }
 
-        return uploadFile({ file, ownerId, accountId, path }).then(
-          (uploadFile) => {
-            if (uploadFile) {
-              setFiles((prevFiles) =>
-                prevFiles.filter((file) => file.name !== file.name)
-              );
-            }
+        try {
+          const uploadedFile = await uploadFile({
+            file,
+            ownerId,
+            accountId,
+            path,
+          });
+          if (uploadedFile) {
+            clearUploads(file.name);
           }
-        );
+        } catch (error) {
+          if (
+            error instanceof Error &&
+            error.message === "Storage limit reached."
+          ) {
+            toast({
+              description: (
+                <p className="body-2 text-white">
+                  Storage limit reached. Unable to upload file.
+                </p>
+              ),
+              className: "error-toast",
+            });
+          } else {
+            toast({
+              description: (
+                <p className="body-2 text-white">
+                  Failed to upload file. Please try again.
+                </p>
+              ),
+              className: "error-toast",
+            });
+          }
+          clearUploads(file.name);
+        }
       });
 
       await Promise.all(uploadPromises);
     },
-    [toast, ownerId, accountId, path]
+    [toast, ownerId, accountId, path, clearUploads]
   );
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
