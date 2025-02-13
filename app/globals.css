@@ -202,7 +202,7 @@
     @apply h5 relative z-20 text-center !important;
   }
   .dashboard-recent-files {
-    @apply h-full rounded-[20px] bg-white p-5 xl:p-8 !important;
+    @apply h-full rounded-[20px] bg-white p-5 !important;
   }
   .recent-file-details {
     @apply flex flex-row w-full justify-between min-w-0 !important;
