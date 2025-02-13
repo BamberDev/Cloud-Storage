@@ -94,14 +94,6 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
     noClick: true,
   });
 
-  const handleRemoveFile = (
-    e: React.MouseEvent<HTMLImageElement>,
-    fileName: string
-  ) => {
-    e.stopPropagation();
-    setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
-  };
-
   return (
     <div {...getRootProps()}>
       <input {...getInputProps()} />
@@ -128,7 +120,7 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
                 key={`${index}-${file.name}`}
                 className="uploader-preview-item"
               >
-                <div className="flex items-center w-full max-w-[70%] md:max-w-[325px] subtitle-2">
+                <div className="flex items-center w-full max-w-[85%] md:max-w-[350px] subtitle-2">
                   <Thumbnail
                     type={type}
                     extension={extension}
@@ -136,17 +128,7 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
                   />
                   <p className="ml-2 truncate">{file.name}</p>
                 </div>
-                <div className="flex gap-1 md:gap-2">
-                  <Loader2Icon size={24} className="animate-spin" />
-                  <Image
-                    src="/assets/icons/remove.svg"
-                    alt="remove"
-                    width={24}
-                    height={24}
-                    onClick={(e) => handleRemoveFile(e, file.name)}
-                    className="cursor-pointer"
-                  />
-                </div>
+                <Loader2Icon size={24} className="animate-spin" />
               </li>
             );
           })}
