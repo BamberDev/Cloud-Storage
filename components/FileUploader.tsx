@@ -88,7 +88,11 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
     },
     [toast, ownerId, accountId, path, clearUploads]
   );
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
+  const { getRootProps, getInputProps, open } = useDropzone({
+    onDrop,
+    noClick: true,
+  });
 
   const handleRemoveFile = (
     e: React.MouseEvent<HTMLImageElement>,
@@ -99,9 +103,13 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
   };
 
   return (
-    <div {...getRootProps()} className="cursor-pointer">
+    <div {...getRootProps()}>
       <input {...getInputProps()} />
-      <Button type="button" className={cn("uploader-button", className)}>
+      <Button
+        type="button"
+        className={cn("uploader-button", className)}
+        onClick={open}
+      >
         <Image
           src="/assets/icons/upload.svg"
           alt="upload"
@@ -136,6 +144,7 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
                     width={24}
                     height={24}
                     onClick={(e) => handleRemoveFile(e, file.name)}
+                    className="cursor-pointer"
                   />
                 </div>
               </li>
