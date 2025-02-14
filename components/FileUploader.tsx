@@ -30,23 +30,37 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      setFiles(acceptedFiles);
+      if (files.length + acceptedFiles.length > 10) {
+        toast({
+          description: (
+            <p className="body-2 text-white">
+              You can upload a maximum of 10 files at once.
+            </p>
+          ),
+          className: "error-toast",
+        });
+        return;
+      }
 
-      const uploadPromises = acceptedFiles.map(async (file) => {
+      const validFiles = acceptedFiles.filter((file) => {
         if (file.size > MAX_FILE_SIZE) {
-          clearUploads(file.name);
-
-          return toast({
+          toast({
             description: (
               <p className="body-2 text-white">
-                <span className="font-semibold">{file.name}</span> is too large.
-                Max file size is 45MB.
+                The file you uploaded is too large. Maximum file size allowed -
+                45MB.
               </p>
             ),
             className: "error-toast",
           });
+          return false;
         }
+        return true;
+      });
 
+      setFiles((prevFiles) => [...prevFiles, ...validFiles]);
+
+      const uploadPromises = validFiles.map(async (file) => {
         try {
           const uploadedFile = await uploadFile({
             file,
@@ -86,7 +100,7 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
 
       await Promise.all(uploadPromises);
     },
-    [toast, ownerId, accountId, path, clearUploads]
+    [toast, ownerId, accountId, path, clearUploads, files]
   );
 
   const { getRootProps, getInputProps, open } = useDropzone({
