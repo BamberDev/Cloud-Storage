@@ -70,9 +70,11 @@ export default function Sidebar({
           height={44}
           className="sidebar-user-avatar"
         />
-        <div className="hidden lg:block">
-          <p className="sutitle-2 capitalize">{fullName}</p>
-          <p className="caption">{email}</p>
+        <div className="hidden lg:block max-w-[170px] xl:max-w-[190px]">
+          <p className="subtitle-2 capitalize overflow-hidden text-ellipsis">
+            {fullName}
+          </p>
+          <p className="caption overflow-hidden text-ellipsis">{email}</p>
         </div>
       </div>
     </aside>

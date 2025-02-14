@@ -68,9 +68,11 @@ export default function MobileNavigation({
                 height={44}
                 className="header-user-avatar"
               />
-              <div className="sm:hidden lg:block">
-                <p className="subtitle-2 capitalize">{fullName}</p>
-                <p className="caption">{email}</p>
+              <div className="sm:hidden lg:block max-w-[calc(100%-100px)]">
+                <p className="subtitle-2 capitalize overflow-hidden text-ellipsis">
+                  {fullName}
+                </p>
+                <p className="caption overflow-hidden text-ellipsis">{email}</p>
               </div>
             </div>
             <Separator className="mb-4 bg-light-200/20" />
