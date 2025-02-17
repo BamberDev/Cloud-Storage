@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { signOutUser } from "@/lib/actions/user.actions";
+import Image from "next/image";
+import { useToast } from "@/hooks/use-toast";
+import { captureException } from "@sentry/nextjs";
 
 interface LogoutDialogProps {
   isOpen: boolean;
@@ -24,9 +27,29 @@ export default function LogoutDialog({
   isOpen,
   onOpenChange,
 }: LogoutDialogProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
   const handleLogout = async () => {
-    await signOutUser();
-    onOpenChange(false);
+    setIsLoading(true);
+    try {
+      await signOutUser();
+      onOpenChange(false);
+    } catch (error) {
+      captureException(error, {
+        extra: { action: "signOutUser" },
+      });
+      toast({
+        description: (
+          <p className="body-2 text-white">
+            Failed to sign out. Please try again.
+          </p>
+        ),
+        className: "error-toast",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,11 +68,29 @@ export default function LogoutDialog({
           <Button
             className="modal-cancel-button"
             onClick={() => onOpenChange(false)}
+            disabled={isLoading}
           >
             Cancel
           </Button>
-          <Button onClick={handleLogout} className="modal-submit-button">
-            Sign out
+          <Button
+            onClick={handleLogout}
+            className="modal-submit-button"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Image
+                  src="/assets/icons/loader.svg"
+                  alt="loader"
+                  width={24}
+                  height={24}
+                  className="animate-spin"
+                />
+                Signing out...
+              </>
+            ) : (
+              "Sign out"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
