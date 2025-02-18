@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -7,6 +8,16 @@ export function cn(...inputs: ClassValue[]) {
 
 export const parseStringify = (value: unknown) => {
   return JSON.parse(JSON.stringify(value));
+};
+
+export const handleError = (error: unknown, message: string) => {
+  console.error(error, message);
+
+  captureException(error instanceof Error ? error : new Error(message), {
+    extra: { error, message },
+  });
+
+  throw error instanceof Error ? error : new Error(message);
 };
 
 export const getFileType = (fileName: string) => {
