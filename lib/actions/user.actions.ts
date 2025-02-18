@@ -3,10 +3,9 @@
 import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
-import { parseStringify } from "../utils";
+import { handleError, parseStringify } from "../utils";
 import { cookies } from "next/headers";
 import { avatarPlaceholderUrl } from "@/constants";
-import { redirect } from "next/navigation";
 
 const getUserByEmail = async (email: string) => {
   const { databases } = await createAdminClient();
@@ -18,10 +17,6 @@ const getUserByEmail = async (email: string) => {
   );
 
   return result.total > 0 ? result.documents[0] : null;
-};
-
-const handleError = (error: unknown, message: string) => {
-  console.log(error, message);
 };
 
 export const sendEmailOTP = async ({ email }: { email: string }) => {
@@ -137,6 +132,46 @@ export const signInUser = async ({ email }: { email: string }) => {
   }
 };
 
+export const signInTestUser = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  try {
+    const { account } = await createAdminClient();
+
+    const testEmails = process.env.TEST_ACCOUNT_EMAILS?.split(",") || [];
+    const testPasswords = process.env.TEST_ACCOUNT_PASSWORDS?.split(",") || [];
+    const index = testEmails.findIndex(
+      (testEmail) => testEmail.trim() === email.trim()
+    );
+
+    if (index === -1 || testPasswords[index] !== password) {
+      throw new Error("Invalid test account credentials");
+    }
+
+    const session = await account.createEmailPasswordSession(email, password);
+    if (!session.secret) {
+      throw new Error("Unable to retrieve session secret");
+    }
+
+    const cookieStore = await cookies();
+    cookieStore.set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+      expires: new Date(Date.now() + 60 * 60 * 24 * 30 * 1000), // 30 days
+    });
+
+    return parseStringify({ sessionId: session.$id });
+  } catch (error) {
+    handleError(error, "Failed to sign in test user");
+  }
+};
+
 export const signOutUser = async () => {
   const { account } = await createSessionClient();
 
@@ -145,7 +180,5 @@ export const signOutUser = async () => {
     (await cookies()).delete("appwrite-session");
   } catch (error) {
     handleError(error, "Failed to sign out user");
-  } finally {
-    redirect("/sign-in");
   }
 };
