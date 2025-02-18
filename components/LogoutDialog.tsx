@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { signOutUser } from "@/lib/actions/user.actions";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
-import { captureException } from "@sentry/nextjs";
+import { useRouter } from "next/navigation";
 
 interface LogoutDialogProps {
   isOpen: boolean;
@@ -29,16 +29,15 @@ export default function LogoutDialog({
 }: LogoutDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleLogout = async () => {
     setIsLoading(true);
     try {
       await signOutUser();
       onOpenChange(false);
-    } catch (error) {
-      captureException(error, {
-        extra: { action: "signOutUser" },
-      });
+      router.push("/sign-in");
+    } catch {
       toast({
         description: (
           <p className="body-2 text-white">
