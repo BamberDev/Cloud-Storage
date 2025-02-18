@@ -2,6 +2,8 @@
 
 type FileType = "document" | "image" | "video" | "audio" | "other";
 
+type FormType = "sign-in" | "sign-up" | "test-account";
+
 type ActionType = {
   label: string;
   icon: string;
@@ -19,23 +21,27 @@ type UploadFileProps = {
   accountId: string;
   path: string;
 };
+
 type GetFilesProps = {
   types: FileType[];
   searchText?: string;
   sort?: string;
   limit?: number;
 };
+
 type RenameFileProps = {
   fileId: string;
   name: string;
   extension: string;
   path: string;
 };
+
 type UpdateFileUsersProps = {
   fileId: string;
   emails: string[];
   path: string;
 };
+
 type DeleteFileProps = {
   fileId: string;
   bucketFileId: string;
@@ -55,6 +61,7 @@ type MobileNavigationProps = {
   avatar: string;
   email: string;
 };
+
 type SidebarProps = {
   fullName: string;
   avatar: string;
