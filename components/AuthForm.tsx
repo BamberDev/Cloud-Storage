@@ -17,10 +17,13 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { createAccount, signInUser } from "@/lib/actions/user.actions";
+import {
+  createAccount,
+  signInUser,
+  signInTestUser,
+} from "@/lib/actions/user.actions";
 import OTPModal from "./OTPModal";
-
-type FormType = "sign-in" | "sign-up";
+import { useRouter } from "next/navigation";
 
 const authFormSchema = (formType: FormType) => {
   return z.object({
@@ -29,6 +32,8 @@ const authFormSchema = (formType: FormType) => {
       formType === "sign-up"
         ? z.string().min(2).max(50)
         : z.string().optional(),
+    password:
+      formType === "test-account" ? z.string().min(6) : z.string().optional(),
   });
 };
 
@@ -36,6 +41,7 @@ export default function AuthForm({ type }: { type: FormType }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [accountId, setAccountId] = useState(null);
+  const router = useRouter();
 
   const formSchema = authFormSchema(type);
 
@@ -44,6 +50,7 @@ export default function AuthForm({ type }: { type: FormType }) {
     defaultValues: {
       email: "",
       fullName: "",
+      password: "",
     },
   });
 
@@ -52,21 +59,31 @@ export default function AuthForm({ type }: { type: FormType }) {
     setErrorMessage("");
 
     try {
-      const user =
-        type === "sign-up"
-          ? await createAccount({
-              fullName: values.fullName || "",
-              email: values.email,
-            })
-          : await signInUser({ email: values.email });
+      if (type === "test-account") {
+        await signInTestUser({
+          email: values.email,
+          password: values.password || "",
+        });
+        router.push("/");
+      } else {
+        const user =
+          type === "sign-up"
+            ? await createAccount({
+                fullName: values.fullName || "",
+                email: values.email,
+              })
+            : await signInUser({ email: values.email });
 
-      setAccountId(user.accountId);
+        setAccountId(user.accountId);
+      }
     } catch {
       setErrorMessage(
         `${
           type === "sign-in"
             ? "Failed to sign in."
-            : "Failed to create account."
+            : type === "sign-up"
+            ? "Failed to create account."
+            : "Failed to sign in to test account."
         } Please try again.`
       );
     } finally {
@@ -79,7 +96,11 @@ export default function AuthForm({ type }: { type: FormType }) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
           <h1 className="form-title">
-            {type === "sign-in" ? "Sign In" : "Sign Up"}
+            {type === "sign-in"
+              ? "Sign In"
+              : type === "sign-up"
+              ? "Sign Up"
+              : "Test Account"}
           </h1>
           {type === "sign-up" && (
             <FormField
@@ -127,12 +148,39 @@ export default function AuthForm({ type }: { type: FormType }) {
               </FormItem>
             )}
           />
+          {type === "test-account" && (
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="shad-form-item">
+                    <FormLabel className="shad-form-label">Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Enter your password"
+                        className="shad-input"
+                        {...field}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormDescription className="sr-only">
+                    Test account password input
+                  </FormDescription>
+                  <FormMessage className="shad-form-message" />
+                </FormItem>
+              )}
+            />
+          )}
           <Button
             type="submit"
             className="form-submit-button"
             disabled={isLoading}
           >
-            {type === "sign-in" ? "Sign In" : "Sign Up"}
+            {type === "sign-in" || type === "test-account"
+              ? "Sign In"
+              : "Sign Up"}
             {isLoading && (
               <Image
                 src="/assets/icons/loader.svg"
@@ -144,23 +192,42 @@ export default function AuthForm({ type }: { type: FormType }) {
             )}
           </Button>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <div className="body-2 flex justify-center">
-            <p className="text-light-100">
-              {type === "sign-in"
-                ? "Don't have an account?"
-                : "Already have an account?"}
-            </p>
-            <Link
-              href={type === "sign-in" ? "/sign-up" : "/sign-in"}
-              className="ml-1 font-medium underline"
-            >
-              {type === "sign-in" ? "Sign Up" : "Sign In"}
-            </Link>
+          <div>
+            <div className="body-2 flex justify-center">
+              <p className="text-light-100">
+                {type === "sign-in"
+                  ? "Don't have an account?"
+                  : type === "sign-up"
+                  ? "Already have an account?"
+                  : "Want to use OTP login?"}
+              </p>
+              <Link
+                href={
+                  type === "sign-up" || type === "test-account"
+                    ? "/sign-in"
+                    : "/sign-up"
+                }
+                className="ml-1 font-medium underline"
+              >
+                {type === "sign-in"
+                  ? "Sign Up"
+                  : type === "sign-up"
+                  ? "Sign In"
+                  : "Sign In with OTP"}
+              </Link>
+            </div>
+            {type !== "test-account" && (
+              <div className="text-center body-2">
+                <p className="my-3">OR</p>
+                <Link href="/test-account" className="font-medium underline">
+                  Try Test Account
+                </Link>
+              </div>
+            )}
           </div>
         </form>
       </Form>
-
-      {accountId && (
+      {accountId && type !== "test-account" && (
         <OTPModal email={form.getValues("email")} accountId={accountId} />
       )}
     </>
