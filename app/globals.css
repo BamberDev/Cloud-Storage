@@ -423,6 +423,14 @@
     @apply !shadow-drop-3 !important;
   }
 
+  /* Test Account Select */
+  .test-account-select {
+    @apply shad-no-focus border-transparent p-0 !important;
+  }
+  .test-account-select[data-placeholder] {
+    @apply text-light-200 !important;
+  }
+
   /* Thumbnail */
   .thumbnail {
     @apply flex-center size-[50px] min-w-[50px] overflow-hidden rounded-full bg-brand/10;

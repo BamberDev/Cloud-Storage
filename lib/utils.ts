@@ -10,6 +10,11 @@ export const parseStringify = (value: unknown) => {
   return JSON.parse(JSON.stringify(value));
 };
 
+export const TEST_EMAILS =
+  process.env.NEXT_PUBLIC_TEST_ACCOUNT_EMAILS?.split(",") || [];
+export const TEST_PASSWORDS =
+  process.env.NEXT_PUBLIC_TEST_ACCOUNT_PASSWORDS?.split(",") || [];
+
 export const handleError = (error: unknown, message: string) => {
   console.error(error, message);
 
