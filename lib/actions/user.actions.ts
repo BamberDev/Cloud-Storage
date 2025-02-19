@@ -3,7 +3,12 @@
 import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
-import { handleError, parseStringify } from "../utils";
+import {
+  handleError,
+  parseStringify,
+  TEST_EMAILS,
+  TEST_PASSWORDS,
+} from "../utils";
 import { cookies } from "next/headers";
 import { avatarPlaceholderUrl } from "@/constants";
 
@@ -142,13 +147,11 @@ export const signInTestUser = async ({
   try {
     const { account } = await createAdminClient();
 
-    const testEmails = process.env.TEST_ACCOUNT_EMAILS?.split(",") || [];
-    const testPasswords = process.env.TEST_ACCOUNT_PASSWORDS?.split(",") || [];
-    const index = testEmails.findIndex(
+    const index = TEST_EMAILS.findIndex(
       (testEmail) => testEmail.trim() === email.trim()
     );
 
-    if (index === -1 || testPasswords[index] !== password) {
+    if (index === -1 || TEST_PASSWORDS[index] !== password) {
       throw new Error("Invalid test account credentials");
     }
 
