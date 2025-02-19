@@ -24,6 +24,7 @@ import {
 } from "@/lib/actions/user.actions";
 import OTPModal from "./OTPModal";
 import { useRouter } from "next/navigation";
+import { TestAccountSelect } from "./TestAccountSelect";
 
 const authFormSchema = (formType: FormType) => {
   return z.object({
@@ -91,6 +92,11 @@ export default function AuthForm({ type }: { type: FormType }) {
     }
   };
 
+  const handleTestAccountSelect = (email: string, password: string) => {
+    form.setValue("email", email);
+    form.setValue("password", password);
+  };
+
   return (
     <>
       <Form {...form}>
@@ -126,47 +132,45 @@ export default function AuthForm({ type }: { type: FormType }) {
               )}
             />
           )}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <div className="shad-form-item">
-                  <FormLabel className="shad-form-label">Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter your email address"
-                      className="shad-input"
-                      {...field}
-                    />
-                  </FormControl>
-                </div>
-                <FormDescription className="sr-only">
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage className="shad-form-message" />
-              </FormItem>
-            )}
-          />
-          {type === "test-account" && (
+          {type === "test-account" ? (
             <FormField
               control={form.control}
-              name="password"
+              name="email"
+              render={() => (
+                <FormItem>
+                  <div className="shad-form-item">
+                    <FormLabel className="shad-form-label">
+                      Test Account
+                    </FormLabel>
+                    <FormControl>
+                      <TestAccountSelect onSelect={handleTestAccountSelect} />
+                    </FormControl>
+                  </div>
+                  <FormDescription className="sr-only">
+                    Select test account
+                  </FormDescription>
+                  <FormMessage className="shad-form-message" />
+                </FormItem>
+              )}
+            />
+          ) : (
+            <FormField
+              control={form.control}
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <div className="shad-form-item">
-                    <FormLabel className="shad-form-label">Password</FormLabel>
+                    <FormLabel className="shad-form-label">Email</FormLabel>
                     <FormControl>
                       <Input
-                        type="password"
-                        placeholder="Enter your password"
+                        placeholder="Enter your email address"
                         className="shad-input"
                         {...field}
                       />
                     </FormControl>
                   </div>
                   <FormDescription className="sr-only">
-                    Test account password input
+                    Email input
                   </FormDescription>
                   <FormMessage className="shad-form-message" />
                 </FormItem>
