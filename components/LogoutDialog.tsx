@@ -85,10 +85,10 @@ export default function LogoutDialog({
                   height={24}
                   className="animate-spin"
                 />
-                Signing out...
+                Signing Out...
               </>
             ) : (
-              "Sign out"
+              "Sign Out"
             )}
           </Button>
         </DialogFooter>

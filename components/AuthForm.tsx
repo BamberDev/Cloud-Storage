@@ -182,18 +182,22 @@ export default function AuthForm({ type }: { type: FormType }) {
             className="form-submit-button"
             disabled={isLoading}
           >
-            {type === "sign-in" || type === "test-account"
-              ? "Sign In"
-              : "Sign Up"}
             {isLoading && (
               <Image
                 src="/assets/icons/loader.svg"
                 alt="loader"
                 width={24}
                 height={24}
-                className="ml-2 animate-spin"
+                className="animate-spin"
               />
             )}
+            {isLoading
+              ? `Signing ${
+                  type === "sign-in" || type === "test-account" ? "In" : "Up"
+                }...`
+              : type === "sign-in" || type === "test-account"
+              ? "Sign In"
+              : "Sign Up"}
           </Button>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div>

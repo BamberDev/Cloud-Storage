@@ -124,11 +124,18 @@ export default function ActionDropdown({
         </DialogHeader>
         {["rename", "delete", "share"].includes(value) && (
           <DialogFooter className="flex flex-col gap-3 md:flex-row">
-            <Button onClick={closeAllModals} className="modal-cancel-button">
+            <Button
+              onClick={closeAllModals}
+              className="modal-cancel-button"
+              disabled={isLoading}
+            >
               Cancel
             </Button>
-            <Button onClick={handleAction} className="modal-submit-button">
-              <p className="capitalize">{value}</p>
+            <Button
+              onClick={handleAction}
+              className="modal-submit-button"
+              disabled={isLoading}
+            >
               {isLoading && (
                 <Image
                   src="/assets/icons/loader.svg"
@@ -138,6 +145,9 @@ export default function ActionDropdown({
                   className="animate-spin"
                 />
               )}
+              <p className="capitalize">
+                {isLoading ? `${value.slice(0, -1)}ing...` : value}
+              </p>
             </Button>
           </DialogFooter>
         )}
