@@ -19,6 +19,7 @@ import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { sendEmailOTP, verifySecret } from "@/lib/actions/user.actions";
 import { useRouter } from "next/navigation";
+import { CheckIcon } from "lucide-react";
 
 export default function OTPModal({
   email,
@@ -31,6 +32,7 @@ export default function OTPModal({
   const [isOpen, setIsOpen] = useState(true);
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [resent, setResent] = useState(false);
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -47,7 +49,11 @@ export default function OTPModal({
   };
 
   const handleResendOTP = async () => {
+    if (resent) return;
+
+    setResent(true);
     await sendEmailOTP({ email });
+    setTimeout(() => setResent(false), 10000);
   };
 
   return (
@@ -87,17 +93,22 @@ export default function OTPModal({
             <AlertDialogAction
               onClick={handleSubmit}
               className="shad-submit-btn h-12"
+              disabled={isLoading}
               type="button"
             >
-              Submit
-              {isLoading && (
-                <Image
-                  src="/assets/icons/loader.svg"
-                  alt="loader"
-                  width={24}
-                  height={24}
-                  className="mr-2 animate-spin"
-                />
+              {isLoading ? (
+                <>
+                  <Image
+                    src="/assets/icons/loader.svg"
+                    alt="loader"
+                    width={24}
+                    height={24}
+                    className="animate-spin"
+                  />
+                  Submiting...
+                </>
+              ) : (
+                "Submit"
               )}
             </AlertDialogAction>
             <div className="subtitle-2 mt-2 text-center text-light-100">
@@ -105,10 +116,11 @@ export default function OTPModal({
               <Button
                 type="button"
                 variant="link"
-                className="pl-1 text-brand"
+                className="px-1 underline-offset-1 underline font-bold"
+                disabled={resent}
                 onClick={handleResendOTP}
               >
-                Resend
+                Resend{resent && <CheckIcon size={16} />}
               </Button>
             </div>
           </div>
