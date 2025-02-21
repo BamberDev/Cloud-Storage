@@ -6,11 +6,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function Sidebar({
-  fullName,
+  username,
   email,
   avatar,
 }: {
-  fullName: string;
+  username: string;
   email: string;
   avatar: string;
 }) {
@@ -72,7 +72,7 @@ export default function Sidebar({
         />
         <div className="hidden lg:block max-w-[170px] xl:max-w-[190px]">
           <p className="subtitle-2 capitalize overflow-hidden text-ellipsis">
-            {fullName}
+            {username}
           </p>
           <p className="caption overflow-hidden text-ellipsis">{email}</p>
         </div>

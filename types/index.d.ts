@@ -57,13 +57,13 @@ type FileUploaderProps = {
 type MobileNavigationProps = {
   ownerId: string;
   accountId: string;
-  fullName: string;
+  username: string;
   avatar: string;
   email: string;
 };
 
 type SidebarProps = {
-  fullName: string;
+  username: string;
   avatar: string;
   email: string;
 };

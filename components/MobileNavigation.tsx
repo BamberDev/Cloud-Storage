@@ -21,7 +21,7 @@ import LogoutDialog from "./LogoutDialog";
 interface Props {
   $id: string;
   accountId: string;
-  fullName: string;
+  username: string;
   email: string;
   avatar: string;
 }
@@ -29,7 +29,7 @@ interface Props {
 export default function MobileNavigation({
   $id: ownerId,
   accountId,
-  fullName,
+  username,
   email,
   avatar,
 }: Props) {
@@ -70,7 +70,7 @@ export default function MobileNavigation({
               />
               <div className="sm:hidden lg:block max-w-[calc(100%-100px)]">
                 <p className="subtitle-2 capitalize overflow-hidden text-ellipsis">
-                  {fullName}
+                  {username}
                 </p>
                 <p className="caption overflow-hidden text-ellipsis">{email}</p>
               </div>
