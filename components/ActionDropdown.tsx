@@ -31,6 +31,7 @@ import {
 } from "@/lib/actions/file.actions";
 import { usePathname } from "next/navigation";
 import { FileDetails, ShareFile } from "./ActionsModalContent";
+import { z } from "zod";
 
 export default function ActionDropdown({
   file,
@@ -43,16 +44,22 @@ export default function ActionDropdown({
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.name);
-  const [emails, setEmails] = useState<string[]>([]);
+  const [emailInput, setEmailInput] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const path = usePathname();
   const isOwner = file.owner.$id === currentUser.$id;
 
   const closeAllModals = () => {
-    setIsModalOpen(false);
-    setIsDropDownOpen(false);
-    setAction(null);
-    setName(file.name);
+    if (action?.value === "share") {
+      setEmailInput("");
+      setEmailError(null);
+    } else {
+      setIsModalOpen(false);
+      setIsDropDownOpen(false);
+      setAction(null);
+      setName(file.name);
+    }
   };
 
   const handleAction = async () => {
@@ -63,7 +70,20 @@ export default function ActionDropdown({
     const actions = {
       rename: () =>
         renameFile({ fileId: file.$id, name, extension: file.extension, path }),
-      share: () => updateFileUsers({ fileId: file.$id, emails, path }),
+      share: () => {
+        const emailSchema = z.string().email("Invalid email address");
+        const result = emailSchema.safeParse(emailInput);
+        if (!result.success) {
+          setEmailError("Invalid email address");
+          setIsLoading(false);
+          return false;
+        }
+        return updateFileUsers({
+          fileId: file.$id,
+          emails: Array.from(new Set([...file.users, emailInput])),
+          path,
+        });
+      },
       delete: () =>
         deleteFile({ fileId: file.$id, bucketFileId: file.bucketFileId, path }),
     };
@@ -77,14 +97,21 @@ export default function ActionDropdown({
 
   const handleRemoveUser = async (email: string) => {
     if (!isOwner) return;
-    const updatedEmails = emails.filter((e) => e !== email);
+    const updatedEmails = file.users.filter((e: string) => e !== email);
     const success = await updateFileUsers({
       fileId: file.$id,
       emails: updatedEmails,
       path,
     });
 
-    if (success) setEmails(updatedEmails);
+    if (success) {
+      file.users = updatedEmails;
+    }
+  };
+
+  const handleEmailChange = (email: string) => {
+    setEmailInput(email);
+    setEmailError(null);
   };
 
   const renderDialogContent = () => {
@@ -111,8 +138,10 @@ export default function ActionDropdown({
           {value === "share" && (
             <ShareFile
               file={file}
-              onInputChange={setEmails}
+              email={emailInput}
+              onEmailChange={handleEmailChange}
               onRemove={handleRemoveUser}
+              error={emailError}
             />
           )}
           {value === "delete" && (
