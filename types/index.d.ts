@@ -76,8 +76,10 @@ type ThumbnailProps = {
   imageClassName?: string;
 };
 
-type ShareInputProps = {
+type ShareFileProps = {
   file: Models.Document;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  email: string;
+  error: string | null;
+  onEmailChange: (email: string) => void;
   onRemove: (email: string) => void;
 };
