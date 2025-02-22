@@ -21,7 +21,7 @@ import { constructDownloadUrl } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { Models } from "node-appwrite";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import {
@@ -43,9 +43,10 @@ export default function ActionDropdown({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [action, setAction] = useState<ActionType | null>(null);
-  const [name, setName] = useState(file.name);
+  const [name, setName] = useState(file.name.replace(/\.[^/.]+$/, ""));
   const [emailInput, setEmailInput] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [renameError, setRenameError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const path = usePathname();
   const isOwner = file.owner.$id === currentUser.$id;
@@ -62,14 +63,35 @@ export default function ActionDropdown({
     }
   };
 
+  useEffect(() => {
+    if (file.name) {
+      setName(file.name.replace(/\.[^/.]+$/, ""));
+    }
+  }, [file.name]);
+
   const handleAction = async () => {
     if (!action || !isOwner) return;
     setIsLoading(true);
     let success = false;
 
     const actions = {
-      rename: () =>
-        renameFile({ fileId: file.$id, name, extension: file.extension, path }),
+      rename: () => {
+        const trimmedName = name.trim();
+        if (!trimmedName) {
+          setRenameError("Name cannot be empty");
+          return false;
+        }
+        if (trimmedName.length > 200) {
+          setRenameError("Name cannot exceed 200 characters");
+          return false;
+        }
+        return renameFile({
+          fileId: file.$id,
+          name: trimmedName,
+          extension: file.extension,
+          path,
+        });
+      },
       share: () => {
         const emailSchema = z.string().email("Invalid email address");
         const result = emailSchema.safeParse(emailInput);
@@ -128,11 +150,18 @@ export default function ActionDropdown({
             Description of {label} dialog
           </DialogDescription>
           {value === "rename" && (
-            <Input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <>
+              <Input
+                type="text"
+                value={name}
+                placeholder="Enter new name"
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setRenameError(null);
+                }}
+              />
+              {renameError && <p className="error-message">{renameError}</p>}
+            </>
           )}
           {value === "details" && <FileDetails file={file} />}
           {value === "share" && (
