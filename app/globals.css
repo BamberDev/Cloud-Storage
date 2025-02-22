@@ -34,6 +34,7 @@
   .recharts-responsive-container {
     height: initial !important;
   }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
@@ -239,10 +240,10 @@
     @apply font-medium text-brand underline line-clamp-2 !important;
   }
   .modal-cancel-button {
-    @apply h-[52px] flex-1 rounded-full border bg-white text-light-100 hover:bg-gray-100 !important;
+    @apply min-h-[52px] flex-1 rounded-full border bg-white text-light-100 hover:bg-gray-100 !important;
   }
   .modal-submit-button {
-    @apply primary-btn !mx-0 h-[52px] w-full flex-1 !important;
+    @apply primary-btn mx-0 min-h-[52px] w-full flex-1 !important;
   }
 
   /* ActionsModalContent */
