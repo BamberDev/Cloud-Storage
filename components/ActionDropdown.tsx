@@ -21,7 +21,7 @@ import { constructDownloadUrl } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { Models } from "node-appwrite";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import {
@@ -31,6 +31,7 @@ import {
 } from "@/lib/actions/file.actions";
 import { usePathname } from "next/navigation";
 import { FileDetails, ShareFile } from "./ActionsModalContent";
+import { z } from "zod";
 
 export default function ActionDropdown({
   file,
@@ -42,18 +43,31 @@ export default function ActionDropdown({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [action, setAction] = useState<ActionType | null>(null);
-  const [name, setName] = useState(file.name);
-  const [emails, setEmails] = useState<string[]>([]);
+  const [name, setName] = useState(file.name.replace(/\.[^/.]+$/, ""));
+  const [emailInput, setEmailInput] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [renameError, setRenameError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const path = usePathname();
   const isOwner = file.owner.$id === currentUser.$id;
 
   const closeAllModals = () => {
-    setIsModalOpen(false);
-    setIsDropDownOpen(false);
-    setAction(null);
-    setName(file.name);
+    if (action?.value === "share") {
+      setEmailInput("");
+      setEmailError(null);
+    } else {
+      setIsModalOpen(false);
+      setIsDropDownOpen(false);
+      setAction(null);
+      setName(file.name);
+    }
   };
+
+  useEffect(() => {
+    if (file.name) {
+      setName(file.name.replace(/\.[^/.]+$/, ""));
+    }
+  }, [file.name]);
 
   const handleAction = async () => {
     if (!action || !isOwner) return;
@@ -61,9 +75,37 @@ export default function ActionDropdown({
     let success = false;
 
     const actions = {
-      rename: () =>
-        renameFile({ fileId: file.$id, name, extension: file.extension, path }),
-      share: () => updateFileUsers({ fileId: file.$id, emails, path }),
+      rename: () => {
+        const trimmedName = name.trim();
+        if (!trimmedName) {
+          setRenameError("Name cannot be empty");
+          return false;
+        }
+        if (trimmedName.length > 200) {
+          setRenameError("Name cannot exceed 200 characters");
+          return false;
+        }
+        return renameFile({
+          fileId: file.$id,
+          name: trimmedName,
+          extension: file.extension,
+          path,
+        });
+      },
+      share: () => {
+        const emailSchema = z.string().email("Invalid email address");
+        const result = emailSchema.safeParse(emailInput);
+        if (!result.success) {
+          setEmailError("Invalid email address");
+          setIsLoading(false);
+          return false;
+        }
+        return updateFileUsers({
+          fileId: file.$id,
+          emails: Array.from(new Set([...file.users, emailInput])),
+          path,
+        });
+      },
       delete: () =>
         deleteFile({ fileId: file.$id, bucketFileId: file.bucketFileId, path }),
     };
@@ -77,14 +119,21 @@ export default function ActionDropdown({
 
   const handleRemoveUser = async (email: string) => {
     if (!isOwner) return;
-    const updatedEmails = emails.filter((e) => e !== email);
+    const updatedEmails = file.users.filter((e: string) => e !== email);
     const success = await updateFileUsers({
       fileId: file.$id,
       emails: updatedEmails,
       path,
     });
 
-    if (success) setEmails(updatedEmails);
+    if (success) {
+      file.users = updatedEmails;
+    }
+  };
+
+  const handleEmailChange = (email: string) => {
+    setEmailInput(email);
+    setEmailError(null);
   };
 
   const renderDialogContent = () => {
@@ -101,18 +150,27 @@ export default function ActionDropdown({
             Description of {label} dialog
           </DialogDescription>
           {value === "rename" && (
-            <Input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <>
+              <Input
+                type="text"
+                value={name}
+                placeholder="Enter new name"
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setRenameError(null);
+                }}
+              />
+              {renameError && <p className="error-message">{renameError}</p>}
+            </>
           )}
           {value === "details" && <FileDetails file={file} />}
           {value === "share" && (
             <ShareFile
               file={file}
-              onInputChange={setEmails}
+              email={emailInput}
+              onEmailChange={handleEmailChange}
               onRemove={handleRemoveUser}
+              error={emailError}
             />
           )}
           {value === "delete" && (
@@ -203,6 +261,7 @@ export default function ActionDropdown({
                   {actionItem.value === "download" ? (
                     <Link
                       href={constructDownloadUrl(file.bucketFileId)}
+                      target="_blank"
                       download={file.name}
                       className="flex items-center"
                     >

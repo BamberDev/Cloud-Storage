@@ -29,7 +29,7 @@ import { TestAccountSelect } from "./TestAccountSelect";
 const authFormSchema = (formType: FormType) => {
   return z.object({
     email: z.string().email(),
-    fullName:
+    username:
       formType === "sign-up"
         ? z.string().min(2).max(50)
         : z.string().optional(),
@@ -50,7 +50,7 @@ export default function AuthForm({ type }: { type: FormType }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      fullName: "",
+      username: "",
       password: "",
     },
   });
@@ -70,7 +70,7 @@ export default function AuthForm({ type }: { type: FormType }) {
         const user =
           type === "sign-up"
             ? await createAccount({
-                fullName: values.fullName || "",
+                username: values.username || "",
                 email: values.email,
               })
             : await signInUser({ email: values.email });
@@ -111,21 +111,21 @@ export default function AuthForm({ type }: { type: FormType }) {
           {type === "sign-up" && (
             <FormField
               control={form.control}
-              name="fullName"
+              name="username"
               render={({ field }) => (
                 <FormItem>
                   <div className="shad-form-item">
-                    <FormLabel className="shad-form-label">Full Name</FormLabel>
+                    <FormLabel className="shad-form-label">Username</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter your full name"
+                        placeholder="Enter your username"
                         className="shad-input"
                         {...field}
                       />
                     </FormControl>
                   </div>
                   <FormDescription className="sr-only">
-                    Full Name input
+                    Username input
                   </FormDescription>
                   <FormMessage className="shad-form-message" />
                 </FormItem>

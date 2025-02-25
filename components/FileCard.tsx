@@ -36,7 +36,7 @@ export default function FileCard({
           className="body-2 text-light-100"
         />
         <p className="caption truncate text-light-200">
-          By: {file.owner.fullName}
+          By: {file.owner.username}
         </p>
       </div>
     </Link>

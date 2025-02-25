@@ -57,13 +57,13 @@ type FileUploaderProps = {
 type MobileNavigationProps = {
   ownerId: string;
   accountId: string;
-  fullName: string;
+  username: string;
   avatar: string;
   email: string;
 };
 
 type SidebarProps = {
-  fullName: string;
+  username: string;
   avatar: string;
   email: string;
 };
@@ -76,8 +76,10 @@ type ThumbnailProps = {
   imageClassName?: string;
 };
 
-type ShareInputProps = {
+type ShareFileProps = {
   file: Models.Document;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  email: string;
+  error: string | null;
+  onEmailChange: (email: string) => void;
   onRemove: (email: string) => void;
 };

@@ -30,20 +30,24 @@ export function FileDetails({ file }: { file: Models.Document }) {
       <div className="space-y-4 px-2 pt-2">
         <DetailRow label="Format:" value={file.extension} />
         <DetailRow label="Size:" value={convertFileSize(file.size)} />
-        <DetailRow label="Owner:" value={file.owner.fullName} />
+        <DetailRow label="Owner:" value={file.owner.username} />
         <DetailRow label="Last edit:" value={formatDateTime(file.$updatedAt)} />
       </div>
     </>
   );
 }
 
-interface ShareFileProps {
-  file: Models.Document;
-  onInputChange: React.Dispatch<React.SetStateAction<string[]>>;
-  onRemove: (email: string) => void;
-}
+export function ShareFile({
+  file,
+  email,
+  onEmailChange,
+  onRemove,
+  error,
+}: ShareFileProps) {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onEmailChange(e.target.value.trim());
+  };
 
-export function ShareFile({ file, onInputChange, onRemove }: ShareFileProps) {
   return (
     <>
       <ImageThumbnail file={file} />
@@ -54,10 +58,12 @@ export function ShareFile({ file, onInputChange, onRemove }: ShareFileProps) {
         <Input
           type="email"
           placeholder="Enter email address"
-          onChange={(e) => onInputChange(e.target.value.trim().split(","))}
+          onChange={handleInputChange}
+          value={email}
           className="share-input-field"
         />
-        <div className="pt-4">
+        {error && <p className="error-message">{error}</p>}
+        <div className="pt-2">
           <div className="flex justify-between">
             <p className="subtitle-2 text-light-100">Shared with</p>
             <p className="subtitle-2 text-light-200">
@@ -66,14 +72,14 @@ export function ShareFile({ file, onInputChange, onRemove }: ShareFileProps) {
           </div>
 
           <ul className="pt-2">
-            {file.users.map((email: string) => (
+            {file.users.map((userEmail: string) => (
               <li
-                key={email}
+                key={userEmail}
                 className="flex items-center justify-between gap-2"
               >
-                <p className="subtitle-2">{email}</p>
+                <p className="subtitle-2">{userEmail}</p>
                 <Button
-                  onClick={() => onRemove(email)}
+                  onClick={() => onRemove(userEmail)}
                   className="share-remove-user"
                 >
                   <Image
