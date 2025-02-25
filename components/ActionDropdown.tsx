@@ -261,6 +261,7 @@ export default function ActionDropdown({
                   {actionItem.value === "download" ? (
                     <Link
                       href={constructDownloadUrl(file.bucketFileId)}
+                      target="_blank"
                       download={file.name}
                       className="flex items-center"
                     >
