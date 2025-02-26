@@ -18,8 +18,8 @@ const ImageThumbnail = ({ file }: { file: Models.Document }) => (
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
   <div className="flex">
-    <p className="file-details-label text-left">{label}</p>
-    <p className="file-details-value text-left">{value}</p>
+    <p className="file-details-label">{label}</p>
+    <p className="subtitle-2 text-left">{value}</p>
   </div>
 );
 
@@ -87,7 +87,7 @@ export function ShareFile({
                     alt="Remove"
                     width={24}
                     height={24}
-                    className="remove-icon"
+                    className="aspect-square rounded-full"
                   />
                 </Button>
               </li>
