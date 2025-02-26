@@ -39,7 +39,7 @@ export default function MobileNavigation({
 
   return (
     <header className="mobile-header">
-      <Link href="/" className="flex items-center justify-center">
+      <Link href="/" className="flex-center">
         <Image
           src="/assets/images/logo-dark.png"
           alt="logo"
@@ -58,7 +58,7 @@ export default function MobileNavigation({
             height={30}
           />
         </SheetTrigger>
-        <SheetContent className="shad-sheet h-screen px-3">
+        <SheetContent className="p-0 h-screen px-3">
           <SheetTitle>
             <div className="header-user">
               <Image
@@ -69,10 +69,8 @@ export default function MobileNavigation({
                 className="header-user-avatar"
               />
               <div className="sm:hidden lg:block max-w-[calc(100%-100px)]">
-                <p className="subtitle-2 capitalize overflow-hidden text-ellipsis">
-                  {username}
-                </p>
-                <p className="caption overflow-hidden text-ellipsis">{email}</p>
+                <p className="truncate-username">{username}</p>
+                <p className="truncate-email">{email}</p>
               </div>
             </div>
             <Separator className="mb-4 bg-light-200/20" />
@@ -117,7 +115,7 @@ export default function MobileNavigation({
               trigger={
                 <Button
                   type="submit"
-                  className="mobile-sign-out-button"
+                  className="mobile-sign-out-button !h5"
                   onClick={() => setIsLogoutModalOpen(true)}
                 >
                   <Image
