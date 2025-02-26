@@ -17,20 +17,16 @@
     height: 0px;
     border-radius: 0px;
   }
-
   .remove-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
-
   .remove-scrollbar::-webkit-scrollbar-thumb {
     background: transparent;
     border-radius: 0px;
   }
-
   .remove-scrollbar::-webkit-scrollbar-thumb:hover {
     background: transparent;
   }
-
   .recharts-responsive-container {
     height: initial !important;
   }
@@ -125,6 +121,12 @@
   .caption {
     @apply text-[12px] leading-[16px] font-normal;
   }
+  .truncate-username {
+    @apply subtitle-2 capitalize overflow-hidden text-ellipsis !important;
+  }
+  .truncate-email {
+    @apply caption overflow-hidden text-ellipsis !important;
+  }
 
   /* ===== HELPER CLASSES */
   .container {
@@ -145,7 +147,7 @@
     @apply border-none shadow-none p-0 shad-no-focus placeholder:text-light-200 body-2 !important;
   }
   .shad-form-item {
-    @apply flex h-[78px] flex-col justify-center rounded-xl border border-light-300 px-4 shadow-drop-1;
+    @apply flex h-[78px] flex-col justify-center rounded-xl border border-light-300 px-4 shadow-drop-1 !important;
   }
   .shad-form-label {
     @apply text-light-100 pt-2 body-2 w-full !important;
@@ -157,7 +159,7 @@
     @apply flex flex-col space-y-4 max-w-[95%] sm:w-fit rounded-xl md:rounded-[30px] px-4 md:px-8 py-10 bg-white outline-none !important;
   }
   .shad-submit-btn {
-    @apply bg-brand button hover:bg-brand-100 transition-all rounded-full !important;
+    @apply primary-btn h-[52px] !important;
   }
   .shad-otp {
     @apply w-full flex gap-1 sm:gap-2 justify-between !important;
@@ -165,15 +167,12 @@
   .shad-otp-slot {
     @apply text-[40px] font-medium rounded-xl ring-brand shadow-drop-1 text-brand-100 justify-center flex border-2 border-light-300 size-12 md:size-16 gap-5 !important;
   }
-  .shad-sheet {
-    @apply pt-0 !important;
-  }
   .shad-sheet button,
   .shad-dialog button {
     @apply focus:ring-0 focus:ring-offset-0 focus-visible:border-none outline-none focus-visible:outline-none focus-visible:ring-transparent focus-visible:ring-offset-0 !important;
   }
   .shad-dialog {
-    @apply rounded-[26px] w-[90%] max-w-[400px] px-6 py-8   !important;
+    @apply rounded-[26px] w-[90%] max-w-[400px] px-6 py-8 !important;
   }
 
   /* =====  STYLE CLASSES */
@@ -248,25 +247,19 @@
 
   /* ActionsModalContent */
   .file-details-thumbnail {
-    @apply !mb-1 flex items-center gap-3 rounded-xl border border-light-200/40 bg-light-400/50 p-3 !important;
+    @apply mb-1 flex items-center gap-3 rounded-xl border border-light-200/40 bg-light-400/50 p-3 !important;
   }
   .file-details-name {
     @apply subtitle-2 mb-1 break-all text-left line-clamp-3 !important;
   }
   .file-details-label {
-    @apply body-2 w-[30%] text-light-100 !important;
-  }
-  .file-details-value {
-    @apply subtitle-2 flex-1 !important;
+    @apply body-2 w-[30%] text-light-100 text-left !important;
   }
   .share-input-field {
     @apply body-2 shad-no-focus h-[52px] w-full rounded-full border px-4 shadow-drop-1 !important;
   }
   .share-remove-user {
     @apply rounded-full bg-transparent text-light-100 shadow-none hover:bg-transparent !important;
-  }
-  .remove-icon {
-    @apply aspect-square rounded-full !important;
   }
 
   /* AuthForm */
@@ -277,7 +270,7 @@
     @apply h1 text-center text-brand !important;
   }
   .form-submit-button {
-    @apply primary-btn h-[66px] !important;
+    @apply primary-btn h-[60px] !important;
   }
   .error-message {
     @apply body-2 mx-auto w-fit rounded-xl bg-error/5 px-8 py-4 text-center text-error !important;
@@ -285,7 +278,7 @@
 
   /* Card */
   .file-card {
-    @apply flex cursor-pointer min-w-0 flex-col gap-6 rounded-[18px] bg-white p-5 shadow-sm transition-all hover:shadow-drop-3 !important;
+    @apply flex cursor-pointer min-w-0 flex-col gap-5 rounded-[18px] bg-white p-5 shadow-sm transition-all hover:shadow-drop-3 !important;
   }
   .file-card-details {
     @apply flex flex-col gap-1 text-light-100 !important;
@@ -316,16 +309,19 @@
 
   /* FileUploader */
   .uploader-button {
-    @apply primary-btn h-[52px] w-full gap-2 px-10 shadow-drop-1 !important;
+    @apply primary-btn h-[52px] w-full gap-2 px-10 !important;
   }
   .uploader-preview-list {
-    @apply fixed gap-2 bottom-6 right-3 md:bottom-10 md:right-10 z-50 flex size-full h-fit max-w-[calc(100%-24px)] md:max-w-[480px] flex-col rounded-[20px] bg-white p-6 shadow-drop-3 !important;
+    @apply fixed gap-2 bottom-6 right-3 sm:bottom-10 sm:right-10 z-50 flex flex-col size-full h-fit max-w-[calc(100%-24px)] max-h-60 sm:max-h-80 overflow-auto sm:max-w-[480px] rounded-[20px] remove-scrollbar bg-white p-6 shadow-drop-3 !important;
   }
   .uploader-preview-item {
     @apply flex items-center justify-between gap-3 rounded-xl p-3 shadow-drop-3 !important;
   }
+  .uploader-preview-thumbnail {
+    @apply flex items-center w-full max-w-[85%] md:max-w-[350px] subtitle-2;
+  }
   .error-toast {
-    @apply bg-red !rounded-[10px] !important;
+    @apply bg-red rounded-[10px] !important;
   }
 
   /* Header */
@@ -336,7 +332,7 @@
     @apply flex-center min-w-fit gap-4 !important;
   }
   .sign-out-button {
-    @apply flex-center h-[52px] min-w-[54px] items-center rounded-full bg-brand p-0 shadow-none transition-all hover:bg-brand-100 !important;
+    @apply flex-center h-[52px] min-w-[54px] primary-btn p-0 !important;
   }
 
   /* Mobile Navigation */
@@ -359,7 +355,7 @@
     @apply flex text-light-100 gap-4 w-full justify-start items-center h5 px-6 h-[52px] rounded-full !important;
   }
   .mobile-sign-out-button {
-    @apply h5 flex h-[52px] w-full items-center rounded-full bg-brand text-white shadow-none transition-all hover:bg-brand-100 !important;
+    @apply h5 flex h-[52px] w-full items-center rounded-full bg-brand text-white transition-all hover:bg-brand-100 !important;
   }
 
   /* OTP Modal */
@@ -415,13 +411,11 @@
   .shad-active {
     @apply bg-brand text-white shadow-drop-2 !important;
   }
+  /* dsd */
 
   /* Sort */
   .sort-select {
-    @apply shad-no-focus h-11 w-full rounded-[8px] border-transparent bg-white !shadow-sm sm:w-[210px] !important;
-  }
-  .sort-select-content {
-    @apply !shadow-drop-3 !important;
+    @apply shad-no-focus h-11 w-full rounded-[8px] border-transparent bg-white shadow-sm sm:w-[210px] !important;
   }
 
   /* Test Account Select */
@@ -434,7 +428,7 @@
 
   /* Thumbnail */
   .thumbnail {
-    @apply flex-center size-[50px] min-w-[50px] overflow-hidden rounded-full bg-brand/10;
+    @apply flex-center size-[50px] min-w-[50px] overflow-hidden rounded-full bg-brand;
   }
   .thumbnail-image {
     @apply size-full object-cover object-center !important;
