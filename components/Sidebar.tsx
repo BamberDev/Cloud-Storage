@@ -18,7 +18,7 @@ export default function Sidebar({
 
   return (
     <aside className="sidebar">
-      <Link href="/" className="flex items-center justify-center">
+      <Link href="/" className="flex-center">
         <Image
           src="/assets/images/logo-dark.png"
           alt="logo"
@@ -71,10 +71,8 @@ export default function Sidebar({
           className="sidebar-user-avatar"
         />
         <div className="hidden lg:block max-w-[170px] xl:max-w-[190px]">
-          <p className="subtitle-2 capitalize overflow-hidden text-ellipsis">
-            {username}
-          </p>
-          <p className="caption overflow-hidden text-ellipsis">{email}</p>
+          <p className="truncate-username">{username}</p>
+          <p className="truncate-email">{email}</p>
         </div>
       </div>
     </aside>
