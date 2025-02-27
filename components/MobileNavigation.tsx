@@ -87,7 +87,7 @@ export default function MobileNavigation({
                   <li
                     className={cn(
                       "mobile-nav-item",
-                      pathname === url && "shad-active"
+                      pathname === url && "nav-item-active"
                     )}
                   >
                     <Image
