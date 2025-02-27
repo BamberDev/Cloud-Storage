@@ -23,7 +23,7 @@ export default function Sort() {
       <SelectTrigger className="sort-select">
         <SelectValue placeholder={sortTypes[0].value} />
       </SelectTrigger>
-      <SelectContent className="sort-select-content">
+      <SelectContent>
         {sortTypes.map((sort) => (
           <SelectItem
             key={sort.label}

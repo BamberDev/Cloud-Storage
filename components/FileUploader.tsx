@@ -134,7 +134,7 @@ export default function FileUploader({ ownerId, accountId, className }: Props) {
                 key={`${index}-${file.name}`}
                 className="uploader-preview-item"
               >
-                <div className="flex items-center w-full max-w-[85%] md:max-w-[350px] subtitle-2">
+                <div className="uploader-preview-thumbnail">
                   <Thumbnail
                     type={type}
                     extension={extension}

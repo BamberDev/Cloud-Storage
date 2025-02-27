@@ -155,6 +155,7 @@ export default function ActionDropdown({
                 type="text"
                 value={name}
                 placeholder="Enter new name"
+                className="rename-input-field"
                 onChange={(e) => {
                   setName(e.target.value);
                   setRenameError(null);
