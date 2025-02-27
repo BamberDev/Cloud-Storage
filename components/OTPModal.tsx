@@ -92,7 +92,7 @@ export default function OTPModal({
           <div className="flex flex-col w-full gap-4">
             <AlertDialogAction
               onClick={handleSubmit}
-              className="shad-submit-btn"
+              className="primary-btn h-[52px]"
               disabled={isLoading}
               type="button"
             >
