@@ -42,7 +42,7 @@ export default function Sidebar({
               <li
                 className={cn(
                   "sidebar-nav-item",
-                  pathname === url && "shad-active"
+                  pathname === url && "nav-item-active"
                 )}
               >
                 <Image
