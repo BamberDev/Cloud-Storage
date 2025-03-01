@@ -42,7 +42,7 @@ export default function ActionDropdown({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-  const [action, setAction] = useState<ActionType | null>(null);
+  const [action, setAction] = useState<ActionTypeProps | null>(null);
   const [name, setName] = useState(file.name.replace(/\.[^/.]+$/, ""));
   const [emailInput, setEmailInput] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);

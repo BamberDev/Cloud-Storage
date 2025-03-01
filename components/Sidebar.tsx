@@ -5,15 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Sidebar({
-  username,
-  email,
-  avatar,
-}: {
-  username: string;
-  email: string;
-  avatar: string;
-}) {
+export default function Sidebar({ username, email, avatar }: SidebarProps) {
   const pathname = usePathname();
 
   return (

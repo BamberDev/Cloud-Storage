@@ -18,21 +18,13 @@ import { Button } from "./ui/button";
 import FileUploader from "./FileUploader";
 import LogoutDialog from "./LogoutDialog";
 
-interface Props {
-  $id: string;
-  accountId: string;
-  username: string;
-  email: string;
-  avatar: string;
-}
-
 export default function MobileNavigation({
   $id: ownerId,
   accountId,
   username,
   email,
   avatar,
-}: Props) {
+}: MobileNavigationProps) {
   const [open, setOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const pathname = usePathname();
