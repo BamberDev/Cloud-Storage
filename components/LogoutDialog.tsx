@@ -16,12 +16,6 @@ import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
-interface LogoutDialogProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  trigger: React.ReactNode;
-}
-
 export default function LogoutDialog({
   trigger,
   isOpen,
