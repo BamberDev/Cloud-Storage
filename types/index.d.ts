@@ -4,7 +4,7 @@ type FileType = "document" | "image" | "video" | "audio" | "other";
 
 type FormType = "sign-in" | "sign-up" | "test-account";
 
-type ActionType = {
+type ActionTypeProps = {
   label: string;
   icon: string;
   value: string;
@@ -55,7 +55,7 @@ type FileUploaderProps = {
 };
 
 type MobileNavigationProps = {
-  ownerId: string;
+  $id: string;
   accountId: string;
   username: string;
   avatar: string;
@@ -71,7 +71,7 @@ type SidebarProps = {
 type ThumbnailProps = {
   type: string;
   extension: string;
-  url: string;
+  url?: string;
   className?: string;
   imageClassName?: string;
 };
@@ -82,4 +82,10 @@ type ShareFileProps = {
   error: string | null;
   onEmailChange: (email: string) => void;
   onRemove: (email: string) => void;
+};
+
+type LogoutDialogProps = {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  trigger: React.ReactNode;
 };
