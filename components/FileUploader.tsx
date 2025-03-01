@@ -11,13 +11,11 @@ import { uploadFile } from "@/lib/actions/file.actions";
 import { usePathname } from "next/navigation";
 import { Loader2Icon } from "lucide-react";
 
-interface Props {
-  ownerId: string;
-  accountId: string;
-  className?: string;
-}
-
-export default function FileUploader({ ownerId, accountId, className }: Props) {
+export default function FileUploader({
+  ownerId,
+  accountId,
+  className,
+}: FileUploaderProps) {
   const [files, setFiles] = useState<File[]>([]);
   const { toast } = useToast();
   const path = usePathname();
