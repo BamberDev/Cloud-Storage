@@ -79,7 +79,6 @@ type ThumbnailProps = {
 type ShareFileProps = {
   file: Models.Document;
   email: string;
-  error: string | null;
   onEmailChange: (email: string) => void;
   onRemove: (email: string) => void;
 };
