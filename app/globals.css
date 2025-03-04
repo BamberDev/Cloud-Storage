@@ -226,7 +226,7 @@
     @apply body-2 shad-no-focus h-[52px] w-full rounded-full border px-4 shadow-drop-1;
   }
   .share-remove-user {
-    @apply rounded-full bg-transparent text-light-100 shadow-none hover:bg-transparent;
+    @apply rounded-full bg-transparent text-light-100 shadow-none hover:!bg-transparent;
   }
 
   /* AuthForm */
