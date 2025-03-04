@@ -45,8 +45,7 @@ export default function FileUploader({
           toast({
             description: (
               <p className="body-2 text-white">
-                The file you uploaded is too large. Maximum file size allowed -
-                45MB.
+                File is too large. Max file size allowed - 45MB.
               </p>
             ),
             className: "error-toast",
