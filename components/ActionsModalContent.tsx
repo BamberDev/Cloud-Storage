@@ -42,7 +42,6 @@ export function ShareFile({
   email,
   onEmailChange,
   onRemove,
-  error,
 }: ShareFileProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onEmailChange(e.target.value.trim());
@@ -62,7 +61,6 @@ export function ShareFile({
           value={email}
           className="share-input-field"
         />
-        {error && <p className="error-message">{error}</p>}
         <div className="pt-2">
           <div className="flex justify-between">
             <p className="subtitle-2 text-light-100">Shared with</p>
