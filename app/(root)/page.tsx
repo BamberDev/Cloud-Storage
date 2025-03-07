@@ -1,19 +1,16 @@
 import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.actions";
 import { getCurrentUser } from "@/lib/actions/user.actions";
-import DashboardContent from "@/components/DashboardContent";
+import DashboardPageContent from "@/components/DashboardPageContent";
 import { fallbackFiles, fallbackTotalSpace } from "@/lib/utils";
 
-export default async function Dashboard() {
+export default async function DashboardPage() {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) return null;
 
-  const filesPromise = getFiles({ types: [], limit: 10 });
-  const totalSpacePromise = getTotalSpaceUsed();
-
   const [filesResult, totalSpaceResult] = await Promise.allSettled([
-    filesPromise,
-    totalSpacePromise,
+    getFiles({ types: [], limit: 10 }),
+    getTotalSpaceUsed(),
   ]);
 
   const files =
@@ -27,7 +24,7 @@ export default async function Dashboard() {
   const hasSpaceError = totalSpaceResult.status === "rejected";
 
   return (
-    <DashboardContent
+    <DashboardPageContent
       currentUser={currentUser}
       files={files}
       totalSpace={totalSpace}
