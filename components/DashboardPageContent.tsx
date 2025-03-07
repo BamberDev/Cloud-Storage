@@ -12,13 +12,13 @@ import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { Models } from "node-appwrite";
 
-export default function DashboardContent({
+export default function DashboardPageContent({
   currentUser,
   files,
   totalSpace,
   hasFileError,
   hasSpaceError,
-}: DashboardContentProps) {
+}: PageContentProps) {
   const { toast } = useToast();
   const usageSummary = useMemo(() => getUsageSummary(totalSpace), [totalSpace]);
   const toastsShown = useRef(false);
@@ -30,8 +30,8 @@ export default function DashboardContent({
           toast({
             description: (
               <p className="body-2 text-white">
-                Could not load your recent files. Please try again by refreshing
-                the page.
+                Could not load your files. Please try again by refreshing the
+                page.
               </p>
             ),
             className: "error-toast",
