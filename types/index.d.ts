@@ -89,7 +89,8 @@ type LogoutDialogProps = {
   trigger: React.ReactNode;
 };
 
-type DashboardContentProps = {
+type PageContentProps = {
+  type?: string;
   currentUser: Models.User<Models.Preferences>;
   files: { documents: Models.Document[] };
   totalSpace: {
