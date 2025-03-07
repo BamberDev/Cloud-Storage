@@ -21,7 +21,7 @@ const getUserByEmail = async (email: string) => {
     [Query.equal("email", [email])]
   );
 
-  return result.total > 0 ? result.documents[0] : null;
+  return result.total > 0 ? parseStringify(result.documents[0]) : null;
 };
 
 export const sendEmailOTP = async ({ email }: { email: string }) => {
@@ -29,8 +29,7 @@ export const sendEmailOTP = async ({ email }: { email: string }) => {
 
   try {
     const session = await account.createEmailToken(ID.unique(), email);
-
-    return session.userId;
+    return parseStringify(session.userId);
   } catch (error) {
     handleError(error, "Failed to create email token");
   }
@@ -43,13 +42,16 @@ export const createAccount = async ({
   username: string;
   email: string;
 }) => {
-  const existingUser = await getUserByEmail(email);
-
-  const accountId = await sendEmailOTP({ email });
-  if (!accountId) throw new Error("Failed to create account");
-
-  if (!existingUser) {
+  try {
+    const existingUser = await getUserByEmail(email);
+    const accountId = await sendEmailOTP({ email });
     const { databases } = await createAdminClient();
+
+    if (existingUser) {
+      throw new Error("Account already exists");
+    }
+
+    if (!accountId) throw new Error("Failed to create account");
 
     await databases.createDocument(
       appwriteConfig.databaseId,
@@ -62,9 +64,11 @@ export const createAccount = async ({
         accountId,
       }
     );
-  }
 
-  return parseStringify({ accountId });
+    return parseStringify({ accountId });
+  } catch (error) {
+    handleError(error, "Failed to create account");
+  }
 };
 
 export const verifySecret = async ({
@@ -107,10 +111,7 @@ export const getCurrentUser = async () => {
       [Query.equal("accountId", [result.$id])]
     );
 
-    if (user.total <= 0) {
-      console.log("No user found in database");
-      return null;
-    }
+    if (user.total <= 0) return null;
 
     return parseStringify(user.documents[0]);
   } catch (error: unknown) {
@@ -126,12 +127,12 @@ export const signInUser = async ({ email }: { email: string }) => {
   try {
     const existingUser = await getUserByEmail(email);
 
-    if (existingUser) {
-      await sendEmailOTP({ email });
-      return parseStringify({ accountId: existingUser.accountId });
+    if (!existingUser) {
+      throw new Error("Account does not exist");
     }
 
-    return parseStringify({ accountId: null, error: "User not found" });
+    await sendEmailOTP({ email });
+    return parseStringify({ accountId: existingUser.accountId });
   } catch (error) {
     handleError(error, "Failed to sign in user");
   }

@@ -45,23 +45,29 @@ export default function ActionDropdown({
   const [action, setAction] = useState<ActionTypeProps | null>(null);
   const [name, setName] = useState(file.name.replace(/\.[^/.]+$/, ""));
   const [emailInput, setEmailInput] = useState("");
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [renameError, setRenameError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const path = usePathname();
   const isOwner = file.owner.$id === currentUser.$id;
 
   const closeAllModals = () => {
     if (action?.value === "share") {
       setEmailInput("");
-      setEmailError(null);
+      setError(null);
     } else {
       setIsModalOpen(false);
       setIsDropDownOpen(false);
       setAction(null);
       setName(file.name);
+      setError(null);
     }
   };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      setError(null);
+    }
+  }, [isModalOpen]);
 
   useEffect(() => {
     if (file.name) {
@@ -72,68 +78,74 @@ export default function ActionDropdown({
   const handleAction = async () => {
     if (!action || !isOwner) return;
     setIsLoading(true);
-    let success = false;
+    setError(null);
 
-    const actions = {
-      rename: () => {
+    try {
+      if (action.value === "rename") {
         const trimmedName = name.trim();
         if (!trimmedName) {
-          setRenameError("Name cannot be empty");
-          return false;
+          setError("Name cannot be empty");
+          return;
         }
         if (trimmedName.length > 200) {
-          setRenameError("Name cannot exceed 200 characters");
-          return false;
+          setError("Name cannot exceed 200 characters");
+          return;
         }
-        return renameFile({
+        await renameFile({
           fileId: file.$id,
           name: trimmedName,
           extension: file.extension,
           path,
         });
-      },
-      share: () => {
+      } else if (action.value === "share") {
         const emailSchema = z.string().email("Invalid email address");
         const result = emailSchema.safeParse(emailInput);
         if (!result.success) {
-          setEmailError("Invalid email address");
-          setIsLoading(false);
-          return false;
+          setError("Invalid email address");
+          return;
         }
-        return updateFileUsers({
+        await updateFileUsers({
           fileId: file.$id,
           emails: Array.from(new Set([...file.users, emailInput])),
           path,
         });
-      },
-      delete: () =>
-        deleteFile({ fileId: file.$id, bucketFileId: file.bucketFileId, path }),
-    };
+      } else if (action.value === "delete") {
+        await deleteFile({
+          fileId: file.$id,
+          bucketFileId: file.bucketFileId,
+          path,
+        });
+      }
 
-    success = await actions[action.value as keyof typeof actions]();
-
-    if (success) closeAllModals();
-
-    setIsLoading(false);
+      closeAllModals();
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleRemoveUser = async (email: string) => {
     if (!isOwner) return;
-    const updatedEmails = file.users.filter((e: string) => e !== email);
-    const success = await updateFileUsers({
-      fileId: file.$id,
-      emails: updatedEmails,
-      path,
-    });
+    setError(null);
 
-    if (success) {
+    try {
+      const updatedEmails = file.users.filter((e: string) => e !== email);
+      await updateFileUsers({
+        fileId: file.$id,
+        emails: updatedEmails,
+        path,
+      });
+
       file.users = updatedEmails;
+    } catch {
+      setError("Failed to remove user. Please try again.");
     }
   };
 
   const handleEmailChange = (email: string) => {
     setEmailInput(email);
-    setEmailError(null);
+    setError(null);
   };
 
   const renderDialogContent = () => {
@@ -158,10 +170,9 @@ export default function ActionDropdown({
                 className="rename-input-field"
                 onChange={(e) => {
                   setName(e.target.value);
-                  setRenameError(null);
+                  setError(null);
                 }}
               />
-              {renameError && <p className="error-message">{renameError}</p>}
             </>
           )}
           {value === "details" && <FileDetails file={file} />}
@@ -171,7 +182,6 @@ export default function ActionDropdown({
               email={emailInput}
               onEmailChange={handleEmailChange}
               onRemove={handleRemoveUser}
-              error={emailError}
             />
           )}
           {value === "delete" && (
@@ -182,32 +192,35 @@ export default function ActionDropdown({
           )}
         </DialogHeader>
         {["rename", "delete", "share"].includes(value) && (
-          <DialogFooter className="flex flex-col gap-3 md:flex-row">
-            <Button
-              onClick={closeAllModals}
-              className="modal-cancel-button"
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleAction}
-              className="modal-submit-button"
-              disabled={isLoading}
-            >
-              {isLoading && (
-                <Image
-                  src="/assets/icons/loader.svg"
-                  alt="loader"
-                  width={24}
-                  height={24}
-                  className="animate-spin"
-                />
-              )}
-              <p className="capitalize">
-                {isLoading ? `${value.slice(0, -1)}ing...` : value}
-              </p>
-            </Button>
+          <DialogFooter className="flex !flex-col gap-4">
+            <div className="flex flex-col gap-3 md:flex-row">
+              <Button
+                onClick={closeAllModals}
+                className="modal-cancel-button"
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAction}
+                className="modal-submit-button"
+                disabled={isLoading}
+              >
+                {isLoading && (
+                  <Image
+                    src="/assets/icons/loader.svg"
+                    alt="loader"
+                    width={24}
+                    height={24}
+                    className="animate-spin"
+                  />
+                )}
+                <p className="capitalize">
+                  {isLoading ? `${value.slice(0, -1)}ing...` : value}
+                </p>
+              </Button>
+            </div>
+            {error && <p className="error-message">{error}</p>}
           </DialogFooter>
         )}
       </DialogContent>

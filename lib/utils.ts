@@ -1,5 +1,6 @@
 import { captureException } from "@sentry/nextjs";
 import { clsx, type ClassValue } from "clsx";
+import { Models } from "node-appwrite";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -18,11 +19,27 @@ export const TEST_PASSWORDS =
 export const handleError = (error: unknown, message: string) => {
   console.error(error, message);
 
-  captureException(error instanceof Error ? error : new Error(message), {
+  const errorInstance = error instanceof Error ? error : new Error(message);
+
+  captureException(errorInstance, {
     extra: { error, message },
   });
 
-  throw error instanceof Error ? error : new Error(message);
+  throw errorInstance;
+};
+
+export const fallbackTotalSpace = {
+  image: { size: 0, latestDate: new Date().toISOString() },
+  document: { size: 0, latestDate: new Date().toISOString() },
+  video: { size: 0, latestDate: new Date().toISOString() },
+  audio: { size: 0, latestDate: new Date().toISOString() },
+  other: { size: 0, latestDate: new Date().toISOString() },
+  used: 0,
+  all: 1_000_000_000,
+};
+
+export const fallbackFiles: { documents: Models.Document[] } = {
+  documents: [],
 };
 
 export const getFileType = (fileName: string) => {

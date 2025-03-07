@@ -33,6 +33,7 @@ export default function OTPModal({
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [resent, setResent] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -42,9 +43,20 @@ export default function OTPModal({
       const sessionId = await verifySecret({ accountId, password });
       if (sessionId) router.push("/");
     } catch (error) {
-      console.error("Failed to verify OTP", error);
+      if (error instanceof Error && error.message.includes("Invalid token")) {
+        setErrorMessage("Invalid OTP code. Please try again.");
+      } else {
+        setErrorMessage("Failed to verify OTP. Please try again.");
+      }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleOTPChange = (value: string) => {
+    setPassword(value);
+    if (errorMessage) {
+      setErrorMessage("");
     }
   };
 
@@ -77,7 +89,7 @@ export default function OTPModal({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <InputOTP maxLength={6} value={password} onChange={setPassword}>
+        <InputOTP maxLength={6} value={password} onChange={handleOTPChange}>
           <InputOTPGroup className="shad-otp">
             <InputOTPSlot index={0} className="shad-otp-slot" />
             <InputOTPSlot index={1} className="shad-otp-slot" />
@@ -112,7 +124,10 @@ export default function OTPModal({
               )}
             </AlertDialogAction>
             <div className="subtitle-2 mt-2 text-center text-light-100">
-              Didn&apos;t receive the code?
+              {errorMessage && (
+                <p className="error-message mb-2">{errorMessage}</p>
+              )}
+              <span>Didn&apos;t receive the code?</span>
               <Button
                 type="button"
                 variant="link"

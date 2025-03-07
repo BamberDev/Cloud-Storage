@@ -31,7 +31,10 @@ const authFormSchema = (formType: FormType) => {
     email: z.string().email(),
     username:
       formType === "sign-up"
-        ? z.string().min(2).max(50)
+        ? z
+            .string()
+            .min(2, "Username must be longer than 2 characters")
+            .max(50, "Username must be shorter than 50 characters")
         : z.string().optional(),
     password:
       formType === "test-account" ? z.string().min(6) : z.string().optional(),
@@ -75,18 +78,28 @@ export default function AuthForm({ type }: { type: FormType }) {
               })
             : await signInUser({ email: values.email });
 
-        setAccountId(user.accountId);
+        if (user) {
+          setAccountId(user.accountId);
+        }
       }
-    } catch {
-      setErrorMessage(
-        `${
-          type === "sign-in"
-            ? "Failed to sign in."
-            : type === "sign-up"
-            ? "Failed to create account."
-            : "Failed to sign in to test account."
-        } Please try again.`
-      );
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === "Account already exists") {
+          setErrorMessage("Account already exists.");
+        } else if (error.message === "Account does not exist") {
+          setErrorMessage("Account does not exist. Please sign up first.");
+        } else {
+          setErrorMessage(
+            `${
+              type === "sign-in"
+                ? "Failed to sign in."
+                : type === "sign-up"
+                ? "Failed to create account."
+                : "Failed to sign in to test account."
+            } Please try again.`
+          );
+        }
+      }
     } finally {
       setIsLoading(false);
     }

@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import { Input } from "./ui/input";
 import { useEffect, useState } from "react";
@@ -16,6 +17,8 @@ export default function Search({ className }: { className?: string }) {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("query") || "";
   const [query, setQuery] = useState(searchQuery);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const path = usePathname();
   const [debouncedQuery] = useDebounce(query, 300);
@@ -25,18 +28,29 @@ export default function Search({ className }: { className?: string }) {
       if (debouncedQuery.length === 0) {
         setResults([]);
         setOpen(false);
-        return router.push(path.replace(searchParams.toString(), ""));
+        setError(null);
+        setIsLoading(false);
+
+        if (searchParams.toString()) {
+          router.push(path);
+        }
+        return;
       }
 
       try {
+        setIsLoading(true);
+        setOpen(true);
+        setError(null);
         const files = await getFiles({
           types: [],
           searchText: debouncedQuery,
         });
         setResults(files.documents);
-        setOpen(true);
-      } catch (error) {
-        console.error("Error fetching files:", error);
+      } catch {
+        setError("Something went wrong while fetching files. Please try again");
+        setResults([]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -64,6 +78,8 @@ export default function Search({ className }: { className?: string }) {
     setQuery("");
     setResults([]);
     setOpen(false);
+    setError(null);
+    setIsLoading(false);
   };
 
   return (
@@ -89,7 +105,11 @@ export default function Search({ className }: { className?: string }) {
         )}
         {open && (
           <ul className="search-result">
-            {results.length > 0 ? (
+            {isLoading ? (
+              <p className="empty-result">Searching...</p>
+            ) : error ? (
+              <p className="error-message">{error}</p>
+            ) : results.length > 0 ? (
               results.map((file) => (
                 <li
                   className="flex items-center justify-between cursor-pointer"
@@ -115,7 +135,7 @@ export default function Search({ className }: { className?: string }) {
                 </li>
               ))
             ) : (
-              <p className="empty-result">No files found</p>
+              <p className="empty-result">No matching files found</p>
             )}
           </ul>
         )}

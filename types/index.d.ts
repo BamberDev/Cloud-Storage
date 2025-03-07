@@ -79,7 +79,6 @@ type ThumbnailProps = {
 type ShareFileProps = {
   file: Models.Document;
   email: string;
-  error: string | null;
   onEmailChange: (email: string) => void;
   onRemove: (email: string) => void;
 };
@@ -88,4 +87,21 @@ type LogoutDialogProps = {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   trigger: React.ReactNode;
+};
+
+type PageContentProps = {
+  type?: string;
+  currentUser: Models.User<Models.Preferences>;
+  files: { documents: Models.Document[] };
+  totalSpace: {
+    image: { size: number; latestDate: string };
+    document: { size: number; latestDate: string };
+    video: { size: number; latestDate: string };
+    audio: { size: number; latestDate: string };
+    other: { size: number; latestDate: string };
+    used: number;
+    all: number;
+  };
+  hasFileError: boolean;
+  hasSpaceError: boolean;
 };
