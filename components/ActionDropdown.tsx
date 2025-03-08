@@ -21,7 +21,7 @@ import { constructDownloadUrl } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { Models } from "node-appwrite";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import {
@@ -50,7 +50,7 @@ export default function ActionDropdown({
   const path = usePathname();
   const isOwner = file.owner.$id === currentUser.$id;
 
-  const closeAllModals = () => {
+  const closeAllModals = useCallback(() => {
     if (action?.value === "share") {
       setEmailInput("");
       setError(null);
@@ -61,7 +61,7 @@ export default function ActionDropdown({
       setName(file.name);
       setError(null);
     }
-  };
+  }, [action, file.name]);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -75,7 +75,7 @@ export default function ActionDropdown({
     }
   }, [file.name]);
 
-  const handleAction = async () => {
+  const handleAction = useCallback(async () => {
     if (!action || !isOwner) return;
     setIsLoading(true);
     setError(null);
@@ -103,6 +103,9 @@ export default function ActionDropdown({
         if (!result.success) {
           setError("Invalid email address");
           return;
+        } else if (file.users.includes(emailInput)) {
+          setError("This user already has access to the file");
+          return;
         }
         await updateFileUsers({
           fileId: file.$id,
@@ -123,30 +126,33 @@ export default function ActionDropdown({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [action, emailInput, file, isOwner, name, path, closeAllModals]);
 
-  const handleRemoveUser = async (email: string) => {
-    if (!isOwner) return;
-    setError(null);
+  const handleRemoveUser = useCallback(
+    async (email: string) => {
+      if (!isOwner) return;
+      setError(null);
 
-    try {
-      const updatedEmails = file.users.filter((e: string) => e !== email);
-      await updateFileUsers({
-        fileId: file.$id,
-        emails: updatedEmails,
-        path,
-      });
+      try {
+        const updatedEmails = file.users.filter((e: string) => e !== email);
+        await updateFileUsers({
+          fileId: file.$id,
+          emails: updatedEmails,
+          path,
+        });
 
-      file.users = updatedEmails;
-    } catch {
-      setError("Failed to remove user. Please try again.");
-    }
-  };
+        file.users = updatedEmails;
+      } catch {
+        setError("Failed to remove user. Please try again.");
+      }
+    },
+    [file, path, isOwner]
+  );
 
-  const handleEmailChange = (email: string) => {
+  const handleEmailChange = useCallback((email: string) => {
     setEmailInput(email);
     setError(null);
-  };
+  }, []);
 
   const renderDialogContent = () => {
     if (!action) return null;
