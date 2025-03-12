@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -58,69 +58,103 @@ export default function AuthForm({ type }: { type: FormType }) {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
-    setErrorMessage("");
+  const onSubmit = useCallback(
+    async (values: z.infer<typeof formSchema>) => {
+      setIsLoading(true);
+      setErrorMessage("");
 
-    try {
-      if (type === "test-account") {
-        await signInTestUser({
-          email: values.email,
-          password: values.password || "",
-        });
-        router.push("/");
-      } else {
-        const user =
-          type === "sign-up"
-            ? await createAccount({
-                username: values.username || "",
-                email: values.email,
-              })
-            : await signInUser({ email: values.email });
-
-        if (user) {
-          setAccountId(user.accountId);
-        }
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message === "Account already exists") {
-          setErrorMessage("Account already exists.");
-        } else if (error.message === "Account does not exist") {
-          setErrorMessage("Account does not exist. Please sign up first.");
+      try {
+        if (type === "test-account") {
+          await signInTestUser({
+            email: values.email,
+            password: values.password || "",
+          });
+          router.push("/");
         } else {
-          setErrorMessage(
-            `${
-              type === "sign-in"
-                ? "Failed to sign in."
-                : type === "sign-up"
-                ? "Failed to create account."
-                : "Failed to sign in to test account."
-            } Please try again.`
-          );
-        }
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+          const user =
+            type === "sign-up"
+              ? await createAccount({
+                  username: values.username || "",
+                  email: values.email,
+                })
+              : await signInUser({ email: values.email });
 
-  const handleTestAccountSelect = (email: string, password: string) => {
-    form.setValue("email", email);
-    form.setValue("password", password);
-  };
+          if (user) {
+            setAccountId(user.accountId);
+          }
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error.message === "Account already exists") {
+            setErrorMessage("Account already exists.");
+          } else if (error.message === "Account does not exist") {
+            setErrorMessage("Account does not exist. Please sign up first.");
+          } else {
+            setErrorMessage(
+              `${
+                type === "sign-in"
+                  ? "Failed to sign in."
+                  : type === "sign-up"
+                  ? "Failed to create account."
+                  : "Failed to sign in to test account."
+              } Please try again.`
+            );
+          }
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [type, router]
+  );
+
+  const handleTestAccountSelect = useCallback(
+    (email: string, password: string) => {
+      form.setValue("email", email);
+      form.setValue("password", password);
+    },
+    [form]
+  );
+
+  const formTitle =
+    type === "sign-in"
+      ? "Sign In"
+      : type === "sign-up"
+      ? "Sign Up"
+      : "Test Account";
+
+  const buttonText = isLoading
+    ? `Signing ${
+        type === "sign-in" || type === "test-account" ? "In" : "Up"
+      }...`
+    : type === "sign-in" || type === "test-account"
+    ? "Sign In"
+    : "Sign Up";
+
+  const linkInfo =
+    type === "sign-in"
+      ? {
+          text: "Don't have an account?",
+          buttonText: "Sign Up",
+          href: "/sign-up",
+        }
+      : type === "sign-up"
+      ? {
+          text: "Already have an account?",
+          buttonText: "Sign In",
+          href: "/sign-in",
+        }
+      : {
+          text: "Want to use OTP login?",
+          buttonText: "Sign In with OTP",
+          href: "/sign-in",
+        };
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
-          <h1 className="form-title">
-            {type === "sign-in"
-              ? "Sign In"
-              : type === "sign-up"
-              ? "Sign Up"
-              : "Test Account"}
-          </h1>
+          <h1 className="form-title">{formTitle}</h1>
           {type === "sign-up" && (
             <FormField
               control={form.control}
@@ -133,6 +167,9 @@ export default function AuthForm({ type }: { type: FormType }) {
                       <Input
                         placeholder="Enter your username"
                         className="shad-input"
+                        type="text"
+                        autoComplete="username"
+                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>
@@ -178,6 +215,9 @@ export default function AuthForm({ type }: { type: FormType }) {
                       <Input
                         placeholder="Enter your email address"
                         className="shad-input"
+                        type="email"
+                        autoComplete="email"
+                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>
@@ -204,37 +244,14 @@ export default function AuthForm({ type }: { type: FormType }) {
                 className="animate-spin"
               />
             )}
-            {isLoading
-              ? `Signing ${
-                  type === "sign-in" || type === "test-account" ? "In" : "Up"
-                }...`
-              : type === "sign-in" || type === "test-account"
-              ? "Sign In"
-              : "Sign Up"}
+            {buttonText}
           </Button>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div>
             <div className="body-2 flex justify-center">
-              <p className="text-light-100">
-                {type === "sign-in"
-                  ? "Don't have an account?"
-                  : type === "sign-up"
-                  ? "Already have an account?"
-                  : "Want to use OTP login?"}
-              </p>
-              <Link
-                href={
-                  type === "sign-up" || type === "test-account"
-                    ? "/sign-in"
-                    : "/sign-up"
-                }
-                className="ml-1 font-medium underline"
-              >
-                {type === "sign-in"
-                  ? "Sign Up"
-                  : type === "sign-up"
-                  ? "Sign In"
-                  : "Sign In with OTP"}
+              <p className="text-light-100">{linkInfo.text}</p>
+              <Link href={linkInfo.href} className="ml-1 font-medium underline">
+                {linkInfo.buttonText}
               </Link>
             </div>
             {type !== "test-account" && (
