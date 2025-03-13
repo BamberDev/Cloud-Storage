@@ -4,16 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "./ui/form";
 import { useCallback, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,6 +16,8 @@ import {
 import OTPModal from "./OTPModal";
 import { useRouter } from "next/navigation";
 import { TestAccountSelect } from "./TestAccountSelect";
+import AuthFormField from "./AuthFormField";
+import { authFormConfig } from "@/lib/authFormConfig";
 
 const authFormSchema = (formType: FormType) => {
   return z.object({
@@ -46,8 +39,8 @@ export default function AuthForm({ type }: { type: FormType }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [accountId, setAccountId] = useState(null);
   const router = useRouter();
-
   const formSchema = authFormSchema(type);
+  const { formTitle, buttonText, linkInfo } = authFormConfig(type, isLoading);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -116,118 +109,37 @@ export default function AuthForm({ type }: { type: FormType }) {
     [form]
   );
 
-  const formTitle =
-    type === "sign-in"
-      ? "Sign In"
-      : type === "sign-up"
-      ? "Sign Up"
-      : "Test Account";
-
-  const buttonText = isLoading
-    ? `Signing ${
-        type === "sign-in" || type === "test-account" ? "In" : "Up"
-      }...`
-    : type === "sign-in" || type === "test-account"
-    ? "Sign In"
-    : "Sign Up";
-
-  const linkInfo =
-    type === "sign-in"
-      ? {
-          text: "Don't have an account?",
-          buttonText: "Sign Up",
-          href: "/sign-up",
-        }
-      : type === "sign-up"
-      ? {
-          text: "Already have an account?",
-          buttonText: "Sign In",
-          href: "/sign-in",
-        }
-      : {
-          text: "Want to use OTP login?",
-          buttonText: "Sign In with OTP",
-          href: "/sign-in",
-        };
-
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
           <h1 className="form-title">{formTitle}</h1>
           {type === "sign-up" && (
-            <FormField
-              control={form.control}
+            <AuthFormField
+              form={form}
               name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="shad-form-item">
-                    <FormLabel className="shad-form-label">Username</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your username"
-                        className="shad-input"
-                        type="text"
-                        autoComplete="username"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                  </div>
-                  <FormDescription className="sr-only">
-                    Username input
-                  </FormDescription>
-                  <FormMessage className="shad-form-message" />
-                </FormItem>
-              )}
+              label="Username"
+              placeholder="Enter your username"
+              disabled={isLoading}
             />
           )}
           {type === "test-account" ? (
-            <FormField
-              control={form.control}
-              name="email"
-              render={() => (
-                <FormItem>
-                  <div className="shad-form-item">
-                    <FormLabel className="shad-form-label">
-                      Test Account
-                    </FormLabel>
-                    <FormControl>
-                      <TestAccountSelect onSelect={handleTestAccountSelect} />
-                    </FormControl>
-                  </div>
-                  <FormDescription className="sr-only">
-                    Select test account
-                  </FormDescription>
-                  <FormMessage className="shad-form-message" />
-                </FormItem>
-              )}
+            <AuthFormField
+              form={form}
+              name="testAccount"
+              label="Test Account"
+              customComponent={
+                <TestAccountSelect onSelect={handleTestAccountSelect} />
+              }
             />
           ) : (
-            <FormField
-              control={form.control}
+            <AuthFormField
+              form={form}
               name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="shad-form-item">
-                    <FormLabel className="shad-form-label">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your email address"
-                        className="shad-input"
-                        type="email"
-                        autoComplete="email"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                  </div>
-                  <FormDescription className="sr-only">
-                    Email input
-                  </FormDescription>
-                  <FormMessage className="shad-form-message" />
-                </FormItem>
-              )}
+              label="Email"
+              type="email"
+              placeholder="Enter your email address"
+              disabled={isLoading}
             />
           )}
           <Button
