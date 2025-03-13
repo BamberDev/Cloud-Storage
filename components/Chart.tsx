@@ -16,6 +16,7 @@ import {
 } from "./ui/card";
 import { ChartContainer } from "./ui/chart";
 import { calculatePercentage, convertFileSize } from "@/lib/utils";
+import { memo } from "react";
 
 const chartConfig = {
   size: {
@@ -27,7 +28,33 @@ const chartConfig = {
   },
 };
 
-export default function Chart({ used = 0 }: { used: number }) {
+const ChartLabel = ({ viewBox, used, percentageUsed }: ChartLabelProps) => {
+  if (!viewBox?.cx || !viewBox?.cy) return null;
+  return (
+    <text
+      x={viewBox.cx}
+      y={viewBox.cy}
+      textAnchor="middle"
+      dominantBaseline="middle"
+    >
+      <tspan x={viewBox.cx} y={viewBox.cy} className="chart-total-percentage">
+        {used && percentageUsed
+          ? percentageUsed.toString().replace(/^0+/, "")
+          : "0"}
+        %
+      </tspan>
+      <tspan
+        x={viewBox.cx}
+        y={(viewBox.cy || 0) + 24}
+        className="fill-white/70"
+      >
+        Space used
+      </tspan>
+    </text>
+  );
+};
+
+const Chart = memo(function Chart({ used = 0 }: { used: number }) {
   const percentageUsed = calculatePercentage(used);
   const chartData = [
     { key: "storage", value: used, fill: chartConfig.used.color },
@@ -54,36 +81,13 @@ export default function Chart({ used = 0 }: { used: number }) {
             <RadialBar dataKey="value" background cornerRadius={10} />
             <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
               <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="chart-total-percentage"
-                        >
-                          {used && percentageUsed
-                            ? percentageUsed.toString().replace(/^0+/, "")
-                            : "0"}
-                          %
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-white/70"
-                        >
-                          Space used
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
+                content={(props) => (
+                  <ChartLabel
+                    {...props}
+                    used={used}
+                    percentageUsed={percentageUsed}
+                  />
+                )}
               />
             </PolarRadiusAxis>
           </RadialBarChart>
@@ -99,4 +103,6 @@ export default function Chart({ used = 0 }: { used: number }) {
       </CardHeader>
     </Card>
   );
-}
+});
+
+export default Chart;
