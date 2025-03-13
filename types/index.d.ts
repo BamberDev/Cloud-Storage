@@ -105,3 +105,31 @@ type PageContentProps = {
   hasFileError: boolean;
   hasSpaceError: boolean;
 };
+
+type ChartLabelProps = {
+  viewBox?: { cx?: number; cy?: number; width?: number; height?: number };
+  used: number;
+  percentageUsed: number;
+};
+
+type SummaryCardProps = {
+  summary: {
+    title: string;
+    url: string;
+    icon: string;
+    size: number;
+    latestDate: string;
+  };
+};
+
+type AuthFormFieldProps<T extends FieldValues> = {
+  form: {
+    control: Control<T>;
+  };
+  name: Path<T>;
+  label: string;
+  type?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  customComponent?: React.ReactNode;
+};
