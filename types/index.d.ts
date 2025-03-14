@@ -133,3 +133,18 @@ type AuthFormFieldProps<T extends FieldValues> = {
   disabled?: boolean;
   customComponent?: React.ReactNode;
 };
+
+type ActionDialogContentProps = {
+  action: ActionTypeProps | null;
+  file: Models.Document;
+  name: string;
+  setName: (value: string) => void;
+  setError: (value: string | null) => void;
+  emailInput: string;
+  error: string | null;
+  isLoading: boolean;
+  handleAction: () => void;
+  closeAllModals: () => void;
+  handleEmailChange: (email: string) => void;
+  handleRemoveUser: (email: string) => void;
+};
