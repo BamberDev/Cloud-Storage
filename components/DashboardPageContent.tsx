@@ -17,6 +17,10 @@ export default function DashboardPageContent({
 }: PageContentProps) {
   const { toast } = useToast();
   const usageSummary = useMemo(() => getUsageSummary(totalSpace), [totalSpace]);
+  const recentFiles = useMemo(
+    () => files.documents.slice(0, 9),
+    [files.documents]
+  );
   const toastsShown = useRef(false);
 
   useEffect(() => {
@@ -67,9 +71,9 @@ export default function DashboardPageContent({
 
       <section className="dashboard-recent-files">
         <h2 className="h3 xl:h2 text-light-100">Recently uploaded</h2>
-        {files.documents.length > 0 ? (
+        {recentFiles.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">
-            {files.documents.slice(0, 9).map((file: Models.Document) => (
+            {recentFiles.map((file: Models.Document) => (
               <FileListItem
                 key={file.$id}
                 file={file}
