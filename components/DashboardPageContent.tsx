@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
 import Chart from "@/components/Chart";
 import { getUsageSummary } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
 import { Models } from "node-appwrite";
 import SummaryCard from "./SummaryCard";
 import FileListItem from "./FileListItem";
+import { useErrorToast } from "@/hooks/useErrorToast";
+import { useMemo } from "react";
 
 export default function DashboardPageContent({
   currentUser,
@@ -15,47 +15,12 @@ export default function DashboardPageContent({
   hasFileError,
   hasSpaceError,
 }: PageContentProps) {
-  const { toast } = useToast();
+  useErrorToast(hasFileError, hasSpaceError);
   const usageSummary = useMemo(() => getUsageSummary(totalSpace), [totalSpace]);
   const recentFiles = useMemo(
     () => files.documents.slice(0, 9),
     [files.documents]
   );
-  const toastsShown = useRef(false);
-
-  useEffect(() => {
-    if (!toastsShown.current) {
-      const timer = setTimeout(() => {
-        if (hasFileError) {
-          toast({
-            description: (
-              <p className="body-2 text-white">
-                Could not load your files. Please try again by refreshing the
-                page.
-              </p>
-            ),
-            className: "error-toast",
-          });
-        }
-
-        if (hasSpaceError) {
-          toast({
-            description: (
-              <p className="body-2 text-white">
-                Could not load your storage information. Please try again by
-                refreshing the page.
-              </p>
-            ),
-            className: "error-toast",
-          });
-        }
-
-        toastsShown.current = true;
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [hasFileError, hasSpaceError, toast]);
 
   return (
     <div className="dashboard-container">
