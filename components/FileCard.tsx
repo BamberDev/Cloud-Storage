@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { Models } from "node-appwrite";
-import React from "react";
+import { memo } from "react";
 import Thumbnail from "./Thumbnail";
 import { convertFileSize } from "@/lib/utils";
 import FormattedDateTime from "./FormattedDateTime";
 import ActionDropdown from "./ActionDropdown";
 
-export default function FileCard({
+const FileCard = memo(function FileCard({
   file,
   currentUser,
 }: {
@@ -41,4 +41,6 @@ export default function FileCard({
       </div>
     </Link>
   );
-}
+});
+
+export default FileCard;
