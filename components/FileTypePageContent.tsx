@@ -1,12 +1,10 @@
 "use client";
-
-import { useEffect, useMemo, useRef } from "react";
 import FileCard from "@/components/FileCard";
 import Sort from "@/components/Sort";
 import type { Models } from "node-appwrite";
 import { convertFileSize, getUsageSummary } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
-
+import { useMemo } from "react";
+import { useErrorToast } from "@/hooks/useErrorToast";
 export default function FileTypePageContent({
   type = "",
   files,
@@ -15,46 +13,15 @@ export default function FileTypePageContent({
   hasFileError,
   hasSpaceError,
 }: PageContentProps) {
-  const { toast } = useToast();
+  useErrorToast(hasFileError, hasSpaceError);
   const usageSummary = useMemo(() => getUsageSummary(totalSpace), [totalSpace]);
-  const toastsShown = useRef(false);
 
-  useEffect(() => {
-    if (!toastsShown.current) {
-      const timer = setTimeout(() => {
-        if (hasFileError) {
-          toast({
-            description: (
-              <p className="body-2 text-white">
-                Could not load your files. Please try again by refreshing the
-                page.
-              </p>
-            ),
-            className: "error-toast",
-          });
-        }
-
-        if (hasSpaceError) {
-          toast({
-            description: (
-              <p className="body-2 text-white">
-                Could not load your storage information. Please try again by
-                refreshing the page.
-              </p>
-            ),
-            className: "error-toast",
-          });
-        }
-
-        toastsShown.current = true;
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [hasFileError, hasSpaceError, toast, type]);
-
-  const currentTypeSummary = usageSummary.find(
-    (item) => item.title.toLowerCase() === type.toLowerCase()
+  const currentTypeSummary = useMemo(
+    () =>
+      usageSummary.find(
+        (item) => item.title.toLowerCase() === type.toLowerCase()
+      ),
+    [usageSummary, type]
   );
 
   const currentTypeSize = currentTypeSummary
