@@ -13,8 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { signOutUser } from "@/lib/actions/user.actions";
 import Image from "next/image";
-import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { useErrorToast } from "@/hooks/useErrorToast";
 
 export default function LogoutDialog({
   trigger,
@@ -22,7 +22,7 @@ export default function LogoutDialog({
   onOpenChange,
 }: LogoutDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const showErrorToast = useErrorToast();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -32,14 +32,7 @@ export default function LogoutDialog({
       onOpenChange(false);
       router.push("/sign-in");
     } catch {
-      toast({
-        description: (
-          <p className="body-2 text-white">
-            Failed to sign out. Please try again.
-          </p>
-        ),
-        className: "error-toast",
-      });
+      showErrorToast("Failed to sign out. Please try again.");
     } finally {
       setIsLoading(false);
     }
