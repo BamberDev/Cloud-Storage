@@ -54,6 +54,13 @@ type FileUploaderProps = {
   className?: string;
 };
 
+type UseFileUploaderProps = {
+  ownerId: string;
+  accountId: string;
+  path: string;
+  onFileProcessed: (fileName: string) => void;
+};
+
 type MobileNavigationProps = {
   $id: string;
   accountId: string;
