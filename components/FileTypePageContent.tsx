@@ -1,10 +1,12 @@
 "use client";
+
 import FileCard from "@/components/FileCard";
 import Sort from "@/components/Sort";
 import type { Models } from "node-appwrite";
 import { convertFileSize, getUsageSummary } from "@/lib/utils";
 import { useMemo } from "react";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { usePageErrorToast } from "@/hooks/usePageErrorToast";
+
 export default function FileTypePageContent({
   type = "",
   files,
@@ -13,7 +15,7 @@ export default function FileTypePageContent({
   hasFileError,
   hasSpaceError,
 }: PageContentProps) {
-  useErrorToast(hasFileError, hasSpaceError);
+  usePageErrorToast(hasFileError, hasSpaceError);
   const usageSummary = useMemo(() => getUsageSummary(totalSpace), [totalSpace]);
 
   const currentTypeSummary = useMemo(
