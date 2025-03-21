@@ -287,9 +287,6 @@
   .uploader-preview-thumbnail {
     @apply flex items-center w-full max-w-[85%] md:max-w-[350px] subtitle-2;
   }
-  .error-toast {
-    @apply bg-red rounded-[10px] !important;
-  }
 
   /* Header */
   .header {
