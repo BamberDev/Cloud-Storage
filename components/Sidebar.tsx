@@ -1,13 +1,10 @@
 "use client";
-import { navItems } from "@/constants";
-import { cn } from "@/lib/utils";
+
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import NavItems from "./NavItems";
 
 export default function Sidebar({ username, email, avatar }: SidebarProps) {
-  const pathname = usePathname();
-
   return (
     <aside className="sidebar">
       <Link href="/" className="flex-center">
@@ -28,30 +25,7 @@ export default function Sidebar({ username, email, avatar }: SidebarProps) {
         />
       </Link>
       <nav className="sidebar-nav">
-        <ul className="flex flex-1 flex-col gap-6">
-          {navItems.map(({ url, name, icon }) => (
-            <Link href={url} key={name} className="lg:w-full">
-              <li
-                className={cn(
-                  "sidebar-nav-item",
-                  pathname === url && "nav-item-active"
-                )}
-              >
-                <Image
-                  src={icon}
-                  alt={name}
-                  width={24}
-                  height={24}
-                  className={cn(
-                    "nav-icon",
-                    pathname === url && "nav-icon-active"
-                  )}
-                />
-                <p className="hidden lg:block">{name}</p>
-              </li>
-            </Link>
-          ))}
-        </ul>
+        <NavItems variant="sidebar" showLabels={true} />
       </nav>
 
       <div className="sidebar-user-info">
