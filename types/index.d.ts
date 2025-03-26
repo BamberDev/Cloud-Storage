@@ -155,3 +155,10 @@ type ActionDialogContentProps = {
   handleEmailChange: (email: string) => void;
   handleRemoveUser: (email: string) => void;
 };
+
+type NavItemsProps = {
+  className?: string;
+  onItemClick?: () => void;
+  variant: "mobile" | "sidebar";
+  showLabels?: boolean;
+};
