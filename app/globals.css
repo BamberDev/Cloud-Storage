@@ -348,14 +348,17 @@
   .sidebar {
     @apply remove-scrollbar hidden h-screen w-[92px] flex-col overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[300px];
   }
-  .sidebar-nav {
-    @apply h5 mt-[14px] sm:mt-7 flex-1 gap-1 text-brand;
-  }
   .nav-icon {
     @apply w-6 filter invert opacity-25;
   }
   .nav-icon-active {
     @apply invert-0 opacity-100;
+  }
+  .sidebar-nav {
+    @apply h5 mt-[14px] sm:mt-7 flex-1 gap-1 text-brand;
+  }
+  .sidebar-nav-list {
+    @apply flex flex-1 flex-col gap-6;
   }
   .sidebar-nav-item {
     @apply flex text-light-100 gap-4 rounded-xl lg:w-full justify-center lg:justify-start items-center h5 lg:px-[30px] h-[52px] lg:rounded-full;
