@@ -54,6 +54,13 @@ type FileUploaderProps = {
   className?: string;
 };
 
+type UseFileUploaderProps = {
+  ownerId: string;
+  accountId: string;
+  path: string;
+  onFileProcessed: (fileName: string) => void;
+};
+
 type MobileNavigationProps = {
   $id: string;
   accountId: string;
@@ -104,4 +111,54 @@ type PageContentProps = {
   };
   hasFileError: boolean;
   hasSpaceError: boolean;
+};
+
+type ChartLabelProps = {
+  viewBox?: { cx?: number; cy?: number; width?: number; height?: number };
+  used: number;
+  percentageUsed: number;
+};
+
+type SummaryCardProps = {
+  summary: {
+    title: string;
+    url: string;
+    icon: string;
+    size: number;
+    latestDate: string;
+  };
+};
+
+type AuthFormFieldProps<T extends FieldValues> = {
+  form: {
+    control: Control<T>;
+  };
+  name: Path<T>;
+  label: string;
+  type?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  customComponent?: React.ReactNode;
+};
+
+type ActionDialogContentProps = {
+  action: ActionTypeProps | null;
+  file: Models.Document;
+  name: string;
+  setName: (value: string) => void;
+  setError: (value: string | null) => void;
+  emailInput: string;
+  error: string | null;
+  isLoading: boolean;
+  handleAction: () => void;
+  closeAllModals: () => void;
+  handleEmailChange: (email: string) => void;
+  handleRemoveUser: (email: string) => void;
+};
+
+type NavItemsProps = {
+  className?: string;
+  onItemClick?: () => void;
+  variant: "mobile" | "sidebar";
+  showLabels?: boolean;
 };

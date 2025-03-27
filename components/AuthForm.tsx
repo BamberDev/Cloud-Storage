@@ -4,17 +4,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { Form } from "./ui/form";
+import { useCallback, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -25,6 +16,8 @@ import {
 import OTPModal from "./OTPModal";
 import { useRouter } from "next/navigation";
 import { TestAccountSelect } from "./TestAccountSelect";
+import AuthFormField from "./AuthFormField";
+import { authFormConfig } from "@/lib/authFormConfig";
 
 const authFormSchema = (formType: FormType) => {
   return z.object({
@@ -46,8 +39,8 @@ export default function AuthForm({ type }: { type: FormType }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [accountId, setAccountId] = useState(null);
   const router = useRouter();
-
   const formSchema = authFormSchema(type);
+  const { formTitle, buttonText, linkInfo } = authFormConfig(type, isLoading);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,136 +51,95 @@ export default function AuthForm({ type }: { type: FormType }) {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
-    setErrorMessage("");
+  const onSubmit = useCallback(
+    async (values: z.infer<typeof formSchema>) => {
+      setIsLoading(true);
+      setErrorMessage("");
 
-    try {
-      if (type === "test-account") {
-        await signInTestUser({
-          email: values.email,
-          password: values.password || "",
-        });
-        router.push("/");
-      } else {
-        const user =
-          type === "sign-up"
-            ? await createAccount({
-                username: values.username || "",
-                email: values.email,
-              })
-            : await signInUser({ email: values.email });
-
-        if (user) {
-          setAccountId(user.accountId);
-        }
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message === "Account already exists") {
-          setErrorMessage("Account already exists.");
-        } else if (error.message === "Account does not exist") {
-          setErrorMessage("Account does not exist. Please sign up first.");
+      try {
+        if (type === "test-account") {
+          await signInTestUser({
+            email: values.email,
+            password: values.password || "",
+          });
+          router.push("/");
         } else {
-          setErrorMessage(
-            `${
-              type === "sign-in"
-                ? "Failed to sign in."
-                : type === "sign-up"
-                ? "Failed to create account."
-                : "Failed to sign in to test account."
-            } Please try again.`
-          );
-        }
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+          const user =
+            type === "sign-up"
+              ? await createAccount({
+                  username: values.username || "",
+                  email: values.email,
+                })
+              : await signInUser({ email: values.email });
 
-  const handleTestAccountSelect = (email: string, password: string) => {
-    form.setValue("email", email);
-    form.setValue("password", password);
-  };
+          if (user) {
+            setAccountId(user.accountId);
+          }
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error.message === "Account already exists") {
+            setErrorMessage("Account already exists.");
+          } else if (error.message === "Account does not exist") {
+            setErrorMessage("Account does not exist. Please sign up first.");
+          } else {
+            setErrorMessage(
+              `${
+                type === "sign-in"
+                  ? "Failed to sign in."
+                  : type === "sign-up"
+                  ? "Failed to create account."
+                  : "Failed to sign in to test account."
+              } Please try again.`
+            );
+          }
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [type, router]
+  );
+
+  const handleTestAccountSelect = useCallback(
+    (email: string, password: string) => {
+      form.setValue("email", email);
+      form.setValue("password", password);
+    },
+    [form]
+  );
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
-          <h1 className="form-title">
-            {type === "sign-in"
-              ? "Sign In"
-              : type === "sign-up"
-              ? "Sign Up"
-              : "Test Account"}
-          </h1>
+          <h1 className="form-title">{formTitle}</h1>
           {type === "sign-up" && (
-            <FormField
-              control={form.control}
+            <AuthFormField
+              form={form}
               name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="shad-form-item">
-                    <FormLabel className="shad-form-label">Username</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your username"
-                        className="shad-input"
-                        {...field}
-                      />
-                    </FormControl>
-                  </div>
-                  <FormDescription className="sr-only">
-                    Username input
-                  </FormDescription>
-                  <FormMessage className="shad-form-message" />
-                </FormItem>
-              )}
+              label="Username"
+              placeholder="Enter your username"
+              disabled={isLoading}
             />
           )}
           {type === "test-account" ? (
-            <FormField
-              control={form.control}
-              name="email"
-              render={() => (
-                <FormItem>
-                  <div className="shad-form-item">
-                    <FormLabel className="shad-form-label">
-                      Test Account
-                    </FormLabel>
-                    <FormControl>
-                      <TestAccountSelect onSelect={handleTestAccountSelect} />
-                    </FormControl>
-                  </div>
-                  <FormDescription className="sr-only">
-                    Select test account
-                  </FormDescription>
-                  <FormMessage className="shad-form-message" />
-                </FormItem>
-              )}
+            <AuthFormField
+              form={form}
+              name="testAccount"
+              label="Test Account"
+              customComponent={
+                <TestAccountSelect onSelect={handleTestAccountSelect} />
+              }
             />
           ) : (
-            <FormField
-              control={form.control}
+            <AuthFormField
+              form={form}
               name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="shad-form-item">
-                    <FormLabel className="shad-form-label">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your email address"
-                        className="shad-input"
-                        {...field}
-                      />
-                    </FormControl>
-                  </div>
-                  <FormDescription className="sr-only">
-                    Email input
-                  </FormDescription>
-                  <FormMessage className="shad-form-message" />
-                </FormItem>
-              )}
+              label="Email"
+              type="email"
+              placeholder="Enter your email address"
+              disabled={isLoading}
             />
           )}
           <Button
@@ -204,37 +156,14 @@ export default function AuthForm({ type }: { type: FormType }) {
                 className="animate-spin"
               />
             )}
-            {isLoading
-              ? `Signing ${
-                  type === "sign-in" || type === "test-account" ? "In" : "Up"
-                }...`
-              : type === "sign-in" || type === "test-account"
-              ? "Sign In"
-              : "Sign Up"}
+            {buttonText}
           </Button>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div>
             <div className="body-2 flex justify-center">
-              <p className="text-light-100">
-                {type === "sign-in"
-                  ? "Don't have an account?"
-                  : type === "sign-up"
-                  ? "Already have an account?"
-                  : "Want to use OTP login?"}
-              </p>
-              <Link
-                href={
-                  type === "sign-up" || type === "test-account"
-                    ? "/sign-in"
-                    : "/sign-up"
-                }
-                className="ml-1 font-medium underline"
-              >
-                {type === "sign-in"
-                  ? "Sign Up"
-                  : type === "sign-up"
-                  ? "Sign In"
-                  : "Sign In with OTP"}
+              <p className="text-light-100">{linkInfo.text}</p>
+              <Link href={linkInfo.href} className="ml-1 font-medium underline">
+                {linkInfo.buttonText}
               </Link>
             </div>
             {type !== "test-account" && (

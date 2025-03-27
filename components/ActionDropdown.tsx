@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,17 +14,15 @@ import { constructDownloadUrl } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { Models } from "node-appwrite";
-import { useEffect, useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { useCallback, useEffect, useState } from "react";
 import {
   deleteFile,
   renameFile,
   updateFileUsers,
 } from "@/lib/actions/file.actions";
 import { usePathname } from "next/navigation";
-import { FileDetails, ShareFile } from "./ActionsModalContent";
 import { z } from "zod";
+import ActionDialogContent from "./ActionDialogContent";
 
 export default function ActionDropdown({
   file,
@@ -50,7 +41,7 @@ export default function ActionDropdown({
   const path = usePathname();
   const isOwner = file.owner.$id === currentUser.$id;
 
-  const closeAllModals = () => {
+  const closeAllModals = useCallback(() => {
     if (action?.value === "share") {
       setEmailInput("");
       setError(null);
@@ -61,7 +52,7 @@ export default function ActionDropdown({
       setName(file.name);
       setError(null);
     }
-  };
+  }, [action, file.name]);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -75,7 +66,7 @@ export default function ActionDropdown({
     }
   }, [file.name]);
 
-  const handleAction = async () => {
+  const handleAction = useCallback(async () => {
     if (!action || !isOwner) return;
     setIsLoading(true);
     setError(null);
@@ -103,6 +94,9 @@ export default function ActionDropdown({
         if (!result.success) {
           setError("Invalid email address");
           return;
+        } else if (file.users.includes(emailInput)) {
+          setError("This user already has access to the file");
+          return;
         }
         await updateFileUsers({
           fileId: file.$id,
@@ -123,109 +117,33 @@ export default function ActionDropdown({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [action, emailInput, file, isOwner, name, path, closeAllModals]);
 
-  const handleRemoveUser = async (email: string) => {
-    if (!isOwner) return;
-    setError(null);
+  const handleRemoveUser = useCallback(
+    async (email: string) => {
+      if (!isOwner) return;
+      setError(null);
 
-    try {
-      const updatedEmails = file.users.filter((e: string) => e !== email);
-      await updateFileUsers({
-        fileId: file.$id,
-        emails: updatedEmails,
-        path,
-      });
+      try {
+        const updatedEmails = file.users.filter((e: string) => e !== email);
+        await updateFileUsers({
+          fileId: file.$id,
+          emails: updatedEmails,
+          path,
+        });
 
-      file.users = updatedEmails;
-    } catch {
-      setError("Failed to remove user. Please try again.");
-    }
-  };
+        file.users = updatedEmails;
+      } catch {
+        setError("Failed to remove user. Please try again.");
+      }
+    },
+    [file, path, isOwner]
+  );
 
-  const handleEmailChange = (email: string) => {
+  const handleEmailChange = useCallback((email: string) => {
     setEmailInput(email);
     setError(null);
-  };
-
-  const renderDialogContent = () => {
-    if (!action) return null;
-    const { value, label } = action;
-
-    return (
-      <DialogContent className="shad-dialog button">
-        <DialogHeader className="flex flex-col gap-3">
-          <DialogTitle className="text-center text-light-100">
-            {label}
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            Description of {label} dialog
-          </DialogDescription>
-          {value === "rename" && (
-            <>
-              <Input
-                type="text"
-                value={name}
-                placeholder="Enter new name"
-                className="rename-input-field"
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setError(null);
-                }}
-              />
-            </>
-          )}
-          {value === "details" && <FileDetails file={file} />}
-          {value === "share" && (
-            <ShareFile
-              file={file}
-              email={emailInput}
-              onEmailChange={handleEmailChange}
-              onRemove={handleRemoveUser}
-            />
-          )}
-          {value === "delete" && (
-            <p className="delete-confirmation">
-              Are you sure you want to delete{` `}
-              <span className="delete-file-name">{file.name}</span>?
-            </p>
-          )}
-        </DialogHeader>
-        {["rename", "delete", "share"].includes(value) && (
-          <DialogFooter className="flex !flex-col gap-4">
-            <div className="flex flex-col gap-3 md:flex-row">
-              <Button
-                onClick={closeAllModals}
-                className="modal-cancel-button"
-                disabled={isLoading}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleAction}
-                className="modal-submit-button"
-                disabled={isLoading}
-              >
-                {isLoading && (
-                  <Image
-                    src="/assets/icons/loader.svg"
-                    alt="loader"
-                    width={24}
-                    height={24}
-                    className="animate-spin"
-                  />
-                )}
-                <p className="capitalize">
-                  {isLoading ? `${value.slice(0, -1)}ing...` : value}
-                </p>
-              </Button>
-            </div>
-            {error && <p className="error-message">{error}</p>}
-          </DialogFooter>
-        )}
-      </DialogContent>
-    );
-  };
+  }, []);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -290,7 +208,20 @@ export default function ActionDropdown({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {renderDialogContent()}
+      <ActionDialogContent
+        action={action}
+        file={file}
+        name={name}
+        emailInput={emailInput}
+        error={error}
+        isLoading={isLoading}
+        setName={setName}
+        setError={setError}
+        handleAction={handleAction}
+        closeAllModals={closeAllModals}
+        handleEmailChange={handleEmailChange}
+        handleRemoveUser={handleRemoveUser}
+      />
     </Dialog>
   );
 }

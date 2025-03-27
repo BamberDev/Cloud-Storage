@@ -8,15 +8,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Separator } from "./ui/separator";
-import { navItems } from "@/constants";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import FileUploader from "./FileUploader";
 import LogoutDialog from "./LogoutDialog";
+import NavItems from "./NavItems";
 
 export default function MobileNavigation({
   $id: ownerId,
@@ -27,7 +25,6 @@ export default function MobileNavigation({
 }: MobileNavigationProps) {
   const [open, setOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const pathname = usePathname();
 
   return (
     <header className="mobile-header">
@@ -68,35 +65,7 @@ export default function MobileNavigation({
             <Separator className="mb-4 bg-light-200/20" />
           </SheetTitle>
           <nav className="mobile-nav">
-            <ul className="mobile-nav-list">
-              {navItems.map(({ url, name, icon }) => (
-                <Link
-                  href={url}
-                  key={name}
-                  className="lg:w-full"
-                  onClick={() => setOpen(false)}
-                >
-                  <li
-                    className={cn(
-                      "mobile-nav-item",
-                      pathname === url && "nav-item-active"
-                    )}
-                  >
-                    <Image
-                      src={icon}
-                      alt={name}
-                      width={24}
-                      height={24}
-                      className={cn(
-                        "nav-icon",
-                        pathname === url && "nav-icon-active"
-                      )}
-                    />
-                    <p>{name}</p>
-                  </li>
-                </Link>
-              ))}
-            </ul>
+            <NavItems variant="mobile" onItemClick={() => setOpen(false)} />
           </nav>
           <Separator className="my-4 bg-light-200/20" />
           <div className="flex flex-col justify-between gap-4">

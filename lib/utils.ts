@@ -3,9 +3,9 @@ import { clsx, type ClassValue } from "clsx";
 import { Models } from "node-appwrite";
 import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: ClassValue[]) {
+export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
-}
+};
 
 export const parseStringify = (value: unknown) => {
   return JSON.parse(JSON.stringify(value));
@@ -120,7 +120,7 @@ export const formatDateTime = (isoString: string | null | undefined) => {
   // Get hours and adjust for 12-hour format
   let hours = date.getHours();
   const minutes = date.getMinutes();
-  const period = hours >= 12 ? "pm" : "am";
+  const period = hours >= 12 ? " pm" : " am";
 
   // Convert hours to 12-hour format
   hours = hours % 12 || 12;

@@ -1,23 +1,24 @@
 "use client";
-import React, { useCallback, useState } from "react";
+
+import { memo, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "./ui/button";
 import { cn, convertFileToUrl, getFileType } from "@/lib/utils";
 import Image from "next/image";
 import Thumbnail from "./Thumbnail";
 import { MAX_FILE_SIZE } from "@/constants";
-import { useToast } from "@/hooks/use-toast";
-import { uploadFile } from "@/lib/actions/file.actions";
 import { usePathname } from "next/navigation";
 import { Loader2Icon } from "lucide-react";
+import { useFileUploader } from "@/hooks/useFileUploader";
+import { useErrorToast } from "@/hooks/useErrorToast";
 
-export default function FileUploader({
+const FileUploader = memo(function FileUploader({
   ownerId,
   accountId,
   className,
 }: FileUploaderProps) {
   const [files, setFiles] = useState<File[]>([]);
-  const { toast } = useToast();
+  const showErrorToast = useErrorToast();
   const path = usePathname();
 
   const clearUploads = useCallback((fileName: string) => {
@@ -26,30 +27,23 @@ export default function FileUploader({
     );
   }, []);
 
+  const { uploadFiles } = useFileUploader({
+    ownerId,
+    accountId,
+    path,
+    onFileProcessed: clearUploads,
+  });
+
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       if (files.length + acceptedFiles.length > 10) {
-        toast({
-          description: (
-            <p className="body-2 text-white">
-              You can upload a maximum of 10 files at once.
-            </p>
-          ),
-          className: "error-toast",
-        });
+        showErrorToast("You can upload a maximum of 10 files at a time.");
         return;
       }
 
       const validFiles = acceptedFiles.filter((file) => {
         if (file.size > MAX_FILE_SIZE) {
-          toast({
-            description: (
-              <p className="body-2 text-white">
-                File is too large. Max file size allowed - 45MB.
-              </p>
-            ),
-            className: "error-toast",
-          });
+          showErrorToast("File is too large. Max file size allowed - 45MB.");
           return false;
         }
         return true;
@@ -57,47 +51,9 @@ export default function FileUploader({
 
       setFiles((prevFiles) => [...prevFiles, ...validFiles]);
 
-      const uploadPromises = validFiles.map(async (file) => {
-        try {
-          const uploadedFile = await uploadFile({
-            file,
-            ownerId,
-            accountId,
-            path,
-          });
-          if (uploadedFile) {
-            clearUploads(file.name);
-          }
-        } catch (error) {
-          if (
-            error instanceof Error &&
-            error.message === "Storage limit reached."
-          ) {
-            toast({
-              description: (
-                <p className="body-2 text-white">
-                  Storage limit reached. Unable to upload file.
-                </p>
-              ),
-              className: "error-toast",
-            });
-          } else {
-            toast({
-              description: (
-                <p className="body-2 text-white">
-                  Failed to upload file. Please try again.
-                </p>
-              ),
-              className: "error-toast",
-            });
-          }
-          clearUploads(file.name);
-        }
-      });
-
-      await Promise.all(uploadPromises);
+      await uploadFiles(validFiles);
     },
-    [toast, ownerId, accountId, path, clearUploads, files]
+    [files, showErrorToast, uploadFiles]
   );
 
   const { getRootProps, getInputProps, open } = useDropzone({
@@ -147,4 +103,6 @@ export default function FileUploader({
       )}
     </div>
   );
-}
+});
+
+export default FileUploader;
