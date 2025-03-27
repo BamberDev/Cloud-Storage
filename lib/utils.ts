@@ -120,7 +120,7 @@ export const formatDateTime = (isoString: string | null | undefined) => {
   // Get hours and adjust for 12-hour format
   let hours = date.getHours();
   const minutes = date.getMinutes();
-  const period = hours >= 12 ? "pm" : "am";
+  const period = hours >= 12 ? " pm" : " am";
 
   // Convert hours to 12-hour format
   hours = hours % 12 || 12;
