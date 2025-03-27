@@ -38,6 +38,7 @@ export default function OTPModal({
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage("");
 
     try {
       const sessionId = await verifySecret({ accountId, password });
@@ -63,9 +64,14 @@ export default function OTPModal({
   const handleResendOTP = async () => {
     if (resent) return;
 
-    setResent(true);
-    await sendEmailOTP({ email });
-    setTimeout(() => setResent(false), 10000);
+    try {
+      setResent(true);
+      await sendEmailOTP({ email });
+      setTimeout(() => setResent(false), 10000);
+    } catch {
+      setErrorMessage("Failed to resend OTP. Please try again.");
+      setResent(false);
+    }
   };
 
   return (
