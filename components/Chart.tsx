@@ -95,7 +95,7 @@ const Chart = memo(function Chart({ used = 0 }: { used: number }) {
       </CardContent>
       <CardHeader className="chart-details">
         <CardTitle className="chart-title">
-          {used ? "Space Used" : "Available Storage"}
+          {used ? "Space used" : "Available Storage"}
         </CardTitle>
         <CardDescription className="chart-description">
           {used ? `${convertFileSize(used)} / 1 GB` : "1 GB"}
