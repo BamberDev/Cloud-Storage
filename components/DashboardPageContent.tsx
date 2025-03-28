@@ -35,7 +35,7 @@ export default function DashboardPageContent({
       </section>
 
       <section className="dashboard-recent-files">
-        <h2 className="h3 xl:h2 text-light-100">Recently uploaded</h2>
+        <h2 className="h3 xl:h2">Recently uploaded</h2>
         {recentFiles.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">
             {recentFiles.map((file: Models.Document) => (
