@@ -12,7 +12,7 @@ const ImageThumbnail = ({ file }: { file: Models.Document }) => (
     <Thumbnail type={file.type} extension={file.extension} url={file.url} />
     <div className="flex flex-col">
       <p className="file-details-name">{file.name}</p>
-      <FormattedDateTime date={file.$createdAt} className="caption" />
+      <FormattedDateTime date={file.$createdAt} />
     </div>
   </div>
 );
@@ -56,9 +56,7 @@ export const ShareFile = memo(function ShareFile({
     <>
       <ImageThumbnail file={file} />
       <div className="space-y-2">
-        <p className="subtitle-2 pl-1 text-light-100">
-          Share file with other users
-        </p>
+        <p className="subtitle-2 pl-1">Share file with other users</p>
         <Input
           type="email"
           placeholder="Enter email address"
@@ -69,7 +67,7 @@ export const ShareFile = memo(function ShareFile({
         />
         <div>
           <div className="flex justify-between">
-            <p className="subtitle-2 text-light-100">Shared with</p>
+            <p className="subtitle-2">Shared with</p>
             <p className="subtitle-2 text-light-200">
               {file.users.length} users
             </p>
