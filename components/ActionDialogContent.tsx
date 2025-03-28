@@ -30,7 +30,7 @@ export default function ActionDialogContent({
   return (
     <DialogContent className="shad-dialog button">
       <DialogHeader className="flex flex-col gap-3">
-        <DialogTitle className="text-center text-light-100">
+        <DialogTitle className="text-center text-brand">
           {action.label}
         </DialogTitle>
         <DialogDescription className="sr-only">
