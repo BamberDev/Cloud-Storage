@@ -47,7 +47,7 @@ export default function MobileNavigation({
             height={30}
           />
         </SheetTrigger>
-        <SheetContent className="p-0 h-screen px-3">
+        <SheetContent className="p-0 h-screen px-3 bg-brand-light">
           <SheetTitle>
             <div className="header-user">
               <Image
