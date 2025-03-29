@@ -8,7 +8,7 @@ export default function FormattedDateTime({
   className?: string;
 }) {
   return (
-    <p className={cn("body-1 text-light-200", className)}>
+    <p className={cn("caption text-light-200", className)}>
       {formatDateTime(date)}
     </p>
   );
