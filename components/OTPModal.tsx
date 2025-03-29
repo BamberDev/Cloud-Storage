@@ -78,7 +78,7 @@ export default function OTPModal({
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogContent className="shad-alert-dialog">
         <AlertDialogHeader className="relative">
-          <AlertDialogTitle className="h2 text-center">
+          <AlertDialogTitle className="h2 text-center text-brand">
             Enter Your OTP
             <Image
               src="/assets/icons/close-dark.svg"
@@ -89,7 +89,7 @@ export default function OTPModal({
               className="otp-close-button"
             />
           </AlertDialogTitle>
-          <AlertDialogDescription className="subtitle-2 text-center text-light-100">
+          <AlertDialogDescription className="subtitle-2 text-center">
             We&apos;ve sent a one-time password to
             <span className="pl-1 text-brand">{email}</span>
           </AlertDialogDescription>
@@ -129,7 +129,7 @@ export default function OTPModal({
                 "Submit"
               )}
             </AlertDialogAction>
-            <div className="subtitle-2 mt-2 text-center text-light-100">
+            <div className="subtitle-2 mt-2 text-center">
               {errorMessage && (
                 <p className="error-message mb-2">{errorMessage}</p>
               )}
@@ -137,7 +137,7 @@ export default function OTPModal({
               <Button
                 type="button"
                 variant="link"
-                className="px-1 underline-offset-1 underline font-bold"
+                className="px-1 underline-offset-1 underline font-bold text-brand"
                 disabled={resent}
                 onClick={handleResendOTP}
               >

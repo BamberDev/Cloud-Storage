@@ -161,7 +161,7 @@ export default function AuthForm({ type }: { type: FormType }) {
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div>
             <div className="body-2 flex justify-center">
-              <p className="text-light-100">{linkInfo.text}</p>
+              <p>{linkInfo.text}</p>
               <Link href={linkInfo.href} className="ml-1 font-medium underline">
                 {linkInfo.buttonText}
               </Link>

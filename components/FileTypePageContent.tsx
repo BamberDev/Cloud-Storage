@@ -39,7 +39,7 @@ export default function FileTypePageContent({
             Total: <span className="h5">{currentTypeSize}</span>
           </p>
           <div className="sort-container">
-            <p className="body-1 hidden sm:block text-light-100">Sort by:</p>
+            <p className="body-1 hidden sm:block">Sort by:</p>
             <Sort />
           </div>
         </div>
