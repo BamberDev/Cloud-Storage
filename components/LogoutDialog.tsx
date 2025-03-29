@@ -43,10 +43,8 @@ export default function LogoutDialog({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="shad-dialog button">
         <DialogHeader className="flex flex-col gap-3">
-          <DialogTitle className="text-center text-light-100">
-            Confirm
-          </DialogTitle>
-          <DialogDescription className="text-center text-[16px] text-light-100">
+          <DialogTitle className="text-center text-brand">Confirm</DialogTitle>
+          <DialogDescription className="text-center text-[16px]">
             Are you sure you want to sign out?
           </DialogDescription>
         </DialogHeader>
