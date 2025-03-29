@@ -28,7 +28,7 @@
   }
 
   :root {
-    --background: 0 0% 100%;
+    --background: 215, 25%, 90%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
@@ -117,10 +117,10 @@
     @apply border-none shadow-none p-0 shad-no-focus placeholder:text-light-200 body-2 !important;
   }
   .shad-form-item {
-    @apply flex h-[78px] flex-col justify-center rounded-xl border border-light-300 px-4 shadow-drop-1 !important;
+    @apply flex h-[78px] flex-col bg-white justify-center rounded-xl border border-light-300 px-4 shadow-drop-1 !important;
   }
   .shad-form-label {
-    @apply text-light-100 pt-2 body-2 w-full !important;
+    @apply pt-2 body-2 w-full !important;
   }
   .shad-form-message {
     @apply text-red body-2 ml-4 !important;
@@ -132,7 +132,7 @@
     @apply w-full flex gap-1 sm:gap-2 justify-between !important;
   }
   .shad-otp-slot {
-    @apply text-[40px] font-medium rounded-xl ring-brand shadow-drop-1 text-brand-100 justify-center flex border-2 border-light-300 size-12 md:size-16 gap-5 !important;
+    @apply text-[40px] font-medium rounded-xl ring-brand shadow-drop-1 text-brand justify-center flex border-2 border-light-300 size-12 md:size-16 gap-5 !important;
   }
   .shad-sheet button,
   .shad-dialog button {
@@ -175,7 +175,7 @@
     @apply flex flex-row w-full justify-between min-w-0;
   }
   .recent-file-name {
-    @apply subtitle-2 truncate w-full overflow-hidden text-ellipsis whitespace-nowrap text-light-100;
+    @apply subtitle-2 truncate w-full overflow-hidden text-ellipsis whitespace-nowrap;
   }
   .empty-list {
     @apply body-1 mt-10 text-center text-light-200;
@@ -200,16 +200,16 @@
     @apply body-2 shad-no-focus h-[52px] w-full rounded-full border px-4 shadow-drop-1;
   }
   .delete-confirmation {
-    @apply text-center text-black break-all;
+    @apply text-center break-all;
   }
   .delete-file-name {
     @apply font-medium text-brand underline line-clamp-2;
   }
   .modal-cancel-button {
-    @apply min-h-[52px] flex-1 rounded-full border bg-white text-light-100 hover:bg-gray-100 !important;
+    @apply min-h-[52px] flex-1 rounded-full border bg-brand-light text-black hover:bg-gray-100 !important;
   }
   .modal-submit-button {
-    @apply primary-btn mx-0 min-h-[52px] w-full flex-1 !important;
+    @apply primary-btn mx-0 min-h-[52px] border border-brand w-full flex-1 !important;
   }
 
   /* ActionsModalContent */
@@ -220,13 +220,13 @@
     @apply subtitle-2 mb-1 break-all text-left line-clamp-3;
   }
   .file-details-label {
-    @apply body-2 w-[30%] text-light-100 text-left;
+    @apply body-2 w-[30%] text-left;
   }
   .share-input-field {
     @apply body-2 shad-no-focus h-[52px] w-full rounded-full border px-4 shadow-drop-1;
   }
   .share-remove-user {
-    @apply rounded-full bg-transparent text-light-100 shadow-none hover:!bg-transparent;
+    @apply rounded-full bg-transparent shadow-none hover:!bg-transparent;
   }
 
   /* AuthForm */
@@ -240,7 +240,7 @@
     @apply primary-btn h-[60px];
   }
   .error-message {
-    @apply body-2 mx-auto w-fit rounded-xl bg-error/5 px-8 py-4 text-center text-error !important;
+    @apply body-2 mx-auto w-fit rounded-xl bg-error/10 px-8 py-4 text-center text-error !important;
   }
 
   /* Card */
@@ -253,7 +253,7 @@
 
   /* Chart */
   .chart {
-    @apply flex flex-col items-center rounded-[20px] bg-brand p-5 mt-2 sm:mt-0 text-white;
+    @apply flex flex-col items-center border-none rounded-[20px] bg-brand p-5 mt-2 sm:mt-0 text-white;
   }
   .chart-container {
     @apply mx-auto aspect-square w-[180px] text-white;
@@ -304,7 +304,7 @@
     @apply flex h-[60px] justify-between px-5 sm:hidden;
   }
   .header-user {
-    @apply my-3 flex items-center gap-2 rounded-full p-1 text-light-100 sm:justify-center sm:bg-brand/10 lg:justify-start lg:p-3;
+    @apply my-3 flex items-center gap-2 rounded-full p-1 sm:justify-center sm:bg-brand/10 lg:justify-start lg:p-3;
   }
   .header-user-avatar {
     @apply aspect-square w-10 rounded-full object-cover;
@@ -316,7 +316,7 @@
     @apply flex flex-1 flex-col gap-4;
   }
   .mobile-nav-item {
-    @apply flex text-light-100 gap-4 w-full justify-start items-center h5 px-6 h-[52px] rounded-full;
+    @apply flex gap-4 w-full justify-start items-center h5 px-6 h-[52px] rounded-full;
   }
   .mobile-sign-out-button {
     @apply h5 flex h-[52px] w-full items-center rounded-full bg-brand text-white transition-all hover:bg-brand-100;
@@ -341,7 +341,7 @@
     @apply absolute drop-shadow-lg left-0 top-16 z-50 flex w-full flex-col gap-3 rounded-[20px] bg-white p-4;
   }
   .empty-result {
-    @apply body-2 p-4 text-center h-[50px] text-light-100;
+    @apply body-2 p-4 text-center h-[50px];
   }
 
   /* Sidebar */
@@ -349,7 +349,7 @@
     @apply remove-scrollbar hidden h-screen w-[92px] flex-col overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[300px];
   }
   .nav-icon {
-    @apply w-6 filter invert opacity-25;
+    @apply w-6 filter invert opacity-35;
   }
   .nav-icon-active {
     @apply invert-0 opacity-100;
@@ -361,7 +361,7 @@
     @apply flex flex-1 flex-col gap-6;
   }
   .sidebar-nav-item {
-    @apply flex text-light-100 gap-4 rounded-xl lg:w-full justify-center lg:justify-start items-center h5 lg:px-[30px] h-[52px] lg:rounded-full;
+    @apply flex gap-4 rounded-xl lg:w-full justify-center lg:justify-start items-center h5 lg:px-[30px] h-[52px] lg:rounded-full;
   }
   .sidebar-nav-item:hover {
     @apply bg-brand text-white shadow-drop-2;
@@ -394,7 +394,7 @@
 
   /* Thumbnail */
   .thumbnail {
-    @apply flex-center size-[50px] min-w-[50px] overflow-hidden rounded-full bg-brand;
+    @apply flex-center size-[50px] min-w-[50px] overflow-hidden rounded-full bg-brand border border-brand;
   }
   .thumbnail-image {
     @apply !size-full object-cover object-center;
