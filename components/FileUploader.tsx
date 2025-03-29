@@ -79,7 +79,7 @@ const FileUploader = memo(function FileUploader({
       </Button>
       {files.length > 0 && (
         <ul className="uploader-preview-list">
-          <h4 className="h4 text-light-100">Uploading...</h4>
+          <h4 className="h4">Uploading...</h4>
           {files.map((file, index) => {
             const { type, extension } = getFileType(file.name);
             return (
