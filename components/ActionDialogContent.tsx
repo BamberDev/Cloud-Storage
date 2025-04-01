@@ -34,17 +34,24 @@ export default function ActionDialogContent({
           {action.label}
         </DialogTitle>
         <DialogDescription className="sr-only">
-          Description of {action.label} dialog
+          {action.value === "rename" && `Rename your file "${file?.name}"`}
+          {action.value === "details" && `View details for "${file?.name}"`}
+          {action.value === "share" && `Share "${file?.name}" with others`}
+          {action.value === "delete" && `Confirm deletion of "${file?.name}"`}
         </DialogDescription>
         {action.value === "rename" && (
           <Input
             type="text"
             value={name}
             placeholder="Enter new name"
+            aria-label="Rename input field"
             className="rename-input-field"
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               setName(e.target.value);
               setError(null);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleAction();
             }}
           />
         )}
@@ -70,6 +77,7 @@ export default function ActionDialogContent({
             <Button
               onClick={closeAllModals}
               className="modal-cancel-button"
+              aria-label="Cancel action"
               disabled={isLoading}
             >
               Cancel
@@ -77,22 +85,24 @@ export default function ActionDialogContent({
             <Button
               onClick={handleAction}
               className="modal-submit-button"
+              aria-label="Submit action"
               disabled={isLoading}
             >
               {isLoading && (
                 <Image
                   src="/assets/icons/loader.svg"
-                  alt="loader"
+                  alt="loader icon"
                   width={24}
                   height={24}
                   className="animate-spin"
+                  aria-hidden="true"
                 />
               )}
-              <p className="capitalize">
+              <span className="capitalize">
                 {isLoading
                   ? `${action.value.slice(0, -1)}ing...`
                   : action.value}
-              </p>
+              </span>
             </Button>
           </div>
           {error && <p className="error-message">{error}</p>}
