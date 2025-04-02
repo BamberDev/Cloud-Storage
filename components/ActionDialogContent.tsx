@@ -62,6 +62,7 @@ export default function ActionDialogContent({
             email={emailInput}
             onEmailChange={handleEmailChange}
             onRemove={handleRemoveUser}
+            handleAction={handleAction}
           />
         )}
         {action.value === "delete" && (
@@ -91,7 +92,7 @@ export default function ActionDialogContent({
               {isLoading && (
                 <Image
                   src="/assets/icons/loader.svg"
-                  alt="loader icon"
+                  alt=""
                   width={24}
                   height={24}
                   className="animate-spin"
@@ -105,7 +106,11 @@ export default function ActionDialogContent({
               </span>
             </Button>
           </div>
-          {error && <p className="error-message">{error}</p>}
+          {error && (
+            <p role="alert" className="error-message">
+              {error}
+            </p>
+          )}
         </DialogFooter>
       )}
     </DialogContent>
