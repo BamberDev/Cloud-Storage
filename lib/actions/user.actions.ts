@@ -44,12 +44,13 @@ export const createAccount = async ({
 }) => {
   try {
     const existingUser = await getUserByEmail(email);
-    const accountId = await sendEmailOTP({ email });
-    const { databases } = await createAdminClient();
 
     if (existingUser) {
       throw new Error("Account already exists");
     }
+
+    const { databases } = await createAdminClient();
+    const accountId = await sendEmailOTP({ email });
 
     if (!accountId) throw new Error("Failed to create account");
 
