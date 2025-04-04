@@ -47,6 +47,7 @@ export const ShareFile = memo(function ShareFile({
   email,
   onEmailChange,
   onRemove,
+  handleAction,
 }: ShareFileProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onEmailChange(e.target.value.trim());
@@ -64,21 +65,28 @@ export const ShareFile = memo(function ShareFile({
           value={email}
           className="share-input-field"
           autoComplete="email"
+          aria-label="Share file input field"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleAction();
+            }
+          }}
         />
         <div>
           <div className="flex justify-between">
             <p className="subtitle-2">Shared with</p>
             <p className="subtitle-2 text-light-200">
-              {file.users.length} users
+              {file.users.length}
+              {file.users.length === 1 ? " user" : " users"}
             </p>
           </div>
 
           {file.users.length === 0 ? (
-            <p className="mt-3 text-center text-light-200">
+            <p className="mt-3 text-center text-light-200" aria-live="polite">
               This file isn&apos;t shared with anyone yet
             </p>
           ) : (
-            <ul className="mt-3">
+            <ul className="mt-3" aria-label="Shared users list">
               {file.users.map((userEmail: string) => (
                 <li
                   key={userEmail}
@@ -88,13 +96,15 @@ export const ShareFile = memo(function ShareFile({
                   <Button
                     onClick={() => onRemove(userEmail)}
                     className="share-remove-user"
+                    aria-label="Remove user from shared list"
                   >
                     <Image
                       src="/assets/icons/remove.svg"
-                      alt="Remove"
+                      alt=""
                       width={24}
                       height={24}
                       className="aspect-square rounded-full"
+                      aria-hidden="true"
                     />
                   </Button>
                 </li>
