@@ -17,6 +17,7 @@ export default function AuthFormField<T extends FieldValues>({
   placeholder,
   disabled,
   customComponent,
+  onInputChange,
 }: AuthFormFieldProps<T>) {
   return (
     <FormField
@@ -35,7 +36,13 @@ export default function AuthFormField<T extends FieldValues>({
                   className="shad-input"
                   type={type}
                   disabled={disabled}
+                  {...(type === "email" && { autoComplete: "email" })}
+                  {...(type === "username" && { autoComplete: "username" })}
                   {...field}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (onInputChange) onInputChange();
+                  }}
                 />
               )}
             </FormControl>
