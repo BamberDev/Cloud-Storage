@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "./ui/form";
 import { useCallback, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   createAccount,
@@ -18,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { TestAccountSelect } from "./TestAccountSelect";
 import AuthFormField from "./AuthFormField";
 import { authFormConfig } from "@/lib/authFormConfig";
+import Loader from "./Loader";
 
 const authFormSchema = (formType: FormType) => {
   return z.object({
@@ -164,16 +164,7 @@ export default function AuthForm({ type }: { type: FormType }) {
             aria-label="Submit form"
             disabled={isLoading}
           >
-            {isLoading && (
-              <Image
-                src="/assets/icons/loader.svg"
-                alt=""
-                width={24}
-                height={24}
-                className="animate-spin"
-                aria-hidden="true"
-              />
-            )}
+            {isLoading && <Loader />}
             {buttonText}
           </Button>
           {errorMessage && (
