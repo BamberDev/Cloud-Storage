@@ -151,7 +151,7 @@ export default function ActionDropdown({
         <DropdownMenuTrigger className="shad-no-focus">
           <Image
             src="/assets/icons/dots.svg"
-            alt="dots icon"
+            alt="Dots icon"
             width={34}
             height={34}
           />
