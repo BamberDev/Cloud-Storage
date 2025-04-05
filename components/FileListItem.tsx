@@ -13,8 +13,18 @@ const FileListItem = memo(function FileListItem({
   currentUser: { $id: string };
 }) {
   return (
-    <Link href={file.url} target="_blank" className="flex items-center gap-3">
-      <Thumbnail type={file.type} extension={file.extension} url={file.url} />
+    <Link
+      href={file.url}
+      target="_blank"
+      className="flex items-center gap-3"
+      aria-label={`Open file ${file.name} in a new tab`}
+    >
+      <Thumbnail
+        type={file.type}
+        extension={file.extension}
+        url={file.url}
+        alt={`Thumbnail for ${file.name}`}
+      />
       <div className="recent-file-details">
         <div className="flex flex-col gap-1 min-w-0">
           <p className="recent-file-name">{file.name}</p>
