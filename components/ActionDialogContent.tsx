@@ -9,7 +9,7 @@ import { Input } from "./ui/input";
 import { ChangeEvent } from "react";
 import { FileDetails, ShareFile } from "./ActionsContent";
 import { Button } from "./ui/button";
-import Image from "next/image";
+import Loader from "./Loader";
 
 export default function ActionDialogContent({
   action,
@@ -89,16 +89,7 @@ export default function ActionDialogContent({
               aria-label="Submit action"
               disabled={isLoading}
             >
-              {isLoading && (
-                <Image
-                  src="/assets/icons/loader.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                  className="animate-spin"
-                  aria-hidden="true"
-                />
-              )}
+              {isLoading && <Loader />}
               <span className="capitalize">
                 {isLoading
                   ? `${action.value.slice(0, -1)}ing...`
