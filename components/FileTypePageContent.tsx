@@ -45,13 +45,15 @@ export default function FileTypePageContent({
         </div>
       </section>
       {files.documents.length > 0 ? (
-        <section className="file-list">
+        <section className="file-list" aria-label={`List of ${type} files`}>
           {files.documents.map((file: Models.Document) => (
             <FileCard key={file.$id} file={file} currentUser={currentUser} />
           ))}
         </section>
       ) : (
-        <p className="empty-list">No files found</p>
+        <p className="empty-list" role="status" aria-live="polite">
+          No files found
+        </p>
       )}
     </div>
   );
