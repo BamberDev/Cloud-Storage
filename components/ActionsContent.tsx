@@ -9,7 +9,12 @@ import { memo } from "react";
 
 const ImageThumbnail = ({ file }: { file: Models.Document }) => (
   <div className="file-details-thumbnail">
-    <Thumbnail type={file.type} extension={file.extension} url={file.url} />
+    <Thumbnail
+      type={file.type}
+      extension={file.extension}
+      url={file.url}
+      alt={`Thumbnail for ${file.name}`}
+    />
     <div className="flex flex-col">
       <p className="file-details-name">{file.name}</p>
       <FormattedDateTime date={file.$createdAt} />
