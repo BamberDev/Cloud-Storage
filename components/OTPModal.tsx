@@ -20,6 +20,7 @@ import { Button } from "./ui/button";
 import { sendEmailOTP, verifySecret } from "@/lib/actions/user.actions";
 import { useRouter } from "next/navigation";
 import { CheckIcon } from "lucide-react";
+import Loader from "./Loader";
 
 export default function OTPModal({
   email,
@@ -82,7 +83,7 @@ export default function OTPModal({
             Enter Your OTP
             <Image
               src="/assets/icons/close-dark.svg"
-              alt="close"
+              alt="Close icon"
               width={20}
               height={20}
               onClick={() => setIsOpen(false)}
@@ -113,16 +114,11 @@ export default function OTPModal({
               className="primary-btn h-[52px]"
               disabled={isLoading}
               type="button"
+              aria-label="Submit OTP"
             >
               {isLoading ? (
                 <>
-                  <Image
-                    src="/assets/icons/loader.svg"
-                    alt="loader"
-                    width={24}
-                    height={24}
-                    className="animate-spin"
-                  />
+                  <Loader />
                   Submiting...
                 </>
               ) : (
@@ -131,7 +127,9 @@ export default function OTPModal({
             </AlertDialogAction>
             <div className="subtitle-2 mt-2 text-center">
               {errorMessage && (
-                <p className="error-message mb-2">{errorMessage}</p>
+                <p className="error-message mb-2" role="alert">
+                  {errorMessage}
+                </p>
               )}
               <span>Didn&apos;t receive the code?</span>
               <Button
@@ -140,6 +138,7 @@ export default function OTPModal({
                 className="px-1 underline-offset-1 underline font-bold text-brand"
                 disabled={resent}
                 onClick={handleResendOTP}
+                aria-label="Resend OTP code"
               >
                 Resend{resent && <CheckIcon size={16} />}
               </Button>
