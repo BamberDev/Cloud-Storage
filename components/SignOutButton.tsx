@@ -17,10 +17,11 @@ export default function SignOutButton() {
           type="button"
           className="sign-out-button"
           onClick={() => setIsLogoutModalOpen(true)}
+          aria-label="Sign out"
         >
           <Image
             src="/assets/icons/logout.png"
-            alt="sign-out"
+            alt="Logout icon"
             width={64}
             height={64}
             className="w-8"
