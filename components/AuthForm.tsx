@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "./ui/form";
 import { useCallback, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   createAccount,
@@ -18,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { TestAccountSelect } from "./TestAccountSelect";
 import AuthFormField from "./AuthFormField";
 import { authFormConfig } from "@/lib/authFormConfig";
+import Loader from "./Loader";
 
 const authFormSchema = (formType: FormType) => {
   return z.object({
@@ -101,6 +101,16 @@ export default function AuthForm({ type }: { type: FormType }) {
     [type, router]
   );
 
+  const handleClearFormError = useCallback(
+    (fieldName: string) => {
+      if (fieldName === "email" || fieldName === "username") {
+        form.clearErrors(fieldName);
+        setErrorMessage("");
+      }
+    },
+    [form]
+  );
+
   const handleTestAccountSelect = useCallback(
     (email: string, password: string) => {
       form.setValue("email", email);
@@ -112,7 +122,11 @@ export default function AuthForm({ type }: { type: FormType }) {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="auth-form"
+          aria-label="Authentication form"
+        >
           <h1 className="form-title">{formTitle}</h1>
           {type === "sign-up" && (
             <AuthFormField
@@ -121,6 +135,7 @@ export default function AuthForm({ type }: { type: FormType }) {
               label="Username"
               placeholder="Enter your username"
               disabled={isLoading}
+              onInputChange={() => handleClearFormError("username")}
             />
           )}
           {type === "test-account" ? (
@@ -140,36 +155,42 @@ export default function AuthForm({ type }: { type: FormType }) {
               type="email"
               placeholder="Enter your email address"
               disabled={isLoading}
+              onInputChange={() => handleClearFormError("email")}
             />
           )}
           <Button
             type="submit"
             className="form-submit-button"
+            aria-label="Submit form"
             disabled={isLoading}
           >
-            {isLoading && (
-              <Image
-                src="/assets/icons/loader.svg"
-                alt="loader"
-                width={24}
-                height={24}
-                className="animate-spin"
-              />
-            )}
+            {isLoading && <Loader />}
             {buttonText}
           </Button>
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
+          {errorMessage && (
+            <p className="error-message" role="alert">
+              {errorMessage}
+            </p>
+          )}
           <div>
             <div className="body-2 flex justify-center">
               <p>{linkInfo.text}</p>
-              <Link href={linkInfo.href} className="ml-1 font-medium underline">
+              <Link
+                href={linkInfo.href}
+                className="ml-1 font-medium underline"
+                aria-label={linkInfo.buttonText}
+              >
                 {linkInfo.buttonText}
               </Link>
             </div>
             {type !== "test-account" && (
               <div className="text-center body-2">
                 <p className="my-3">OR</p>
-                <Link href="/test-account" className="font-medium underline">
+                <Link
+                  href="/test-account"
+                  className="font-medium underline"
+                  aria-label="Try test account"
+                >
                   Try Test Account
                 </Link>
               </div>

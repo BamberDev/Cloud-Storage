@@ -8,7 +8,10 @@ export default function FormattedDateTime({
   className?: string;
 }) {
   return (
-    <p className={cn("caption text-light-200", className)}>
+    <p
+      className={cn("caption text-light-200", className)}
+      aria-label={`Date and time: ${formatDateTime(date)}`}
+    >
       {formatDateTime(date)}
     </p>
   );

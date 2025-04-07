@@ -33,7 +33,13 @@ export default function NavItems({
   return (
     <ul className={getListClasses()}>
       {navItems.map(({ url, name, icon }) => (
-        <Link href={url} key={name} className="lg:w-full" onClick={onItemClick}>
+        <Link
+          href={url}
+          key={name}
+          className="lg:w-full"
+          onClick={onItemClick}
+          aria-label={`Go to ${name} page`}
+        >
           <li className={getItemClasses(pathname === url)}>
             <Image
               src={icon}

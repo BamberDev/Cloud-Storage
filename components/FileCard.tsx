@@ -14,12 +14,18 @@ const FileCard = memo(function FileCard({
   currentUser: { $id: string };
 }) {
   return (
-    <Link href={file.url} target="_blank" className="file-card">
+    <Link
+      href={file.url}
+      target="_blank"
+      className="file-card"
+      aria-label={`Open file ${file.name} in a new tab`}
+    >
       <div className="flex justify-between">
         <Thumbnail
           type={file.type}
           extension={file.extension}
           url={file.url}
+          alt={`Thumbnail for ${file.name}`}
           className="!size-20"
           imageClassName="!size-11"
         />
@@ -30,7 +36,7 @@ const FileCard = memo(function FileCard({
       </div>
 
       <div className="file-card-details">
-        <p className="subtitle-1 line-clamp-1">{file.name}</p>
+        <h2 className="subtitle-1 line-clamp-1">{file.name}</h2>
         <FormattedDateTime date={file.$createdAt} />
         <p className="caption truncate text-light-200">
           By: {file.owner.username}

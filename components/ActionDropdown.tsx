@@ -151,7 +151,7 @@ export default function ActionDropdown({
         <DropdownMenuTrigger className="shad-no-focus">
           <Image
             src="/assets/icons/dots.svg"
-            alt="dots"
+            alt="Dots icon"
             width={34}
             height={34}
           />
@@ -186,9 +186,10 @@ export default function ActionDropdown({
                 <div className="flex items-center gap-2">
                   <Image
                     src={actionItem.icon}
-                    alt={actionItem.label}
+                    alt=""
                     width={30}
                     height={30}
+                    aria-hidden="true"
                   />
                   {actionItem.value === "download" ? (
                     <Link
@@ -196,11 +197,12 @@ export default function ActionDropdown({
                       target="_blank"
                       download={file.name}
                       className="flex items-center"
+                      aria-label="Download file"
                     >
                       {actionItem.label}
                     </Link>
                   ) : (
-                    <p>{actionItem.label}</p>
+                    <span>{actionItem.label}</span>
                   )}
                 </div>
               </DropdownMenuItem>

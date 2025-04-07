@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { signOutUser } from "@/lib/actions/user.actions";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useErrorToast } from "@/hooks/useErrorToast";
+import Loader from "./Loader";
 
 export default function LogoutDialog({
   trigger,
@@ -53,6 +53,7 @@ export default function LogoutDialog({
             className="modal-cancel-button"
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
+            aria-label="Cancel sign out"
           >
             Cancel
           </Button>
@@ -60,16 +61,11 @@ export default function LogoutDialog({
             onClick={handleLogout}
             className="modal-submit-button"
             disabled={isLoading}
+            aria-label="Confirm sign out"
           >
             {isLoading ? (
               <>
-                <Image
-                  src="/assets/icons/loader.svg"
-                  alt="loader"
-                  width={24}
-                  height={24}
-                  className="animate-spin"
-                />
+                <Loader />
                 Signing Out...
               </>
             ) : (

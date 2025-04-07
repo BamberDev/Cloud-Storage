@@ -78,6 +78,7 @@ type SidebarProps = {
 type ThumbnailProps = {
   type: string;
   extension: string;
+  alt: string;
   url?: string;
   className?: string;
   imageClassName?: string;
@@ -88,6 +89,7 @@ type ShareFileProps = {
   email: string;
   onEmailChange: (email: string) => void;
   onRemove: (email: string) => void;
+  handleAction: () => void;
 };
 
 type LogoutDialogProps = {
@@ -130,15 +132,14 @@ type SummaryCardProps = {
 };
 
 type AuthFormFieldProps<T extends FieldValues> = {
-  form: {
-    control: Control<T>;
-  };
-  name: Path<T>;
+  form: UseFormReturn<T>;
+  name: string;
   label: string;
   type?: string;
   placeholder?: string;
   disabled?: boolean;
   customComponent?: React.ReactNode;
+  onInputChange?: () => void;
 };
 
 type ActionDialogContentProps = {

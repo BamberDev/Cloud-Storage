@@ -63,22 +63,24 @@ const FileUploader = memo(function FileUploader({
 
   return (
     <div {...getRootProps()}>
-      <input {...getInputProps()} />
+      <input {...getInputProps()} aria-label="File upload input" />
       <Button
         type="button"
         className={cn("uploader-button", className)}
         onClick={open}
+        aria-label="Click to open file picker to upload files"
       >
         <Image
           src="/assets/icons/upload.svg"
-          alt="upload"
+          alt=""
           width={24}
           height={24}
+          aria-hidden="true"
         />
         <p className="h5">Upload</p>
       </Button>
       {files.length > 0 && (
-        <ul className="uploader-preview-list">
+        <ul className="uploader-preview-list" aria-label="Uploading files list">
           <h4 className="h4">Uploading...</h4>
           {files.map((file, index) => {
             const { type, extension } = getFileType(file.name);
@@ -86,12 +88,14 @@ const FileUploader = memo(function FileUploader({
               <li
                 key={`${index}-${file.name}`}
                 className="uploader-preview-item"
+                aria-label={`Uploading ${file.name}`}
               >
                 <div className="uploader-preview-thumbnail">
                   <Thumbnail
                     type={type}
                     extension={extension}
                     url={convertFileToUrl(file)}
+                    alt={`Thumbnail for ${file.name}`}
                   />
                   <p className="ml-2 truncate">{file.name}</p>
                 </div>

@@ -34,7 +34,10 @@ export default function DashboardPageContent({
         </ul>
       </section>
 
-      <section className="dashboard-recent-files">
+      <section
+        className="dashboard-recent-files"
+        aria-label={`List of recently uploaded files`}
+      >
         <h2 className="h3 xl:h2">Recently uploaded</h2>
         {recentFiles.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">
@@ -47,7 +50,9 @@ export default function DashboardPageContent({
             ))}
           </ul>
         ) : (
-          <p className="empty-list">No files uploaded</p>
+          <p className="empty-list" role="status" aria-live="polite">
+            No files uploaded
+          </p>
         )}
       </section>
     </div>

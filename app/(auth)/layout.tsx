@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex flex-col max-h-[800px] max-w-[600px] justify-center items-center space-y-12">
           <Image
             src="/assets/images/logo-white.png"
-            alt="logo"
+            alt="Brand logo"
             width={725}
             height={250}
             priority
@@ -32,7 +32,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="mb-16 lg:hidden">
           <Image
             src="/assets/images/logo-dark.png"
-            alt="logo"
+            alt="Brand logo"
             width={725}
             height={250}
             priority

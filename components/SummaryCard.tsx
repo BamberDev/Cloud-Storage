@@ -11,6 +11,7 @@ const SummaryCard = memo(function SummaryCard({ summary }: SummaryCardProps) {
       href={summary.url}
       key={summary.title}
       className="dashboard-summary-card"
+      aria-label={`View summary details for ${summary.title}`}
     >
       <div className="space-y-4">
         <div className="flex justify-between gap-3">

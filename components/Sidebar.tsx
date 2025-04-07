@@ -7,10 +7,10 @@ import NavItems from "./NavItems";
 export default function Sidebar({ username, email, avatar }: SidebarProps) {
   return (
     <aside className="sidebar">
-      <Link href="/" className="flex-center">
+      <Link href="/" className="flex-center" aria-label="Go to home page">
         <Image
           src="/assets/images/logo-dark.png"
-          alt="logo"
+          alt="Brand logo"
           width={725}
           height={250}
           priority
@@ -18,20 +18,20 @@ export default function Sidebar({ username, email, avatar }: SidebarProps) {
         />
         <Image
           src="/assets/images/logo-icon.png"
-          alt="logo"
+          alt="Brand logo"
           width={100}
           height={100}
           className="lg:hidden h-[52px] w-auto"
         />
       </Link>
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Main navigation">
         <NavItems variant="sidebar" showLabels={true} />
       </nav>
 
       <div className="sidebar-user-info">
         <Image
           src={avatar}
-          alt="avatar"
+          alt="User avatar"
           width={44}
           height={44}
           className="sidebar-user-avatar"

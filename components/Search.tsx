@@ -87,7 +87,7 @@ export default function Search({ className }: { className?: string }) {
       <div className="search-input-wrapper">
         <Image
           src="/assets/icons/search.svg"
-          alt="Search"
+          alt="Search icon"
           width={24}
           height={24}
         />
@@ -97,24 +97,30 @@ export default function Search({ className }: { className?: string }) {
           className="search-input"
           tabIndex={-1}
           onChange={(e) => setQuery(e.target.value)}
+          aria-label="Search files"
         />
         {query && (
-          <button onClick={clearSearch}>
+          <button onClick={clearSearch} aria-label="Clear search">
             <XIcon size={24} />
           </button>
         )}
         {open && (
           <ul className="search-result">
             {isLoading ? (
-              <p className="empty-result">Searching...</p>
+              <p className="empty-result" role="status" aria-live="polite">
+                Searching...
+              </p>
             ) : error ? (
-              <p className="error-message">{error}</p>
+              <p className="error-message" role="alert">
+                {error}
+              </p>
             ) : results.length > 0 ? (
               results.map((file) => (
                 <li
                   className="flex items-center justify-between cursor-pointer"
                   key={file.$id}
                   onClick={() => handleClickItem(file)}
+                  aria-label={`View details for ${file.name}`}
                 >
                   <div className="flex items-center gap-4">
                     <Thumbnail
@@ -122,6 +128,7 @@ export default function Search({ className }: { className?: string }) {
                       extension={file.extension}
                       url={file.url}
                       className="size-9 min-w-9"
+                      alt={`Thumbnail for ${file.name}`}
                     />
                     <p className="subtitle-2 line-clamp-1">{file.name}</p>
                   </div>
@@ -133,7 +140,9 @@ export default function Search({ className }: { className?: string }) {
                 </li>
               ))
             ) : (
-              <p className="empty-result">No matching files found</p>
+              <p className="empty-result" role="status" aria-live="polite">
+                No matching files found
+              </p>
             )}
           </ul>
         )}
