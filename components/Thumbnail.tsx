@@ -7,6 +7,7 @@ export default function Thumbnail({
   url = "",
   imageClassName,
   className,
+  alt,
 }: ThumbnailProps) {
   const isImage = type === "image" && extension !== "svg";
 
@@ -14,7 +15,7 @@ export default function Thumbnail({
     <figure className={cn("thumbnail", className)}>
       <Image
         src={isImage ? url : getFileIcon(extension, type)}
-        alt="thumbnail"
+        alt={alt}
         width={100}
         height={100}
         className={cn(
