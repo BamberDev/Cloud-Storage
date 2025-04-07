@@ -78,6 +78,7 @@ type SidebarProps = {
 type ThumbnailProps = {
   type: string;
   extension: string;
+  alt: string;
   url?: string;
   className?: string;
   imageClassName?: string;
