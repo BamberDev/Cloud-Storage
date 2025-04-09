@@ -3,6 +3,14 @@ import { getCurrentUser } from "@/lib/actions/user.actions";
 import DashboardPageContent from "@/components/DashboardPageContent";
 import { fallbackFiles, fallbackTotalSpace } from "@/lib/utils";
 
+export function generateMetadata() {
+  return {
+    title: "Dashboard | Cloud Storage",
+    description:
+      "Welcome to your Cloud Storage dashboard. Here you can view your files, manage your storage, and access all features of your account.",
+  };
+}
+
 export default async function DashboardPage() {
   const currentUser = await getCurrentUser();
 
