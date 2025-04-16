@@ -201,7 +201,7 @@ export const deleteFile = async ({
   }
 };
 
-export async function getTotalSpaceUsed() {
+export const getTotalSpaceUsed = async () => {
   try {
     const { databases } = await createAdminClient();
     const currentUser = await getCurrentUser();
@@ -240,4 +240,4 @@ export async function getTotalSpaceUsed() {
   } catch (error) {
     handleError(error, "Error calculating total space used");
   }
-}
+};
