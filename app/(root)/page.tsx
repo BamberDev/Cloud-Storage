@@ -17,8 +17,13 @@ export default async function DashboardPage() {
   if (!currentUser) return null;
 
   const [filesResult, totalSpaceResult] = await Promise.allSettled([
-    getFiles({ types: [], limit: 10 }),
-    getTotalSpaceUsed(),
+    getFiles({
+      types: [],
+      limit: 10,
+      userId: currentUser.$id,
+      userEmail: currentUser.email,
+    }),
+    getTotalSpaceUsed({ userId: currentUser.$id }),
   ]);
 
   const files =
