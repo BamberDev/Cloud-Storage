@@ -11,6 +11,7 @@ import {
 } from "../utils";
 import { cookies } from "next/headers";
 import { avatarPlaceholderUrl } from "@/constants";
+import { cache } from "react";
 
 const getUserByEmail = async (email: string) => {
   const { databases } = await createAdminClient();
@@ -101,7 +102,7 @@ export const verifySecret = async ({
   }
 };
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = cache(async () => {
   try {
     const { databases, account } = await createSessionClient();
     const result = await account.get();
@@ -121,8 +122,9 @@ export const getCurrentUser = async () => {
     }
 
     handleError(error, "Failed to get current user");
+    return null;
   }
-};
+});
 
 export const signInUser = async ({ email }: { email: string }) => {
   try {

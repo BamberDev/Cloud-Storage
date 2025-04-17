@@ -27,6 +27,8 @@ type GetFilesProps = {
   searchText?: string;
   sort?: string;
   limit?: number;
+  userId: string;
+  userEmail: string;
 };
 
 type RenameFileProps = {

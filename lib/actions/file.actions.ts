@@ -10,8 +10,24 @@ import {
   parseStringify,
 } from "../utils";
 import { revalidatePath } from "next/cache";
-import { ID, Models, Query } from "node-appwrite";
-import { getCurrentUser } from "./user.actions";
+import { ID, Query } from "node-appwrite";
+import { cache } from "react";
+
+const fallbackFiles = () => {
+  return parseStringify({ documents: [] });
+};
+
+const fallbackTotalSpace = () => {
+  return parseStringify({
+    image: { size: 0, latestDate: "" },
+    document: { size: 0, latestDate: "" },
+    video: { size: 0, latestDate: "" },
+    audio: { size: 0, latestDate: "" },
+    other: { size: 0, latestDate: "" },
+    used: 0,
+    all: 1_000_000_000,
+  });
+};
 
 export const uploadFile = async ({
   file,
@@ -23,7 +39,7 @@ export const uploadFile = async ({
 
   try {
     const inputFile = InputFile.fromBuffer(file, file.name);
-    const totalSpaceUsed = await getTotalSpaceUsed();
+    const totalSpaceUsed = await getTotalSpaceUsed({ userId: ownerId });
     const remainingSpace = totalSpaceUsed.all - totalSpaceUsed.used;
 
     if (file.size > remainingSpace) {
@@ -68,7 +84,8 @@ export const uploadFile = async ({
 };
 
 const createQueries = (
-  currentUser: Models.Document,
+  userId: string,
+  userEmail: string,
   types: string[],
   searchText: string,
   sort: string,
@@ -76,8 +93,8 @@ const createQueries = (
 ) => {
   const queries = [
     Query.or([
-      Query.equal("owner", [currentUser.$id]),
-      Query.contains("users", [currentUser.email]),
+      Query.equal("owner", [userId]),
+      Query.contains("users", [userEmail]),
     ]),
   ];
 
@@ -99,32 +116,42 @@ const createQueries = (
   return queries;
 };
 
-export const getFiles = async ({
-  types = [],
-  searchText = "",
-  sort = "$createdAt-desc",
-  limit,
-}: GetFilesProps) => {
-  const { databases } = await createAdminClient();
+export const getFiles = cache(
+  async ({
+    types = [],
+    searchText = "",
+    sort = "$createdAt-desc",
+    limit,
+    userId,
+    userEmail,
+  }: GetFilesProps) => {
+    const { databases } = await createAdminClient();
 
-  try {
-    const currentUser = await getCurrentUser();
+    try {
+      if (!userId || !userEmail) return fallbackFiles();
 
-    if (!currentUser) throw new Error("User not found");
+      const queries = createQueries(
+        userId,
+        userEmail,
+        types,
+        searchText,
+        sort,
+        limit
+      );
 
-    const queries = createQueries(currentUser, types, searchText, sort, limit);
+      const files = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.filesCollectionId,
+        queries
+      );
 
-    const files = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.filesCollectionId,
-      queries
-    );
-
-    return parseStringify(files);
-  } catch (error) {
-    handleError(error, "Failed to get files");
+      return parseStringify(files);
+    } catch (error) {
+      handleError(error, "Failed to get files");
+      return fallbackFiles();
+    }
   }
-};
+);
 
 export const renameFile = async ({
   fileId,
@@ -201,43 +228,45 @@ export const deleteFile = async ({
   }
 };
 
-export async function getTotalSpaceUsed() {
-  try {
-    const { databases } = await createAdminClient();
-    const currentUser = await getCurrentUser();
-    if (!currentUser) throw new Error("User is not authenticated.");
+export const getTotalSpaceUsed = cache(
+  async ({ userId }: { userId: string }) => {
+    try {
+      const { databases } = await createAdminClient();
+      if (!userId) return fallbackTotalSpace();
 
-    const files = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.filesCollectionId,
-      [Query.equal("owner", [currentUser.$id])]
-    );
+      const files = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.filesCollectionId,
+        [Query.equal("owner", [userId])]
+      );
 
-    const totalSpace = {
-      image: { size: 0, latestDate: "" },
-      document: { size: 0, latestDate: "" },
-      video: { size: 0, latestDate: "" },
-      audio: { size: 0, latestDate: "" },
-      other: { size: 0, latestDate: "" },
-      used: 0,
-      all: 1_000_000_000, // Exactly 1GB (To show it in the chart)
-    };
+      const totalSpace = {
+        image: { size: 0, latestDate: "" },
+        document: { size: 0, latestDate: "" },
+        video: { size: 0, latestDate: "" },
+        audio: { size: 0, latestDate: "" },
+        other: { size: 0, latestDate: "" },
+        used: 0,
+        all: 1_000_000_000, // Exactly 1GB (To show it in the chart)
+      };
 
-    files.documents.forEach((file) => {
-      const fileType = file.type as FileType;
-      totalSpace[fileType].size += file.size;
-      totalSpace.used += file.size;
+      files.documents.forEach((file) => {
+        const fileType = file.type as FileType;
+        totalSpace[fileType].size += file.size;
+        totalSpace.used += file.size;
 
-      if (
-        !totalSpace[fileType].latestDate ||
-        new Date(file.$updatedAt) > new Date(totalSpace[fileType].latestDate)
-      ) {
-        totalSpace[fileType].latestDate = file.$updatedAt;
-      }
-    });
+        if (
+          !totalSpace[fileType].latestDate ||
+          new Date(file.$updatedAt) > new Date(totalSpace[fileType].latestDate)
+        ) {
+          totalSpace[fileType].latestDate = file.$updatedAt;
+        }
+      });
 
-    return parseStringify(totalSpace);
-  } catch (error) {
-    handleError(error, "Error calculating total space used");
+      return parseStringify(totalSpace);
+    } catch (error) {
+      handleError(error, "Error calculating total space used");
+      return fallbackTotalSpace();
+    }
   }
-}
+);

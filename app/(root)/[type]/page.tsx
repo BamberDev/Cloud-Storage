@@ -34,8 +34,14 @@ export default async function FileTypePage({
 
   const types = getFileTypesParams(type) as FileType[];
   const [filesResult, totalSpaceResult] = await Promise.allSettled([
-    getFiles({ types, searchText, sort }),
-    getTotalSpaceUsed(),
+    getFiles({
+      types,
+      searchText,
+      sort,
+      userId: currentUser.$id,
+      userEmail: currentUser.email,
+    }),
+    getTotalSpaceUsed({ userId: currentUser.$id }),
   ]);
 
   const files =
