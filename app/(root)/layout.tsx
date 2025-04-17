@@ -24,7 +24,7 @@ export default async function layout({
         <MobileNavigation {...currentUser} />
         <Header {...currentUser} />
         <div className="main-content">
-          <Search className="block pb-5 sm:hidden" />
+          <Search {...currentUser} className="block pb-5 sm:hidden" />
           {children}
         </div>
       </section>
