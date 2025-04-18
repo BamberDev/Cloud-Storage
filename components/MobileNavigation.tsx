@@ -17,8 +17,6 @@ import LogoutDialog from "./LogoutDialog";
 import NavItems from "./NavItems";
 
 export default function MobileNavigation({
-  $id: ownerId,
-  accountId,
   username,
   email,
   avatar,
@@ -69,7 +67,7 @@ export default function MobileNavigation({
           </nav>
           <Separator className="my-4 bg-light-200/20" />
           <div className="flex flex-col justify-between gap-4">
-            <FileUploader ownerId={ownerId} accountId={accountId} />
+            <FileUploader />
             <LogoutDialog
               isOpen={isLogoutModalOpen}
               onOpenChange={setIsLogoutModalOpen}
