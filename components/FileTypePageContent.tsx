@@ -11,7 +11,6 @@ export default function FileTypePageContent({
   type = "",
   files,
   totalSpace,
-  currentUser,
   hasFileError,
   hasSpaceError,
 }: PageContentProps) {
@@ -47,7 +46,7 @@ export default function FileTypePageContent({
       {files.documents.length > 0 ? (
         <section className="file-list" aria-label={`List of ${type} files`}>
           {files.documents.map((file: Models.Document) => (
-            <FileCard key={file.$id} file={file} currentUser={currentUser} />
+            <FileCard key={file.$id} file={file} />
           ))}
         </section>
       ) : (

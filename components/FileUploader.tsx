@@ -11,15 +11,18 @@ import { usePathname } from "next/navigation";
 import { Loader2Icon } from "lucide-react";
 import { useFileUploader } from "@/hooks/useFileUploader";
 import { useErrorToast } from "@/hooks/useErrorToast";
+import { useUser } from "@/context/UserContext";
 
 const FileUploader = memo(function FileUploader({
-  ownerId,
-  accountId,
   className,
-}: FileUploaderProps) {
+}: {
+  className?: string;
+}) {
   const [files, setFiles] = useState<File[]>([]);
   const showErrorToast = useErrorToast();
   const path = usePathname();
+  const { currentUser } = useUser();
+  const { $id: ownerId, accountId } = currentUser;
 
   const clearUploads = useCallback((fileName: string) => {
     setFiles((prevFiles) =>

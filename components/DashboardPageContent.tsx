@@ -9,7 +9,6 @@ import { useMemo } from "react";
 import { usePageErrorToast } from "@/hooks/usePageErrorToast";
 
 export default function DashboardPageContent({
-  currentUser,
   files,
   totalSpace,
   hasFileError,
@@ -42,11 +41,7 @@ export default function DashboardPageContent({
         {recentFiles.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">
             {recentFiles.map((file: Models.Document) => (
-              <FileListItem
-                key={file.$id}
-                file={file}
-                currentUser={currentUser}
-              />
+              <FileListItem key={file.$id} file={file} />
             ))}
           </ul>
         ) : (

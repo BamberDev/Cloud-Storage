@@ -3,20 +3,12 @@ import FileUploader from "./FileUploader";
 import SignOutButton from "./SignOutButton";
 import { memo } from "react";
 
-const Header = memo(function Header({
-  $id: ownerId,
-  accountId,
-  email: userEmail,
-}: {
-  $id: string;
-  accountId: string;
-  email: string;
-}) {
+const Header = memo(function Header() {
   return (
     <header className="header">
-      <Search userId={ownerId} userEmail={userEmail} />
+      <Search />
       <div className="header-wrapper">
-        <FileUploader ownerId={ownerId} accountId={accountId} />
+        <FileUploader />
         <SignOutButton />
       </div>
     </header>

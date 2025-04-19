@@ -23,14 +23,9 @@ import {
 import { usePathname } from "next/navigation";
 import { z } from "zod";
 import ActionDialogContent from "./ActionDialogContent";
+import { useUser } from "@/context/UserContext";
 
-export default function ActionDropdown({
-  file,
-  currentUser,
-}: {
-  file: Models.Document;
-  currentUser: { $id: string };
-}) {
+export default function ActionDropdown({ file }: { file: Models.Document }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [action, setAction] = useState<ActionTypeProps | null>(null);
@@ -39,6 +34,7 @@ export default function ActionDropdown({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const path = usePathname();
+  const { currentUser } = useUser();
   const isOwner = file.owner.$id === currentUser.$id;
 
   const closeAllModals = useCallback(() => {

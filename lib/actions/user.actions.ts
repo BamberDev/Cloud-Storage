@@ -26,9 +26,8 @@ const getUserByEmail = async (email: string) => {
 };
 
 export const sendEmailOTP = async ({ email }: { email: string }) => {
-  const { account } = await createAdminClient();
-
   try {
+    const { account } = await createAdminClient();
     const session = await account.createEmailToken(ID.unique(), email);
     return parseStringify(session.userId);
   } catch (error) {
@@ -180,9 +179,8 @@ export const signInTestUser = async ({
 };
 
 export const signOutUser = async () => {
-  const { account } = await createSessionClient();
-
   try {
+    const { account } = await createSessionClient();
     await account.deleteSession("current");
     (await cookies()).delete("appwrite-session");
   } catch (error) {

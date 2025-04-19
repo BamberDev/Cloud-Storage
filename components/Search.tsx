@@ -10,16 +10,9 @@ import Thumbnail from "./Thumbnail";
 import FormattedDateTime from "./FormattedDateTime";
 import { useDebounce } from "use-debounce";
 import { XIcon } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
-export default function Search({
-  className,
-  userId,
-  userEmail,
-}: {
-  className?: string;
-  userId: string;
-  userEmail: string;
-}) {
+export default function Search({ className }: { className?: string }) {
   const [results, setResults] = useState<Models.Document[]>([]);
   const [open, setOpen] = useState(false);
   const searchParams = useSearchParams();
@@ -30,6 +23,7 @@ export default function Search({
   const router = useRouter();
   const path = usePathname();
   const [debouncedQuery] = useDebounce(query, 300);
+  const { currentUser } = useUser();
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -52,8 +46,8 @@ export default function Search({
         const files = await getFiles({
           types: [],
           searchText: debouncedQuery,
-          userId,
-          userEmail,
+          userId: currentUser.$id,
+          userEmail: currentUser.email,
         });
         setResults(files.documents);
       } catch {

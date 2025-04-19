@@ -7,10 +7,8 @@ import { memo } from "react";
 
 const FileListItem = memo(function FileListItem({
   file,
-  currentUser,
 }: {
   file: Models.Document;
-  currentUser: { $id: string };
 }) {
   return (
     <Link
@@ -31,7 +29,7 @@ const FileListItem = memo(function FileListItem({
           <FormattedDateTime date={file.$createdAt} />
         </div>
         <div className="flex items-center min-w-[34px]">
-          <ActionDropdown file={file} currentUser={currentUser} />
+          <ActionDropdown file={file} />
         </div>
       </div>
     </Link>

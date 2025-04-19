@@ -50,12 +50,6 @@ type DeleteFileProps = {
   path: string;
 };
 
-type FileUploaderProps = {
-  ownerId: string;
-  accountId: string;
-  className?: string;
-};
-
 type UseFileUploaderProps = {
   ownerId: string;
   accountId: string;
@@ -64,8 +58,6 @@ type UseFileUploaderProps = {
 };
 
 type MobileNavigationProps = {
-  $id: string;
-  accountId: string;
   username: string;
   avatar: string;
   email: string;
@@ -102,7 +94,6 @@ type LogoutDialogProps = {
 
 type PageContentProps = {
   type?: string;
-  currentUser: Models.User<Models.Preferences>;
   files: { documents: Models.Document[] };
   totalSpace: {
     image: { size: number; latestDate: string };

@@ -59,7 +59,6 @@ export default async function FileTypePage({
       type={type}
       files={files}
       totalSpace={totalSpace}
-      currentUser={currentUser}
       hasFileError={hasFileError}
       hasSpaceError={hasSpaceError}
     />
