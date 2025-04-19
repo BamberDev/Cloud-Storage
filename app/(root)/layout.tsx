@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/actions/user.actions";
 import { redirect } from "next/navigation";
 import { Toaster } from "@/components/ui/toaster";
 import Search from "@/components/Search";
+import { UserProvider } from "@/context/UserContext";
 
 export const dynamic = "force-dynamic";
 
@@ -18,17 +19,19 @@ export default async function layout({
   if (!currentUser) return redirect("/sign-in");
 
   return (
-    <main className="flex h-screen">
-      <Sidebar {...currentUser} />
-      <section className="flex h-full flex-1 flex-col">
-        <MobileNavigation {...currentUser} />
-        <Header {...currentUser} />
-        <div className="main-content">
-          <Search {...currentUser} className="block pb-5 sm:hidden" />
-          {children}
-        </div>
-      </section>
-      <Toaster />
-    </main>
+    <UserProvider currentUser={currentUser}>
+      <main className="flex h-screen">
+        <Sidebar {...currentUser} />
+        <section className="flex h-full flex-1 flex-col">
+          <MobileNavigation {...currentUser} />
+          <Header />
+          <div className="main-content">
+            <Search className="block pb-5 sm:hidden" />
+            {children}
+          </div>
+        </section>
+        <Toaster />
+      </main>
+    </UserProvider>
   );
 }
