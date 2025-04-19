@@ -35,9 +35,8 @@ export const uploadFile = async ({
   accountId,
   path,
 }: UploadFileProps) => {
-  const { storage, databases } = await createAdminClient();
-
   try {
+    const { storage, databases } = await createAdminClient();
     const inputFile = InputFile.fromBuffer(file, file.name);
     const totalSpaceUsed = await getTotalSpaceUsed({ userId: ownerId });
     const remainingSpace = totalSpaceUsed.all - totalSpaceUsed.used;
@@ -125,9 +124,9 @@ export const getFiles = cache(
     userId,
     userEmail,
   }: GetFilesProps) => {
-    const { databases } = await createAdminClient();
-
     try {
+      const { databases } = await createAdminClient();
+
       if (!userId || !userEmail) return fallbackFiles();
 
       const queries = createQueries(
@@ -159,9 +158,8 @@ export const renameFile = async ({
   extension,
   path,
 }: RenameFileProps) => {
-  const { databases } = await createAdminClient();
-
   try {
+    const { databases } = await createAdminClient();
     const newName = `${name}.${extension}`;
     const updatedFile = await databases.updateDocument(
       appwriteConfig.databaseId,
@@ -184,9 +182,8 @@ export const updateFileUsers = async ({
   emails,
   path,
 }: UpdateFileUsersProps) => {
-  const { databases } = await createAdminClient();
-
   try {
+    const { databases } = await createAdminClient();
     const updatedFile = await databases.updateDocument(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
@@ -208,9 +205,8 @@ export const deleteFile = async ({
   bucketFileId,
   path,
 }: DeleteFileProps) => {
-  const { databases, storage } = await createAdminClient();
-
   try {
+    const { databases, storage } = await createAdminClient();
     const deletedFile = await databases.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
@@ -232,6 +228,7 @@ export const getTotalSpaceUsed = cache(
   async ({ userId }: { userId: string }) => {
     try {
       const { databases } = await createAdminClient();
+
       if (!userId) return fallbackTotalSpace();
 
       const files = await databases.listDocuments(
