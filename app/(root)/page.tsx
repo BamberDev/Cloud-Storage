@@ -38,7 +38,6 @@ export default async function DashboardPage() {
 
   return (
     <DashboardPageContent
-      currentUser={currentUser}
       files={files}
       totalSpace={totalSpace}
       hasFileError={hasFileError}
