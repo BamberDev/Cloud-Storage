@@ -7,7 +7,7 @@ export default function FileTypeLoading() {
       <section className="w-full">
         <Skeleton className="h-[42px] w-48" />
         <div className="total-size-section">
-          <div className="flex items-center mt-2 sm:mt-0">
+          <div className="flex items-center">
             <p className="body-1">Total:</p>
             <Skeleton className="h-4 w-11 ml-1" />
           </div>
