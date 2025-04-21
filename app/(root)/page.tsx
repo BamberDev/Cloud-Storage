@@ -11,19 +11,21 @@ export function generateMetadata() {
   };
 }
 
-export default async function DashboardPage() {
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser) return null;
-
+async function DashboardData({
+  userId,
+  userEmail,
+}: {
+  userId: string;
+  userEmail: string;
+}) {
   const [filesResult, totalSpaceResult] = await Promise.allSettled([
     getFiles({
       types: [],
       limit: 10,
-      userId: currentUser.$id,
-      userEmail: currentUser.email,
+      userId,
+      userEmail,
     }),
-    getTotalSpaceUsed({ userId: currentUser.$id }),
+    getTotalSpaceUsed({ userId }),
   ]);
 
   const files =
@@ -43,5 +45,15 @@ export default async function DashboardPage() {
       hasFileError={hasFileError}
       hasSpaceError={hasSpaceError}
     />
+  );
+}
+
+export default async function DashboardPage() {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) return null;
+
+  return (
+    <DashboardData userId={currentUser.$id} userEmail={currentUser.email} />
   );
 }
