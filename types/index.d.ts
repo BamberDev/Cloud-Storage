@@ -156,3 +156,11 @@ type NavItemsProps = {
   variant: "mobile" | "sidebar";
   showLabels?: boolean;
 };
+
+type FileTypeDataProps = {
+  type: string;
+  searchText: string;
+  sort: string;
+  userId: string;
+  userEmail: string;
+};

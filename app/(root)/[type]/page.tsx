@@ -12,7 +12,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ type: string }>;
 }) {
-  const { type } = (await params) || "Files";
+  const resolvedParams = await params;
+  const type = resolvedParams?.type || "Files";
   const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
 
   return {
@@ -21,27 +22,23 @@ export async function generateMetadata({
   };
 }
 
-export default async function FileTypePage({
-  searchParams,
-  params,
-}: SearchParamProps) {
-  const type = ((await params)?.type as string) || "";
-  const searchText = ((await searchParams)?.query as string) || "";
-  const sort = ((await searchParams)?.sort as string) || "";
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser) return null;
-
+async function FileTypeData({
+  type,
+  searchText,
+  sort,
+  userId,
+  userEmail,
+}: FileTypeDataProps) {
   const types = getFileTypesParams(type) as FileType[];
   const [filesResult, totalSpaceResult] = await Promise.allSettled([
     getFiles({
       types,
       searchText,
       sort,
-      userId: currentUser.$id,
-      userEmail: currentUser.email,
+      userId,
+      userEmail,
     }),
-    getTotalSpaceUsed({ userId: currentUser.$id }),
+    getTotalSpaceUsed({ userId }),
   ]);
 
   const files =
@@ -61,6 +58,28 @@ export default async function FileTypePage({
       totalSpace={totalSpace}
       hasFileError={hasFileError}
       hasSpaceError={hasSpaceError}
+    />
+  );
+}
+
+export default async function FileTypePage({
+  searchParams,
+  params,
+}: SearchParamProps) {
+  const type = ((await params)?.type as string) || "";
+  const searchText = ((await searchParams)?.query as string) || "";
+  const sort = ((await searchParams)?.sort as string) || "";
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) return null;
+
+  return (
+    <FileTypeData
+      type={type}
+      searchText={searchText}
+      sort={sort}
+      userId={currentUser.$id}
+      userEmail={currentUser.email}
     />
   );
 }
