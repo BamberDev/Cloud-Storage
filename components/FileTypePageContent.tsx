@@ -4,7 +4,6 @@ import FileCard from "@/components/FileCard";
 import Sort from "@/components/Sort";
 import type { Models } from "node-appwrite";
 import { convertFileSize, getUsageSummary } from "@/lib/utils";
-import { useMemo } from "react";
 import { usePageErrorToast } from "@/hooks/usePageErrorToast";
 
 export default function FileTypePageContent({
@@ -15,16 +14,11 @@ export default function FileTypePageContent({
   hasSpaceError,
 }: PageContentProps) {
   usePageErrorToast(hasFileError, hasSpaceError);
-  const usageSummary = useMemo(() => getUsageSummary(totalSpace), [totalSpace]);
+  const usageSummary = getUsageSummary(totalSpace);
 
-  const currentTypeSummary = useMemo(
-    () =>
-      usageSummary.find(
-        (item) => item.title.toLowerCase() === type.toLowerCase()
-      ),
-    [usageSummary, type]
+  const currentTypeSummary = usageSummary.find(
+    (item) => item.title.toLowerCase() === type.toLowerCase()
   );
-
   const currentTypeSize = currentTypeSummary
     ? convertFileSize(currentTypeSummary.size)
     : "0";
