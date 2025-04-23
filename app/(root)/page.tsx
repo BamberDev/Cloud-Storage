@@ -21,7 +21,7 @@ async function DashboardData({
   const [filesResult, totalSpaceResult] = await Promise.allSettled([
     getFiles({
       types: [],
-      limit: 10,
+      limit: 14,
       userId,
       userEmail,
     }),
