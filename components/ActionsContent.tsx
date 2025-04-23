@@ -5,7 +5,6 @@ import { convertFileSize, formatDateTime } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { memo } from "react";
 
 const ImageThumbnail = ({ file }: { file: Models.Document }) => (
   <div className="file-details-thumbnail">
@@ -29,11 +28,7 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-export const FileDetails = memo(function FileDetails({
-  file,
-}: {
-  file: Models.Document;
-}) {
+export function FileDetails({ file }: { file: Models.Document }) {
   return (
     <>
       <ImageThumbnail file={file} />
@@ -45,9 +40,9 @@ export const FileDetails = memo(function FileDetails({
       </div>
     </>
   );
-});
+}
 
-export const ShareFile = memo(function ShareFile({
+export function ShareFile({
   file,
   email,
   onEmailChange,
@@ -120,4 +115,4 @@ export const ShareFile = memo(function ShareFile({
       </div>
     </>
   );
-});
+}
