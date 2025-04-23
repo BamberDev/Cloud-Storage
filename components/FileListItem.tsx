@@ -3,13 +3,8 @@ import { Models } from "node-appwrite";
 import Thumbnail from "./Thumbnail";
 import FormattedDateTime from "./FormattedDateTime";
 import ActionDropdown from "./ActionDropdown";
-import { memo } from "react";
 
-const FileListItem = memo(function FileListItem({
-  file,
-}: {
-  file: Models.Document;
-}) {
+export default function FileListItem({ file }: { file: Models.Document }) {
   return (
     <Link
       href={file.url}
@@ -34,6 +29,4 @@ const FileListItem = memo(function FileListItem({
       </div>
     </Link>
   );
-});
-
-export default FileListItem;
+}
