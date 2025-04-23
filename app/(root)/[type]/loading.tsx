@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Image from "next/image";
 
 export default function FileTypeLoading() {
@@ -13,7 +14,11 @@ export default function FileTypeLoading() {
           </div>
           <div className="sort-container">
             <p className="body-1 hidden sm:block">Sort by:</p>
-            <Skeleton className="h-11 w-full sm:w-[210px]" />
+            <Select>
+              <SelectTrigger className="sort-select">
+                <SelectValue placeholder="Date (newest)" />
+              </SelectTrigger>
+            </Select>
           </div>
         </div>
       </section>

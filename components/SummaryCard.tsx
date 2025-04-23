@@ -3,9 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
 import FormattedDateTime from "./FormattedDateTime";
-import { memo } from "react";
 
-const SummaryCard = memo(function SummaryCard({ summary }: SummaryCardProps) {
+export default function SummaryCard({ summary }: SummaryCardProps) {
   return (
     <Link
       href={summary.url}
@@ -32,6 +31,4 @@ const SummaryCard = memo(function SummaryCard({ summary }: SummaryCardProps) {
       </div>
     </Link>
   );
-});
-
-export default SummaryCard;
+}

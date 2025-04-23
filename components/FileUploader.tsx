@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState } from "react";
+import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "./ui/button";
 import { cn, convertFileToUrl, getFileType } from "@/lib/utils";
@@ -13,22 +13,18 @@ import { useFileUploader } from "@/hooks/useFileUploader";
 import { useErrorToast } from "@/hooks/useErrorToast";
 import { useUser } from "@/context/UserContext";
 
-const FileUploader = memo(function FileUploader({
-  className,
-}: {
-  className?: string;
-}) {
+export default function FileUploader({ className }: { className?: string }) {
   const [files, setFiles] = useState<File[]>([]);
   const showErrorToast = useErrorToast();
   const path = usePathname();
   const { currentUser } = useUser();
   const { $id: ownerId, accountId } = currentUser;
 
-  const clearUploads = useCallback((fileName: string) => {
+  const clearUploads = (fileName: string) => {
     setFiles((prevFiles) =>
       prevFiles.filter((prevFile) => prevFile.name !== fileName)
     );
-  }, []);
+  };
 
   const { uploadFiles } = useFileUploader({
     ownerId,
@@ -37,27 +33,24 @@ const FileUploader = memo(function FileUploader({
     onFileProcessed: clearUploads,
   });
 
-  const onDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      if (files.length + acceptedFiles.length > 10) {
-        showErrorToast("You can upload a maximum of 10 files at a time.");
-        return;
+  const onDrop = async (acceptedFiles: File[]) => {
+    if (files.length + acceptedFiles.length > 10) {
+      showErrorToast("You can upload a maximum of 10 files at a time.");
+      return;
+    }
+
+    const validFiles = acceptedFiles.filter((file) => {
+      if (file.size > MAX_FILE_SIZE) {
+        showErrorToast("File is too large. Max file size allowed - 45MB.");
+        return false;
       }
+      return true;
+    });
 
-      const validFiles = acceptedFiles.filter((file) => {
-        if (file.size > MAX_FILE_SIZE) {
-          showErrorToast("File is too large. Max file size allowed - 45MB.");
-          return false;
-        }
-        return true;
-      });
+    setFiles((prevFiles) => [...prevFiles, ...validFiles]);
 
-      setFiles((prevFiles) => [...prevFiles, ...validFiles]);
-
-      await uploadFiles(validFiles);
-    },
-    [files, showErrorToast, uploadFiles]
-  );
+    await uploadFiles(validFiles);
+  };
 
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
@@ -110,6 +103,4 @@ const FileUploader = memo(function FileUploader({
       )}
     </div>
   );
-});
-
-export default FileUploader;
+}
