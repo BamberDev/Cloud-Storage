@@ -1,9 +1,8 @@
 import Search from "./Search";
 import FileUploader from "./FileUploader";
 import SignOutButton from "./SignOutButton";
-import { memo } from "react";
 
-const Header = memo(function Header() {
+export default function Header() {
   return (
     <header className="header">
       <Search />
@@ -13,6 +12,4 @@ const Header = memo(function Header() {
       </div>
     </header>
   );
-});
-
-export default Header;
+}
