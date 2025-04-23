@@ -5,7 +5,6 @@ import { getUsageSummary } from "@/lib/utils";
 import { Models } from "node-appwrite";
 import SummaryCard from "./SummaryCard";
 import FileListItem from "./FileListItem";
-import { useMemo } from "react";
 import { usePageErrorToast } from "@/hooks/usePageErrorToast";
 
 export default function DashboardPageContent({
@@ -15,11 +14,8 @@ export default function DashboardPageContent({
   hasSpaceError,
 }: PageContentProps) {
   usePageErrorToast(hasFileError, hasSpaceError);
-  const usageSummary = useMemo(() => getUsageSummary(totalSpace), [totalSpace]);
-  const recentFiles = useMemo(
-    () => files.documents.slice(0, 14),
-    [files.documents]
-  );
+  const usageSummary = getUsageSummary(totalSpace);
+  const recentFiles = files.documents.slice(0, 14);
 
   return (
     <div className="dashboard-container">
