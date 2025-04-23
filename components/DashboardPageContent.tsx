@@ -17,7 +17,7 @@ export default function DashboardPageContent({
   usePageErrorToast(hasFileError, hasSpaceError);
   const usageSummary = useMemo(() => getUsageSummary(totalSpace), [totalSpace]);
   const recentFiles = useMemo(
-    () => files.documents.slice(0, 9),
+    () => files.documents.slice(0, 14),
     [files.documents]
   );
 
@@ -35,20 +35,22 @@ export default function DashboardPageContent({
 
       <section
         className="dashboard-recent-files"
-        aria-label={`List of recently uploaded files`}
+        aria-label="List of recently uploaded files"
       >
         <h2 className="h3 xl:h2">Recently uploaded</h2>
-        {recentFiles.length > 0 ? (
-          <ul className="mt-5 flex flex-col gap-5">
-            {recentFiles.map((file: Models.Document) => (
-              <FileListItem key={file.$id} file={file} />
-            ))}
-          </ul>
-        ) : (
-          <p className="empty-list" role="status" aria-live="polite">
-            No files uploaded
-          </p>
-        )}
+        <div className="overflow-y-auto xl:max-h-[630px]">
+          {recentFiles.length > 0 ? (
+            <ul className="mt-5 flex flex-col gap-5">
+              {recentFiles.map((file: Models.Document) => (
+                <FileListItem key={file.$id} file={file} />
+              ))}
+            </ul>
+          ) : (
+            <p className="empty-list" role="status" aria-live="polite">
+              No files uploaded
+            </p>
+          )}
+        </div>
       </section>
     </div>
   );
