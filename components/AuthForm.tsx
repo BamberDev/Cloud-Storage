@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "./ui/form";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   createAccount,
@@ -51,73 +51,64 @@ export default function AuthForm({ type }: { type: FormType }) {
     },
   });
 
-  const onSubmit = useCallback(
-    async (values: z.infer<typeof formSchema>) => {
-      setIsLoading(true);
-      setErrorMessage("");
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
+    setErrorMessage("");
 
-      try {
-        if (type === "test-account") {
-          await signInTestUser({
-            email: values.email,
-            password: values.password || "",
-          });
-          router.push("/");
+    try {
+      if (type === "test-account") {
+        await signInTestUser({
+          email: values.email,
+          password: values.password || "",
+        });
+        router.push("/");
+      } else {
+        const user =
+          type === "sign-up"
+            ? await createAccount({
+                username: values.username || "",
+                email: values.email,
+              })
+            : await signInUser({ email: values.email });
+
+        if (user) {
+          setAccountId(user.accountId);
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === "Account already exists") {
+          setErrorMessage("Account already exists.");
+        } else if (error.message === "Account does not exist") {
+          setErrorMessage("Account does not exist. Please sign up first.");
         } else {
-          const user =
-            type === "sign-up"
-              ? await createAccount({
-                  username: values.username || "",
-                  email: values.email,
-                })
-              : await signInUser({ email: values.email });
-
-          if (user) {
-            setAccountId(user.accountId);
-          }
+          setErrorMessage(
+            `${
+              type === "sign-in"
+                ? "Failed to sign in."
+                : type === "sign-up"
+                ? "Failed to create account."
+                : "Failed to sign in to test account."
+            } Please try again.`
+          );
         }
-      } catch (error) {
-        if (error instanceof Error) {
-          if (error.message === "Account already exists") {
-            setErrorMessage("Account already exists.");
-          } else if (error.message === "Account does not exist") {
-            setErrorMessage("Account does not exist. Please sign up first.");
-          } else {
-            setErrorMessage(
-              `${
-                type === "sign-in"
-                  ? "Failed to sign in."
-                  : type === "sign-up"
-                  ? "Failed to create account."
-                  : "Failed to sign in to test account."
-              } Please try again.`
-            );
-          }
-        }
-      } finally {
-        setIsLoading(false);
       }
-    },
-    [type, router]
-  );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const handleClearFormError = useCallback(
-    (fieldName: string) => {
-      if (fieldName === "email" || fieldName === "username") {
-        form.clearErrors(fieldName);
-        setErrorMessage("");
-      }
-    },
-    [form]
-  );
+  const handleClearFormError = (fieldName: string) => {
+    if (fieldName === "email" || fieldName === "username") {
+      form.clearErrors(fieldName);
+      setErrorMessage("");
+    }
+  };
 
-  const handleTestAccountSelect = useCallback(
-    (email: string, password: string) => {
-      form.setValue("email", email);
-      form.setValue("password", password);
-    },
-    [form]
-  );
+  const handleTestAccountSelect = (email: string, password: string) => {
+    form.setValue("email", email);
+    form.setValue("password", password);
+  };
 
   return (
     <>
