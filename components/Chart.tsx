@@ -16,7 +16,6 @@ import {
 } from "./ui/card";
 import { ChartContainer } from "./ui/chart";
 import { calculatePercentage, convertFileSize } from "@/lib/utils";
-import { memo } from "react";
 
 const chartConfig = {
   size: {
@@ -54,7 +53,7 @@ const ChartLabel = ({ viewBox, used, percentageUsed }: ChartLabelProps) => {
   );
 };
 
-const Chart = memo(function Chart({ used = 0 }: { used: number }) {
+export default function Chart({ used = 0 }: { used: number }) {
   const percentageUsed = calculatePercentage(used);
   const chartData = [
     { key: "storage", value: used, fill: chartConfig.used.color },
@@ -103,6 +102,4 @@ const Chart = memo(function Chart({ used = 0 }: { used: number }) {
       </CardHeader>
     </Card>
   );
-});
-
-export default Chart;
+}
