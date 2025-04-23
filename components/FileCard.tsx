@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { Models } from "node-appwrite";
-import { memo } from "react";
 import Thumbnail from "./Thumbnail";
 import { convertFileSize } from "@/lib/utils";
 import FormattedDateTime from "./FormattedDateTime";
 import ActionDropdown from "./ActionDropdown";
 
-const FileCard = memo(function FileCard({ file }: { file: Models.Document }) {
+export default function FileCard({ file }: { file: Models.Document }) {
   return (
     <Link
       href={file.url}
@@ -38,6 +37,4 @@ const FileCard = memo(function FileCard({ file }: { file: Models.Document }) {
       </div>
     </Link>
   );
-});
-
-export default FileCard;
+}
