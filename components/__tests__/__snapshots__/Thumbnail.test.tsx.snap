@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Thumbnail component matches snapshot for fallback icon 1`] = `
+<DocumentFragment>
+  <figure
+    class="thumbnail"
+  >
+    <img
+      alt="Text"
+      class="size-8 object-contain"
+      height="100"
+      src="/assets/icons/txt-file.svg"
+      width="100"
+    />
+  </figure>
+</DocumentFragment>
+`;
