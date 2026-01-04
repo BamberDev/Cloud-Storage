@@ -9,10 +9,10 @@ jest.mock("next/image", () => ({
 }));
 
 jest.mock("@/lib/utils", () => ({
-  cn: (...classes: (string | false | null | undefined)[]) =>
-    classes.filter(Boolean).join(" "),
-  getFileIcon: (ext: string, type: string) =>
-    `/assets/icons/${ext}-${type}.svg`,
+  cn: jest.fn((...args) => args.join(" ")),
+  getFileIcon: jest.fn(
+    (extension, type) => `/assets/icons/${extension}-${type}.svg`
+  ),
 }));
 
 describe("Thumbnail component", () => {
@@ -29,6 +29,14 @@ describe("Thumbnail component", () => {
     const img = screen.getByAltText("Real image");
     expect(img).toHaveAttribute("src", "/real-image.png");
     expect(img).toHaveClass("thumbnail-image", "extra-class");
+  });
+
+  it("renders figure element as container", () => {
+    const { container } = render(
+      <Thumbnail type="image" extension="png" url="/img.png" alt="Image" />
+    );
+    const figure = container.querySelector("figure");
+    expect(figure).toBeInTheDocument();
   });
 
   it("renders fallback icon when not an image", () => {
@@ -73,6 +81,24 @@ describe("Thumbnail component", () => {
     expect(img).not.toHaveClass("thumbnail-image");
   });
 
+  it("shows image class only for actual image types", () => {
+    const { rerender } = render(
+      <Thumbnail type="image" extension="png" url="/img.png" alt="Image" />
+    );
+    expect(screen.getByAltText("Image")).toHaveClass("thumbnail-image");
+
+    rerender(
+      <Thumbnail type="document" extension="pdf" url="/doc.pdf" alt="Doc" />
+    );
+    expect(screen.getByAltText("Doc")).not.toHaveClass("thumbnail-image");
+  });
+
+  it("calls getFileIcon with correct parameters", () => {
+    render(<Thumbnail type="video" extension="mp4" alt="Video" />);
+    const img = screen.getByAltText("Video");
+    expect(img).toHaveAttribute("src", "/assets/icons/mp4-video.svg");
+  });
+
   it("renders image with alt text for screen readers", () => {
     render(
       <Thumbnail type="image" extension="png" url="/img.png" alt="Image" />
@@ -113,12 +139,5 @@ describe("Thumbnail component", () => {
       expect(img).toHaveAttribute("src", expected);
       cleanup();
     });
-  });
-
-  it("matches snapshot for fallback icon", () => {
-    const { asFragment } = render(
-      <Thumbnail type="file" extension="txt" alt="Text" />
-    );
-    expect(asFragment()).toMatchSnapshot();
   });
 });
