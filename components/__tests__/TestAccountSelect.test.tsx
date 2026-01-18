@@ -14,7 +14,7 @@ beforeAll(() => {
   }
 });
 
-describe("TestAccountSelect", () => {
+describe("TestAccountSelect component", () => {
   it("renders placeholder when no selection made", () => {
     render(<TestAccountSelect onSelect={jest.fn()} />);
     expect(screen.getByText("Select test account")).toBeInTheDocument();
@@ -90,7 +90,7 @@ describe("TestAccountSelect", () => {
 
     expect(onSelectMock).toHaveBeenCalledWith(
       firstEmail,
-      TEST_PASSWORDS[0].trim()
+      TEST_PASSWORDS[0].trim(),
     );
   });
 
