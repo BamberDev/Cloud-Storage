@@ -28,7 +28,7 @@ beforeEach(() => {
   (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams());
 });
 
-describe("Sort", () => {
+describe("Sort component", () => {
   it("renders sort combobox", () => {
     render(<Sort />);
     expect(screen.getByRole("combobox")).toBeInTheDocument();
