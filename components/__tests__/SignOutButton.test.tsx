@@ -3,7 +3,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SignOutButton from "../SignOutButton";
 
-// Mock LogoutDialog component
 jest.mock("../LogoutDialog", () => {
   return function MockLogoutDialog({
     trigger,
@@ -21,7 +20,6 @@ jest.mock("../LogoutDialog", () => {
   };
 });
 
-// Mock Next.js Image component
 jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
