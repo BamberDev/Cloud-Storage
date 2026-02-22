@@ -30,79 +30,89 @@ jest.mock("@/lib/actions/file.actions", () => ({
   updateFileUsers: jest.fn(),
 }));
 
+const mockFile: Models.Document = {
+  $id: "file-123",
+  $collectionId: "files",
+  $databaseId: "main",
+  $createdAt: new Date().toISOString(),
+  $updatedAt: new Date().toISOString(),
+  $permissions: [],
+  name: "test-document.pdf",
+  size: 1024 * 1024,
+  type: "pdf",
+  extension: "pdf",
+  url: "https://example.com/test-document.pdf",
+  owner: { username: "user1", $id: "user-1" },
+} as Models.Document;
+
+const renderComponent = (file: Models.Document = mockFile) => {
+  return render(<FileCard file={file} />);
+};
+
 describe("FileCard component", () => {
-  const mockFile: Models.Document = {
-    $id: "file-123",
-    $collectionId: "files",
-    $databaseId: "main",
-    $createdAt: new Date().toISOString(),
-    $updatedAt: new Date().toISOString(),
-    $permissions: [],
-    name: "test-document.pdf",
-    size: 1024 * 1024,
-    type: "pdf",
-    extension: "pdf",
-    url: "https://example.com/test-document.pdf",
-    owner: { username: "user1", $id: "user-1" },
-  } as Models.Document;
+  describe("Basic rendering", () => {
+    it("renders file information", () => {
+      renderComponent();
+      expect(screen.getByText(mockFile.name)).toBeInTheDocument();
+      expect(screen.getByText(/\.pdf$/i)).toBeInTheDocument();
+      expect(screen.getByText(/By: user1/i)).toBeInTheDocument();
+    });
 
-  it("renders file information correctly", () => {
-    render(<FileCard file={mockFile} />);
-    expect(screen.getByText(mockFile.name)).toBeInTheDocument();
-    expect(screen.getByText(/\.pdf$/i)).toBeInTheDocument();
-    expect(screen.getByText(/By: user1/i)).toBeInTheDocument();
+    it("renders as link element", () => {
+      renderComponent();
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+    });
+
+    it("renders thumbnail", () => {
+      renderComponent();
+      const thumbnail = screen.getByTestId("mock-thumbnail");
+      expect(thumbnail).toBeInTheDocument();
+      expect(thumbnail).toHaveAttribute(
+        "data-alt",
+        `Thumbnail for ${mockFile.name}`,
+      );
+    });
+
+    it("renders formatted date", () => {
+      renderComponent();
+      expect(screen.getByTestId("mock-date")).toBeInTheDocument();
+    });
   });
 
-  it("renders as a link element", () => {
-    render(<FileCard file={mockFile} />);
-    const link = screen.getByRole("link");
-    expect(link).toBeInTheDocument();
+  describe("Link attributes", () => {
+    it("has correct URL and target", () => {
+      renderComponent();
+      const link = screen.getByRole("link");
+      expect(link).toHaveAttribute("href", mockFile.url);
+      expect(link).toHaveAttribute("target", "_blank");
+    });
+
+    it("has aria-label", () => {
+      renderComponent();
+      const link = screen.getByRole("link");
+      expect(link).toHaveAttribute("aria-label");
+    });
   });
 
-  it("renders file link with correct URL and opens in new tab", () => {
-    render(<FileCard file={mockFile} />);
-    const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", mockFile.url);
-    expect(link).toHaveAttribute("target", "_blank");
-  });
+  describe("Edge cases", () => {
+    it("handles special characters in file names", () => {
+      const specialFile = {
+        ...mockFile,
+        name: "file@#$%.pdf",
+      } as Models.Document;
+      renderComponent(specialFile);
+      expect(screen.getByText(/file@#\$%\.pdf/)).toBeInTheDocument();
+    });
 
-  it("renders thumbnail component with correct props", () => {
-    render(<FileCard file={mockFile} />);
-    const thumbnail = screen.getByTestId("mock-thumbnail");
-    expect(thumbnail).toBeInTheDocument();
-    expect(thumbnail).toHaveAttribute(
-      "data-alt",
-      `Thumbnail for ${mockFile.name}`,
-    );
-  });
-
-  it("handles files with special characters in names", () => {
-    const specialFile = {
-      ...mockFile,
-      name: "file@#$%.pdf",
-    } as Models.Document;
-    render(<FileCard file={specialFile} />);
-    expect(screen.getByText(/file@#\$%\.pdf/)).toBeInTheDocument();
-  });
-
-  it("handles very long file names", () => {
-    const longFileName = "a".repeat(100) + ".pdf";
-    const longNameFile = {
-      ...mockFile,
-      name: longFileName,
-    } as Models.Document;
-    render(<FileCard file={longNameFile} />);
-    expect(screen.getByText(longFileName)).toBeInTheDocument();
-  });
-
-  it("renders formatted date component", () => {
-    render(<FileCard file={mockFile} />);
-    expect(screen.getByTestId("mock-date")).toBeInTheDocument();
-  });
-
-  it("has proper accessibility with aria-label", () => {
-    render(<FileCard file={mockFile} />);
-    const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("aria-label");
+    it("handles long file names", () => {
+      const longFileName = "a".repeat(100) + ".pdf";
+      const longNameFile = {
+        ...mockFile,
+        name: longFileName,
+      } as Models.Document;
+      renderComponent(longNameFile);
+      expect(screen.getByText(longFileName)).toBeInTheDocument();
+    });
   });
 });
