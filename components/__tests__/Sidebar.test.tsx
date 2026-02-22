@@ -1,73 +1,54 @@
 import { render, screen } from "@testing-library/react";
 import Sidebar from "../Sidebar";
 
+const defaultProps = {
+  username: "Test User",
+  email: "test@example.com",
+  avatar: "/avatar.png",
+};
+
+const renderSidebar = (props = {}) => {
+  return render(<Sidebar {...defaultProps} {...props} />);
+};
+
 describe("Sidebar component", () => {
   it("renders sidebar navigation", () => {
-    render(
-      <Sidebar
-        username="Test User"
-        email="test@example.com"
-        avatar="/avatar.png"
-      />,
-    );
+    renderSidebar();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
   });
 
-  it("renders user profile section", () => {
-    render(
-      <Sidebar
-        username="Test User"
-        email="test@example.com"
-        avatar="/avatar.png"
-      />,
-    );
-    expect(screen.getByText("Test User")).toBeInTheDocument();
-    expect(screen.getByText("test@example.com")).toBeInTheDocument();
-  });
+  describe("User profile section", () => {
+    it("renders username and email", () => {
+      renderSidebar();
+      expect(screen.getByText("Test User")).toBeInTheDocument();
+      expect(screen.getByText("test@example.com")).toBeInTheDocument();
+    });
 
-  it("renders with different user data", () => {
-    const { rerender } = render(
-      <Sidebar username="User One" email="one@example.com" avatar="/one.png" />,
-    );
-    expect(screen.getByText("User One")).toBeInTheDocument();
-    expect(screen.getByText("one@example.com")).toBeInTheDocument();
+    it.each([
+      ["User One", "one@example.com"],
+      ["User Two", "two@example.com"],
+    ])("renders with different user data: %s", (username, email) => {
+      renderSidebar({ username, email });
+      expect(screen.getByText(username)).toBeInTheDocument();
+      expect(screen.getByText(email)).toBeInTheDocument();
+    });
 
-    rerender(
-      <Sidebar username="User Two" email="two@example.com" avatar="/two.png" />,
-    );
-    expect(screen.getByText("User Two")).toBeInTheDocument();
-    expect(screen.getByText("two@example.com")).toBeInTheDocument();
-  });
+    it("handles very long username", () => {
+      const longUsername = "A".repeat(100);
+      renderSidebar({ username: longUsername });
+      expect(screen.getByText(longUsername)).toBeInTheDocument();
+    });
 
-  it("handles very long username", () => {
-    const longUsername = "A".repeat(100);
-    render(
-      <Sidebar
-        username={longUsername}
-        email="user@example.com"
-        avatar="/avatar.png"
-      />,
+    it.each([
+      ["User-Name_2024", "user@example.com"],
+      ["User", "user+tag@sub.domain.co.uk"],
+    ])(
+      "handles special characters: %s, %s",
+      (username, email) => {
+        renderSidebar({ username, email });
+        expect(screen.getByText(username)).toBeInTheDocument();
+        expect(screen.getByText(email)).toBeInTheDocument();
+      },
     );
-    expect(screen.getByText(longUsername)).toBeInTheDocument();
-  });
-
-  it("handles special characters in username", () => {
-    const specialUsername = "User-Name_2024";
-    render(
-      <Sidebar
-        username={specialUsername}
-        email="user@example.com"
-        avatar="/avatar.png"
-      />,
-    );
-    expect(screen.getByText(specialUsername)).toBeInTheDocument();
-  });
-
-  it("handles special characters in email", () => {
-    const specialEmail = "user+tag@sub.domain.co.uk";
-    render(
-      <Sidebar username="User" email={specialEmail} avatar="/avatar.png" />,
-    );
-    expect(screen.getByText(specialEmail)).toBeInTheDocument();
   });
 });

@@ -1,28 +1,35 @@
-import { ImgHTMLAttributes } from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import Search from "../Search";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import { getFiles } from "@/lib/actions/file.actions";
-import Search from "../Search";
+import { ImgHTMLAttributes } from "react";
 
-jest.mock("next/navigation");
-jest.mock("@/context/UserContext");
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(),
+  usePathname: jest.fn(),
+  useSearchParams: jest.fn(),
+}));
+
+jest.mock("@/context/UserContext", () => ({
+  useUser: jest.fn(),
+}));
+
 jest.mock("@/lib/actions/file.actions", () => ({
   getFiles: jest.fn(),
 }));
+
 jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
 }));
 
 const mockUser = { $id: "user1", email: "user@example.com" };
+const mockPush = jest.fn();
+const mockRouter = { push: mockPush };
 
-describe("Search Component", () => {
-  const mockPush = jest.fn();
-  const mockRouter = {
-    push: mockPush,
-  };
-
+describe("Search component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
@@ -32,15 +39,13 @@ describe("Search Component", () => {
   });
 
   it("renders search input placeholder", () => {
-    (getFiles as jest.Mock).mockResolvedValue({
-      documents: [],
-    });
+    (getFiles as jest.Mock).mockResolvedValue({ documents: [] });
     render(<Search />);
-    const input = screen.getByPlaceholderText("Search...");
-    expect(input).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Search...")).toBeInTheDocument();
   });
 
   it("displays search results after input change", async () => {
+    const user = userEvent.setup();
     const mockFiles = [
       {
         $id: "1",
@@ -50,38 +55,32 @@ describe("Search Component", () => {
         url: "http://example.com/file1",
       },
     ];
-    (getFiles as jest.Mock).mockResolvedValue({
-      documents: mockFiles,
-    });
+    (getFiles as jest.Mock).mockResolvedValue({ documents: mockFiles });
     render(<Search />);
-    const input = screen.getByPlaceholderText("Search...") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "test" } });
+    await user.type(screen.getByPlaceholderText("Search..."), "test");
     await waitFor(() => {
       expect(getFiles).toHaveBeenCalled();
     });
   });
 
   it("clears results when query is empty", async () => {
-    (getFiles as jest.Mock).mockResolvedValue({
-      documents: [],
-    });
+    const user = userEvent.setup();
+    (getFiles as jest.Mock).mockResolvedValue({ documents: [] });
     render(<Search />);
-    const input = screen.getByPlaceholderText("Search...") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "test" } });
+    const input = screen.getByPlaceholderText("Search...");
+    await user.type(input, "test");
     await waitFor(() => {
       expect(getFiles).toHaveBeenCalled();
     });
-    fireEvent.change(input, { target: { value: "" } });
-    expect(input.value).toBe("");
+    await user.clear(input);
+    expect(input).toHaveValue("");
   });
 
   it("calls getFiles with correct parameters", async () => {
-    (getFiles as jest.Mock).mockResolvedValue({
-      documents: [],
-    });
+    const user = userEvent.setup();
+    (getFiles as jest.Mock).mockResolvedValue({ documents: [] });
     render(<Search />);
-    const input = screen.getByPlaceholderText("Search...") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "search query" } });
+    await user.type(screen.getByPlaceholderText("Search..."), "search query");
     await waitFor(() => {
       expect(getFiles).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -94,6 +93,7 @@ describe("Search Component", () => {
   });
 
   it("handles clear button click", async () => {
+    const user = userEvent.setup();
     (getFiles as jest.Mock).mockResolvedValue({
       documents: [
         {
@@ -106,16 +106,14 @@ describe("Search Component", () => {
       ],
     });
     render(<Search />);
-    const input = screen.getByPlaceholderText("Search...") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "test" } });
+    const input = screen.getByPlaceholderText("Search...");
+    await user.type(input, "test");
     await waitFor(() => {
-      expect(input.value).toBe("test");
       expect(getFiles).toHaveBeenCalled();
     });
-    const clearButton = screen.getByRole("button", { name: /clear/i });
-    fireEvent.click(clearButton);
+    await user.click(screen.getByRole("button", { name: /clear/i }));
     await waitFor(() => {
-      expect(input.value).toBe("");
+      expect(input).toHaveValue("");
     });
   });
 });

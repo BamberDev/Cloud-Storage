@@ -1,6 +1,5 @@
+import { render, screen } from "@testing-library/react";
 import { ImgHTMLAttributes } from "react";
-import "@testing-library/jest-dom";
-import { render, screen, cleanup } from "@testing-library/react";
 import Thumbnail from "@/components/Thumbnail";
 
 jest.mock("next/image", () => ({
@@ -9,9 +8,9 @@ jest.mock("next/image", () => ({
 }));
 
 jest.mock("@/lib/utils", () => ({
-  cn: jest.fn((...args) => args.join(" ")),
+  cn: jest.fn((...args) => args.filter(Boolean).join(" ")),
   getFileIcon: jest.fn(
-    (extension, type) => `/assets/icons/${extension}-${type}.svg`
+    (extension, type) => `/assets/icons/${extension}-${type}.svg`,
   ),
 }));
 
@@ -24,7 +23,7 @@ describe("Thumbnail component", () => {
         url="/real-image.png"
         alt="Real image"
         imageClassName="extra-class"
-      />
+      />,
     );
     const img = screen.getByAltText("Real image");
     expect(img).toHaveAttribute("src", "/real-image.png");
@@ -33,10 +32,9 @@ describe("Thumbnail component", () => {
 
   it("renders figure element as container", () => {
     const { container } = render(
-      <Thumbnail type="image" extension="png" url="/img.png" alt="Image" />
+      <Thumbnail type="image" extension="png" url="/img.png" alt="Image" />,
     );
-    const figure = container.querySelector("figure");
-    expect(figure).toBeInTheDocument();
+    expect(container.querySelector("figure")).toBeInTheDocument();
   });
 
   it("renders fallback icon when not an image", () => {
@@ -53,10 +51,12 @@ describe("Thumbnail component", () => {
         extension="doc"
         alt="Doc"
         className="figure-extra"
-      />
+      />,
     );
-    const figure = container.querySelector("figure");
-    expect(figure).toHaveClass("thumbnail", "figure-extra");
+    expect(container.querySelector("figure")).toHaveClass(
+      "thumbnail",
+      "figure-extra",
+    );
   });
 
   it("applies imageClassName even when rendering fallback icon", () => {
@@ -66,78 +66,75 @@ describe("Thumbnail component", () => {
         extension="zip"
         alt="Zip File"
         imageClassName="extra-class"
-      />
+      />,
     );
-    const img = screen.getByAltText("Zip File");
-    expect(img).toHaveClass("extra-class");
+    expect(screen.getByAltText("Zip File")).toHaveClass("extra-class");
   });
 
   it('treats ".svg" as fallback even when type="image"', () => {
     render(
-      <Thumbnail type="image" extension="svg" url="/icon.svg" alt="SVG Icon" />
+      <Thumbnail type="image" extension="svg" url="/icon.svg" alt="SVG Icon" />,
     );
     const img = screen.getByAltText("SVG Icon");
     expect(img).toHaveAttribute("src", "/assets/icons/svg-image.svg");
     expect(img).not.toHaveClass("thumbnail-image");
   });
 
-  it("shows image class only for actual image types", () => {
-    const { rerender } = render(
-      <Thumbnail type="image" extension="png" url="/img.png" alt="Image" />
-    );
-    expect(screen.getByAltText("Image")).toHaveClass("thumbnail-image");
+  it.each([
+    ["image", "png", true],
+    ["document", "pdf", false],
+  ] as const)(
+    "shows thumbnail-image class only for image types: %s",
+    (type, ext, shouldHaveClass) => {
+      render(
+        <Thumbnail type={type} extension={ext} url="/file.ext" alt="File" />,
+      );
+      const img = screen.getByAltText("File");
+      if (shouldHaveClass) {
+        expect(img).toHaveClass("thumbnail-image");
+      } else {
+        expect(img).not.toHaveClass("thumbnail-image");
+      }
+    },
+  );
 
-    rerender(
-      <Thumbnail type="document" extension="pdf" url="/doc.pdf" alt="Doc" />
-    );
-    expect(screen.getByAltText("Doc")).not.toHaveClass("thumbnail-image");
-  });
-
-  it("calls getFileIcon with correct parameters", () => {
-    render(<Thumbnail type="video" extension="mp4" alt="Video" />);
-    const img = screen.getByAltText("Video");
-    expect(img).toHaveAttribute("src", "/assets/icons/mp4-video.svg");
-  });
+  it.each([
+    ["audio", "mp3", "/assets/icons/mp3-audio.svg"],
+    ["video", "mp4", "/assets/icons/mp4-video.svg"],
+    ["document", "docx", "/assets/icons/docx-document.svg"],
+    ["other", "xyz", "/assets/icons/xyz-other.svg"],
+  ] as const)(
+    "calls getFileIcon with correct parameters for %s",
+    (type, ext, expectedSrc) => {
+      render(<Thumbnail type={type} extension={ext} alt={`${type} file`} />);
+      expect(screen.getByAltText(`${type} file`)).toHaveAttribute(
+        "src",
+        expectedSrc,
+      );
+    },
+  );
 
   it("renders image with alt text for screen readers", () => {
     render(
-      <Thumbnail type="image" extension="png" url="/img.png" alt="Image" />
+      <Thumbnail type="image" extension="png" url="/img.png" alt="Image" />,
     );
     expect(screen.getByAltText("Image")).toBeVisible();
   });
 
-  it("handles missing url prop with empty string default", () => {
+  it("handles missing url prop", () => {
     render(<Thumbnail type="file" extension="doc" alt="Doc" />);
-    const img = screen.getByAltText("Doc");
-    expect(img).toHaveAttribute("src", "/assets/icons/doc-file.svg");
+    expect(screen.getByAltText("Doc")).toHaveAttribute(
+      "src",
+      "/assets/icons/doc-file.svg",
+    );
   });
 
-  it("applies correct size attributes to the image", () => {
+  it("applies correct size attributes", () => {
     render(
-      <Thumbnail type="image" extension="jpg" url="/image.jpg" alt="Image" />
+      <Thumbnail type="image" extension="jpg" url="/image.jpg" alt="Image" />,
     );
     const img = screen.getByAltText("Image");
     expect(img).toHaveAttribute("width", "100");
     expect(img).toHaveAttribute("height", "100");
-  });
-
-  it("handles different file type and extension combinations", () => {
-    const cases = [
-      { type: "audio", ext: "mp3", expected: "/assets/icons/mp3-audio.svg" },
-      { type: "video", ext: "mp4", expected: "/assets/icons/mp4-video.svg" },
-      {
-        type: "document",
-        ext: "docx",
-        expected: "/assets/icons/docx-document.svg",
-      },
-      { type: "other", ext: "xyz", expected: "/assets/icons/xyz-other.svg" },
-    ];
-
-    cases.forEach(({ type, ext, expected }) => {
-      render(<Thumbnail type={type} extension={ext} alt={`${type} file`} />);
-      const img = screen.getByAltText(`${type} file`);
-      expect(img).toHaveAttribute("src", expected);
-      cleanup();
-    });
   });
 });

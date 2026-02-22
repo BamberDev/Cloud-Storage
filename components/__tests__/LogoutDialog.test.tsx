@@ -23,11 +23,17 @@ jest.mock("../Loader", () => {
   };
 });
 
-describe("LogoutDialog component", () => {
-  const mockPush = jest.fn();
-  const mockShowErrorToast = jest.fn();
-  const mockOnOpenChange = jest.fn();
+const mockPush = jest.fn();
+const mockShowErrorToast = jest.fn();
+const mockOnOpenChange = jest.fn();
 
+const defaultProps = {
+  isOpen: true,
+  onOpenChange: mockOnOpenChange,
+  trigger: <button>Open</button>,
+};
+
+describe("LogoutDialog component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
@@ -36,14 +42,7 @@ describe("LogoutDialog component", () => {
   });
 
   it("renders logout dialog when isOpen is true", () => {
-    render(
-      <LogoutDialog
-        isOpen={true}
-        onOpenChange={mockOnOpenChange}
-        trigger={<button>Open</button>}
-      />,
-    );
-
+    render(<LogoutDialog {...defaultProps} />);
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText("Confirm")).toBeInTheDocument();
     expect(
@@ -51,14 +50,8 @@ describe("LogoutDialog component", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders Cancel and Sign Out buttons", () => {
-    render(
-      <LogoutDialog
-        isOpen={true}
-        onOpenChange={mockOnOpenChange}
-        trigger={<button>Open</button>}
-      />,
-    );
+  it("renders cancel and sign out buttons", () => {
+    render(<LogoutDialog {...defaultProps} />);
     expect(
       screen.getByRole("button", { name: /cancel sign out/i }),
     ).toBeInTheDocument();
@@ -67,48 +60,30 @@ describe("LogoutDialog component", () => {
     ).toBeInTheDocument();
   });
 
-  it("calls onOpenChange(false) when Cancel button is clicked", async () => {
-    render(
-      <LogoutDialog
-        isOpen={true}
-        onOpenChange={mockOnOpenChange}
-        trigger={<button>Open</button>}
-      />,
-    );
-    const cancelButton = screen.getByRole("button", { name: /cancel/i });
-    await userEvent.click(cancelButton);
+  it("calls onOpenChange(false) when cancel button clicked", async () => {
+    const user = userEvent.setup();
+    render(<LogoutDialog {...defaultProps} />);
+    await user.click(screen.getByRole("button", { name: /cancel/i }));
     expect(mockOnOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it("calls signOutUser when Sign Out button is clicked", async () => {
-    render(
-      <LogoutDialog
-        isOpen={true}
-        onOpenChange={mockOnOpenChange}
-        trigger={<button>Open</button>}
-      />,
+  it("calls signOutUser when sign out button clicked", async () => {
+    const user = userEvent.setup();
+    render(<LogoutDialog {...defaultProps} />);
+    await user.click(
+      screen.getByRole("button", { name: /confirm sign out/i }),
     );
-    const signOutButton = screen.getByRole("button", {
-      name: /confirm sign out/i,
-    });
-    await userEvent.click(signOutButton);
     await waitFor(() => {
       expect(signOutUser).toHaveBeenCalled();
     });
   });
 
   it("closes dialog and redirects to sign-in on successful logout", async () => {
-    render(
-      <LogoutDialog
-        isOpen={true}
-        onOpenChange={mockOnOpenChange}
-        trigger={<button>Open</button>}
-      />,
+    const user = userEvent.setup();
+    render(<LogoutDialog {...defaultProps} />);
+    await user.click(
+      screen.getByRole("button", { name: /confirm sign out/i }),
     );
-    const signOutButton = screen.getByRole("button", {
-      name: /confirm sign out/i,
-    });
-    await userEvent.click(signOutButton);
     await waitFor(() => {
       expect(mockOnOpenChange).toHaveBeenCalledWith(false);
       expect(mockPush).toHaveBeenCalledWith("/sign-in");
@@ -119,17 +94,11 @@ describe("LogoutDialog component", () => {
     (signOutUser as jest.Mock).mockRejectedValueOnce(
       new Error("Sign out failed"),
     );
-    render(
-      <LogoutDialog
-        isOpen={true}
-        onOpenChange={mockOnOpenChange}
-        trigger={<button>Open</button>}
-      />,
+    const user = userEvent.setup();
+    render(<LogoutDialog {...defaultProps} />);
+    await user.click(
+      screen.getByRole("button", { name: /confirm sign out/i }),
     );
-    const signOutButton = screen.getByRole("button", {
-      name: /confirm sign out/i,
-    });
-    await userEvent.click(signOutButton);
     await waitFor(() => {
       expect(mockShowErrorToast).toHaveBeenCalledWith(
         "Failed to sign out. Please try again.",
@@ -137,21 +106,15 @@ describe("LogoutDialog component", () => {
     });
   });
 
-  it("shows Loader and 'Signing Out...' text during logout", async () => {
+  it("shows loader and signing out text during logout", async () => {
     (signOutUser as jest.Mock).mockImplementation(
       () => new Promise((resolve) => setTimeout(resolve, 1000)),
     );
-    render(
-      <LogoutDialog
-        isOpen={true}
-        onOpenChange={mockOnOpenChange}
-        trigger={<button>Open</button>}
-      />,
+    const user = userEvent.setup();
+    render(<LogoutDialog {...defaultProps} />);
+    await user.click(
+      screen.getByRole("button", { name: /confirm sign out/i }),
     );
-    const signOutButton = screen.getByRole("button", {
-      name: /confirm sign out/i,
-    });
-    await userEvent.click(signOutButton);
     expect(screen.getByTestId("loader")).toBeInTheDocument();
     expect(screen.getByText("Signing Out...")).toBeInTheDocument();
   });
@@ -160,17 +123,11 @@ describe("LogoutDialog component", () => {
     (signOutUser as jest.Mock).mockImplementation(
       () => new Promise((resolve) => setTimeout(resolve, 1000)),
     );
-    render(
-      <LogoutDialog
-        isOpen={true}
-        onOpenChange={mockOnOpenChange}
-        trigger={<button>Open</button>}
-      />,
+    const user = userEvent.setup();
+    render(<LogoutDialog {...defaultProps} />);
+    await user.click(
+      screen.getByRole("button", { name: /confirm sign out/i }),
     );
-    const signOutButton = screen.getByRole("button", {
-      name: /confirm sign out/i,
-    });
-    await userEvent.click(signOutButton);
     expect(
       screen.getByRole("button", { name: /cancel sign out/i }),
     ).toBeDisabled();

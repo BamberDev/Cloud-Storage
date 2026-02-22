@@ -1,15 +1,38 @@
 import { render, screen } from "@testing-library/react";
+import { AnchorHTMLAttributes, ImgHTMLAttributes, ReactNode } from "react";
 import SummaryCard from "../SummaryCard";
 
-describe("SummaryCard component", () => {
-  const mockSummary = {
-    title: "Documents",
-    icon: "/assets/icons/file-document-light.svg",
-    url: "/documents",
-    size: 100_000_000, // 100MB
-    latestDate: new Date("2025-01-01T12:00:00Z").toISOString(),
-  };
+jest.mock("next/image", () => ({
+  __esModule: true,
+  default: (props: ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
+}));
 
+jest.mock("next/link", () => ({
+  __esModule: true,
+  default: ({
+    children,
+    href,
+    ...props
+  }: {
+    children: ReactNode;
+    href: string;
+    [key: string]: unknown;
+  }) => (
+    <a href={href} {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)}>
+      {children}
+    </a>
+  ),
+}));
+
+const mockSummary = {
+  title: "Documents",
+  icon: "/assets/icons/file-document-light.svg",
+  url: "/documents",
+  size: 100_000_000,
+  latestDate: new Date("2025-01-01T12:00:00Z").toISOString(),
+};
+
+describe("SummaryCard component", () => {
   it("renders title and file size", () => {
     render(<SummaryCard summary={mockSummary} />);
     expect(screen.getByText(mockSummary.title)).toBeInTheDocument();
@@ -21,7 +44,7 @@ describe("SummaryCard component", () => {
     const icon = screen.getByAltText(`${mockSummary.title} icon`);
     expect(icon).toHaveAttribute(
       "src",
-      expect.stringContaining(mockSummary.icon)
+      expect.stringContaining(mockSummary.icon),
     );
   });
 

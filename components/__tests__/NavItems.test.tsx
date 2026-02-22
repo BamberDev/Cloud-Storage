@@ -7,51 +7,64 @@ jest.mock("next/navigation", () => ({
   usePathname: jest.fn(),
 }));
 
-describe("NavItems component", () => {
-  const mockPathname = usePathname as jest.Mock;
+const defaultProps = {
+  variant: "sidebar" as const,
+};
 
+const renderNavItems = (props = {}) => {
+  return render(<NavItems {...defaultProps} {...props} />);
+};
+
+describe("NavItems component", () => {
   beforeEach(() => {
-    mockPathname.mockReturnValue("/");
+    (usePathname as jest.Mock).mockReturnValue("/");
   });
 
   it("renders all navigation items", () => {
-    render(<NavItems variant="sidebar" />);
+    renderNavItems();
     navItems.forEach((item) => {
       expect(screen.getByText(item.name)).toBeInTheDocument();
     });
   });
 
   it("renders as an unordered list", () => {
-    render(<NavItems variant="sidebar" />);
+    renderNavItems();
     expect(screen.getByRole("list")).toBeInTheDocument();
   });
 
-  it("hides labels when showLabels is false", () => {
-    const { rerender } = render(<NavItems variant="sidebar" />);
-    expect(screen.getByText(navItems[0].name)).toBeInTheDocument();
-
-    rerender(<NavItems variant="sidebar" showLabels={false} />);
-    expect(screen.queryByText(navItems[0].name)).not.toBeInTheDocument();
+  describe("Variant styling", () => {
+    it.each([
+      ["sidebar", "sidebar-nav-list"],
+      ["mobile", "mobile-nav-list"],
+    ] as const)("applies %s variant classes", (variant, expectedClass) => {
+      renderNavItems({ variant });
+      expect(screen.getByRole("list")).toHaveClass(expectedClass);
+    });
   });
 
-  it("applies correct classes for different variants", () => {
-    const { rerender } = render(<NavItems variant="sidebar" />);
-    expect(screen.getByRole("list")).toHaveClass("sidebar-nav-list");
+  describe("Label visibility", () => {
+    it("shows labels by default", () => {
+      renderNavItems();
+      expect(screen.getByText(navItems[0].name)).toBeInTheDocument();
+    });
 
-    rerender(<NavItems variant="mobile" />);
-    expect(screen.getByRole("list")).toHaveClass("mobile-nav-list");
+    it("hides labels when showLabels is false", () => {
+      renderNavItems({ showLabels: false });
+      expect(screen.queryByText(navItems[0].name)).not.toBeInTheDocument();
+    });
   });
 
-  it("applies active class to current route", () => {
-    mockPathname.mockReturnValue("/documents");
-    render(<NavItems variant="sidebar" />);
-
-    const activeItem = screen.getByText("Documents").closest("li");
-    expect(activeItem).toHaveClass("nav-item-active");
+  describe("Active state", () => {
+    it("applies active class to current route", () => {
+      (usePathname as jest.Mock).mockReturnValue("/documents");
+      renderNavItems();
+      const activeItem = screen.getByText("Documents").closest("li");
+      expect(activeItem).toHaveClass("nav-item-active");
+    });
   });
 
   it("accepts custom className prop", () => {
-    render(<NavItems variant="sidebar" className="custom-class" />);
+    renderNavItems({ className: "custom-class" });
     expect(screen.getByRole("list")).toHaveClass("custom-class");
   });
 });

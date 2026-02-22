@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom";
 import {
   ImgHTMLAttributes,
   PropsWithChildren,
@@ -23,17 +22,17 @@ jest.mock("next/image", () => ({
   },
 }));
 
-jest.mock("@/components/LogoutDialog", () => {
-  return function MockLogoutDialog(props: { trigger?: ReactNode }) {
-    return <div data-testid="logout-dialog">{props.trigger ?? null}</div>;
-  };
-});
+jest.mock("@/components/LogoutDialog", () => ({
+  __esModule: true,
+  default: (props: { trigger?: ReactNode }) => (
+    <div data-testid="logout-dialog">{props.trigger ?? null}</div>
+  ),
+}));
 
-jest.mock("@/components/FileUploader", () => {
-  return function MockFileUploader() {
-    return <div data-testid="file-uploader">FileUploader</div>;
-  };
-});
+jest.mock("@/components/FileUploader", () => ({
+  __esModule: true,
+  default: () => <div data-testid="file-uploader">FileUploader</div>,
+}));
 
 jest.mock("@/components/ui/separator", () => ({
   Separator: (props: HTMLAttributes<HTMLHRElement>) => (
@@ -59,44 +58,62 @@ jest.mock("@/components/ui/sheet", () => ({
   ),
 }));
 
+const defaultProps = {
+  username: "John Doe",
+  email: "john@example.com",
+  avatar: "/avatar.jpg",
+};
+
+const renderMobileNavigation = (props = {}) => {
+  return render(<MobileNavigation {...defaultProps} {...props} />);
+};
+
 describe("MobileNavigation component", () => {
-  const props = {
-    username: "John Doe",
-    email: "john@example.com",
-    avatar: "/avatar.jpg",
-  };
-
-  it("renders as a banner (header)", () => {
-    render(<MobileNavigation {...props} />);
-    const header = screen.getByRole("banner");
-    expect(header).toBeInTheDocument();
+  it("renders as a banner", () => {
+    renderMobileNavigation();
+    expect(screen.getByRole("banner")).toBeInTheDocument();
   });
 
-  it("renders the home link with aria-label", () => {
-    render(<MobileNavigation {...props} />);
-    const homeLink = screen.getByLabelText("Go to home page");
-    expect(homeLink).toBeInTheDocument();
+  describe("Header elements", () => {
+    it("renders the home link with aria-label", () => {
+      renderMobileNavigation();
+      expect(screen.getByLabelText("Go to home page")).toBeInTheDocument();
+    });
+
+    it("renders the menu icon", () => {
+      renderMobileNavigation();
+      expect(screen.getByAltText("Menu icon")).toBeInTheDocument();
+    });
   });
 
-  it("renders the menu trigger and icon", () => {
-    render(<MobileNavigation {...props} />);
-    const menuImg = screen.getByAltText("Menu icon");
-    expect(menuImg).toBeInTheDocument();
+  describe("User profile section", () => {
+    it("shows user avatar", () => {
+      renderMobileNavigation();
+      expect(screen.getByAltText("User avatar")).toBeInTheDocument();
+    });
+
+    it("shows username and email", () => {
+      renderMobileNavigation();
+      expect(screen.getByText("John Doe")).toBeInTheDocument();
+      expect(screen.getByText("john@example.com")).toBeInTheDocument();
+    });
   });
 
-  it("shows user avatar, username and email", () => {
-    render(<MobileNavigation {...props} />);
-    const avatar = screen.getByAltText("User avatar");
-    expect(avatar).toBeInTheDocument();
-    expect(screen.getByText(props.username)).toBeInTheDocument();
-    expect(screen.getByText(props.email)).toBeInTheDocument();
-  });
+  describe("Navigation components", () => {
+    it("renders NavItems", () => {
+      renderMobileNavigation();
+      expect(screen.getByLabelText("Go to Dashboard page")).toBeInTheDocument();
+    });
 
-  it("renders NavItems and FileUploader and LogoutDialog trigger", () => {
-    render(<MobileNavigation {...props} />);
-    expect(screen.getByLabelText("Go to Dashboard page")).toBeInTheDocument();
-    expect(screen.getByTestId("file-uploader")).toBeInTheDocument();
-    expect(screen.getByTestId("logout-dialog")).toBeInTheDocument();
-    expect(screen.getByText(/Sign out/i)).toBeInTheDocument();
+    it("renders FileUploader", () => {
+      renderMobileNavigation();
+      expect(screen.getByTestId("file-uploader")).toBeInTheDocument();
+    });
+
+    it("renders LogoutDialog", () => {
+      renderMobileNavigation();
+      expect(screen.getByTestId("logout-dialog")).toBeInTheDocument();
+      expect(screen.getByText(/Sign out/i)).toBeInTheDocument();
+    });
   });
 });
