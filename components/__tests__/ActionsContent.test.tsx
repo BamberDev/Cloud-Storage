@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { FileDetails, ShareFile } from "../ActionsContent";
 import { Models } from "node-appwrite";
 
@@ -14,10 +15,7 @@ const mockFile: Models.Document = {
   type: "pdf",
   extension: "pdf",
   url: "https://example.com/test-document.pdf",
-  owner: {
-    username: "testuser",
-    $id: "user-1",
-  },
+  owner: { username: "testuser", $id: "user-1" },
   users: [],
 };
 
@@ -26,7 +24,19 @@ const mockFileWithUsers: Models.Document = {
   users: ["user1@example.com", "user2@example.com"],
 };
 
+const defaultProps = {
+  file: mockFile,
+  email: "",
+  onEmailChange: jest.fn(),
+  onRemove: jest.fn(),
+  handleAction: jest.fn(),
+};
+
 describe("ActionsContent component", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("FileDetails", () => {
     it("renders file details with thumbnail and information", () => {
       render(<FileDetails file={mockFile} />);
@@ -41,24 +51,8 @@ describe("ActionsContent component", () => {
   });
 
   describe("ShareFile", () => {
-    const mockOnEmailChange = jest.fn();
-    const mockOnRemove = jest.fn();
-    const mockHandleAction = jest.fn();
-
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-
     it("renders share file component with thumbnail and input", () => {
-      render(
-        <ShareFile
-          file={mockFile}
-          email=""
-          onEmailChange={mockOnEmailChange}
-          onRemove={mockOnRemove}
-          handleAction={mockHandleAction}
-        />,
-      );
+      render(<ShareFile {...defaultProps} />);
       expect(screen.getByText(mockFile.name)).toBeInTheDocument();
       expect(
         screen.getByText(/Share file with other users/i),
@@ -67,95 +61,50 @@ describe("ActionsContent component", () => {
     });
 
     it("displays empty state when no users are shared", () => {
-      render(
-        <ShareFile
-          file={mockFile}
-          email=""
-          onEmailChange={mockOnEmailChange}
-          onRemove={mockOnRemove}
-          handleAction={mockHandleAction}
-        />,
-      );
+      render(<ShareFile {...defaultProps} />);
       expect(
         screen.getByText(/This file isn't shared with anyone yet/i),
       ).toBeInTheDocument();
     });
 
     it("displays shared users list when users exist", () => {
-      render(
-        <ShareFile
-          file={mockFileWithUsers}
-          email=""
-          onEmailChange={mockOnEmailChange}
-          onRemove={mockOnRemove}
-          handleAction={mockHandleAction}
-        />,
-      );
+      render(<ShareFile {...defaultProps} file={mockFileWithUsers} />);
       expect(screen.getByText("user1@example.com")).toBeInTheDocument();
       expect(screen.getByText("user2@example.com")).toBeInTheDocument();
+      expect(
+        screen.getAllByLabelText(/Remove user from shared list/i),
+      ).toHaveLength(2);
+    });
+
+    it("calls onEmailChange when email input changes", async () => {
+      const user = userEvent.setup();
+      render(<ShareFile {...defaultProps} />);
+      await user.type(
+        screen.getByPlaceholderText(/enter email/i),
+        "test@example.com",
+      );
+      expect(defaultProps.onEmailChange).toHaveBeenCalled();
+    });
+
+    it("calls handleAction when Enter key is pressed", async () => {
+      const user = userEvent.setup();
+      render(<ShareFile {...defaultProps} email="test@example.com" />);
+      await user.type(screen.getByPlaceholderText(/enter email/i), "{enter}");
+      expect(defaultProps.handleAction).toHaveBeenCalledTimes(1);
+    });
+
+    it("calls onRemove when remove button is clicked", async () => {
+      const user = userEvent.setup();
+      render(<ShareFile {...defaultProps} file={mockFileWithUsers} />);
       const removeButtons = screen.getAllByLabelText(
         /Remove user from shared list/i,
       );
-      expect(removeButtons).toHaveLength(2);
-    });
-
-    it("calls onEmailChange when email input changes", () => {
-      render(
-        <ShareFile
-          file={mockFile}
-          email=""
-          onEmailChange={mockOnEmailChange}
-          onRemove={mockOnRemove}
-          handleAction={mockHandleAction}
-        />,
-      );
-      const input = screen.getByPlaceholderText(/enter email/i);
-      fireEvent.change(input, { target: { value: "test@example.com" } });
-      expect(mockOnEmailChange).toHaveBeenCalledWith("test@example.com");
-    });
-
-    it("calls handleAction when Enter key is pressed in email input", () => {
-      render(
-        <ShareFile
-          file={mockFile}
-          email="test@example.com"
-          onEmailChange={mockOnEmailChange}
-          onRemove={mockOnRemove}
-          handleAction={mockHandleAction}
-        />,
-      );
-      const input = screen.getByPlaceholderText(/enter email/i);
-      fireEvent.keyDown(input, { key: "Enter" });
-      expect(mockHandleAction).toHaveBeenCalledTimes(1);
-    });
-
-    it("calls onRemove when remove button is clicked", () => {
-      render(
-        <ShareFile
-          file={mockFileWithUsers}
-          email=""
-          onEmailChange={mockOnEmailChange}
-          onRemove={mockOnRemove}
-          handleAction={mockHandleAction}
-        />,
-      );
-      const removeButtons = screen.getAllByLabelText(
-        /Remove user from shared list/i,
-      );
-      fireEvent.click(removeButtons[0]);
-      expect(mockOnRemove).toHaveBeenCalledWith("user1@example.com");
+      await user.click(removeButtons[0]);
+      expect(defaultProps.onRemove).toHaveBeenCalledWith("user1@example.com");
     });
 
     it("displays correct user count", () => {
-      render(
-        <ShareFile
-          file={mockFileWithUsers}
-          email=""
-          onEmailChange={mockOnEmailChange}
-          onRemove={mockOnRemove}
-          handleAction={mockHandleAction}
-        />,
-      );
+      render(<ShareFile {...defaultProps} file={mockFileWithUsers} />);
       expect(screen.getByText("2 users")).toBeInTheDocument();
     });
   });

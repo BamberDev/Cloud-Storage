@@ -1,5 +1,6 @@
 import { ImgHTMLAttributes } from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
 import OTPModal from "../OTPModal";
 import { sendEmailOTP, verifySecret } from "@/lib/actions/user.actions";
@@ -30,12 +31,13 @@ ResizeObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn(),
 }));
 
-describe("OTPModal Component", () => {
-  const mockPush = jest.fn();
-  const mockRouter = { push: mockPush };
-  const testEmail = "test@example.com";
-  const testAccountId = "account123";
+document.elementFromPoint = jest.fn().mockReturnValue(null);
+const mockPush = jest.fn();
+const mockRouter = { push: mockPush };
+const testEmail = "test@example.com";
+const testAccountId = "account123";
 
+describe("OTPModal component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
@@ -59,21 +61,19 @@ describe("OTPModal Component", () => {
   });
 
   it("updates OTP value when input changes", async () => {
+    const user = userEvent.setup();
     render(<OTPModal email={testEmail} accountId={testAccountId} />);
-    const input = screen.getByDisplayValue("") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "123456" } });
-    await waitFor(() => {
-      expect(input.value).toBe("123456");
-    });
+    const input = screen.getByDisplayValue("");
+    await user.type(input, "123456");
+    expect(input).toHaveValue("123456");
   });
 
   it("successfully submits OTP and redirects to home", async () => {
-    (verifySecret as jest.Mock).mockResolvedValue("session123");
+    const user = userEvent.setup();
     render(<OTPModal email={testEmail} accountId={testAccountId} />);
-    const input = screen.getByDisplayValue("") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "123456" } });
-    const submitButton = screen.getByRole("button", { name: /submit/i });
-    fireEvent.click(submitButton);
+    const input = screen.getByDisplayValue("");
+    await user.type(input, "123456");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
     await waitFor(() => {
       expect(verifySecret).toHaveBeenCalledWith({
         accountId: testAccountId,
@@ -90,11 +90,10 @@ describe("OTPModal Component", () => {
           setTimeout(() => resolve("session123"), 100);
         }),
     );
+    const user = userEvent.setup();
     render(<OTPModal email={testEmail} accountId={testAccountId} />);
-    const input = screen.getByDisplayValue("") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "123456" } });
-    const submitButton = screen.getByRole("button", { name: /submit/i });
-    fireEvent.click(submitButton);
+    await user.type(screen.getByDisplayValue(""), "123456");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
     await waitFor(() => {
       expect(screen.getByTestId("loader")).toBeInTheDocument();
       expect(screen.getByText(/Submiting.../i)).toBeInTheDocument();
@@ -108,11 +107,10 @@ describe("OTPModal Component", () => {
     (verifySecret as jest.Mock).mockRejectedValueOnce(
       new Error("Invalid token"),
     );
+    const user = userEvent.setup();
     render(<OTPModal email={testEmail} accountId={testAccountId} />);
-    const input = screen.getByDisplayValue("") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "123456" } });
-    const submitButton = screen.getByRole("button", { name: /submit/i });
-    fireEvent.click(submitButton);
+    await user.type(screen.getByDisplayValue(""), "123456");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
     await waitFor(() => {
       expect(
         screen.getByText("Invalid OTP code. Please try again."),
@@ -124,16 +122,15 @@ describe("OTPModal Component", () => {
     (verifySecret as jest.Mock).mockRejectedValueOnce(
       new Error("Invalid token"),
     );
+    const user = userEvent.setup();
     render(<OTPModal email={testEmail} accountId={testAccountId} />);
-    const submitButton = screen.getByRole("button", { name: /submit/i });
-    fireEvent.click(submitButton);
+    await user.click(screen.getByRole("button", { name: /submit/i }));
     await waitFor(() => {
       expect(
         screen.getByText("Invalid OTP code. Please try again."),
       ).toBeInTheDocument();
     });
-    const input = screen.getByDisplayValue("") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "1" } });
+    await user.type(screen.getByDisplayValue(""), "1");
     await waitFor(() => {
       expect(
         screen.queryByText("Invalid OTP code. Please try again."),
@@ -145,11 +142,10 @@ describe("OTPModal Component", () => {
     (verifySecret as jest.Mock).mockRejectedValueOnce(
       new Error("Network error"),
     );
+    const user = userEvent.setup();
     render(<OTPModal email={testEmail} accountId={testAccountId} />);
-    const input = screen.getByDisplayValue("") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "123456" } });
-    const submitButton = screen.getByRole("button", { name: /submit/i });
-    fireEvent.click(submitButton);
+    await user.type(screen.getByDisplayValue(""), "123456");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
     await waitFor(() => {
       expect(
         screen.getByText("Failed to verify OTP. Please try again."),
@@ -158,30 +154,33 @@ describe("OTPModal Component", () => {
   });
 
   it("handles resend OTP", async () => {
-    (sendEmailOTP as jest.Mock).mockResolvedValue({});
+    const user = userEvent.setup();
     render(<OTPModal email={testEmail} accountId={testAccountId} />);
-    const resendButton = screen.getByRole("button", {
-      name: /resend/i,
-    }) as HTMLButtonElement;
-    expect(resendButton.disabled).toBe(false);
-    fireEvent.click(resendButton);
+    const resendButton = screen.getByRole("button", { name: /resend/i });
+    expect(resendButton).not.toBeDisabled();
+    await user.click(resendButton);
     await waitFor(() => {
       expect(sendEmailOTP).toHaveBeenCalledWith({ email: testEmail });
-      expect(resendButton.disabled).toBe(true);
+      expect(resendButton).toBeDisabled();
     });
   });
 
   it("prevents multiple rapid submissions", async () => {
-    (verifySecret as jest.Mock).mockResolvedValue("session123");
+    (verifySecret as jest.Mock).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => resolve("session123"), 100);
+        }),
+    );
+    const user = userEvent.setup();
     render(<OTPModal email={testEmail} accountId={testAccountId} />);
-    const input = screen.getByDisplayValue("") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "123456" } });
-    const submitButton = screen.getByRole("button", {
-      name: /submit/i,
-    }) as HTMLButtonElement;
-    fireEvent.click(submitButton);
-    expect(submitButton.disabled).toBe(true);
-    fireEvent.click(submitButton);
+    await user.type(screen.getByDisplayValue(""), "123456");
+    const submitButton = screen.getByRole("button", { name: /submit/i });
+    await user.click(submitButton);
+    await waitFor(() => {
+      expect(submitButton).toBeDisabled();
+    });
+    await user.click(submitButton);
     await waitFor(() => {
       expect(verifySecret).toHaveBeenCalledTimes(1);
     });

@@ -20,155 +20,116 @@ jest.mock("@/components/Sort", () => {
   };
 });
 
+const mockFiles: Models.Document[] = [
+  {
+    $id: "file-1",
+    $collectionId: "files",
+    $databaseId: "main",
+    $createdAt: new Date().toISOString(),
+    $updatedAt: new Date().toISOString(),
+    $permissions: [],
+    name: "image1.jpg",
+    size: 2 * 1024 * 1024,
+    type: "image",
+    extension: "jpg",
+    url: "https://example.com/image1.jpg",
+    owner: { username: "user1", $id: "user-1" },
+  } as Models.Document,
+  {
+    $id: "file-2",
+    $collectionId: "files",
+    $databaseId: "main",
+    $createdAt: new Date().toISOString(),
+    $updatedAt: new Date().toISOString(),
+    $permissions: [],
+    name: "image2.png",
+    size: 3 * 1024 * 1024,
+    type: "image",
+    extension: "png",
+    url: "https://example.com/image2.png",
+    owner: { username: "user2", $id: "user-2" },
+  } as Models.Document,
+];
+
+const mockTotalSpace = {
+  image: { size: 5 * 1024 * 1024, latestDate: new Date().toISOString() },
+  document: { size: 2 * 1024 * 1024, latestDate: new Date().toISOString() },
+  video: { size: 1024 * 1024, latestDate: new Date().toISOString() },
+  audio: { size: 512 * 1024, latestDate: new Date().toISOString() },
+  other: { size: 256 * 1024, latestDate: new Date().toISOString() },
+  used: 8 * 1024 * 1024,
+  all: 100 * 1024 * 1024,
+};
+
+const defaultProps = {
+  type: "image" as const,
+  files: { documents: mockFiles },
+  totalSpace: mockTotalSpace,
+  hasFileError: false,
+  hasSpaceError: false,
+};
+
+const renderComponent = (props = {}) => {
+  return render(<FileTypePageContent {...defaultProps} {...props} />);
+};
+
 describe("FileTypePageContent component", () => {
-  const mockFiles: Models.Document[] = [
-    {
-      $id: "file-1",
-      $collectionId: "files",
-      $databaseId: "main",
-      $createdAt: new Date().toISOString(),
-      $updatedAt: new Date().toISOString(),
-      $permissions: [],
-      name: "image1.jpg",
-      size: 2 * 1024 * 1024,
-      type: "image",
-      extension: "jpg",
-      url: "https://example.com/image1.jpg",
-      owner: { username: "user1", $id: "user-1" },
-    } as Models.Document,
-    {
-      $id: "file-2",
-      $collectionId: "files",
-      $databaseId: "main",
-      $createdAt: new Date().toISOString(),
-      $updatedAt: new Date().toISOString(),
-      $permissions: [],
-      name: "image2.png",
-      size: 3 * 1024 * 1024,
-      type: "image",
-      extension: "png",
-      url: "https://example.com/image2.png",
-      owner: { username: "user2", $id: "user-2" },
-    } as Models.Document,
-  ];
-
-  const mockTotalSpace = {
-    image: { size: 5 * 1024 * 1024, latestDate: new Date().toISOString() },
-    document: { size: 2 * 1024 * 1024, latestDate: new Date().toISOString() },
-    video: { size: 1024 * 1024, latestDate: new Date().toISOString() },
-    audio: { size: 512 * 1024, latestDate: new Date().toISOString() },
-    other: { size: 256 * 1024, latestDate: new Date().toISOString() },
-    used: 8 * 1024 * 1024,
-    all: 100 * 1024 * 1024,
-  };
-
-  it("renders file type page with heading", () => {
-    render(
-      <FileTypePageContent
-        type="image"
-        files={{ documents: mockFiles }}
-        totalSpace={mockTotalSpace}
-        hasFileError={false}
-        hasSpaceError={false}
-      />,
-    );
-    const heading = screen.getByRole("heading");
-    expect(heading).toHaveTextContent(/image/i);
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it("renders sort component", () => {
-    render(
-      <FileTypePageContent
-        type="image"
-        files={{ documents: mockFiles }}
-        totalSpace={mockTotalSpace}
-        hasFileError={false}
-        hasSpaceError={false}
-      />,
-    );
-    expect(screen.getByTestId("mock-sort")).toBeInTheDocument();
+  describe("Basic rendering", () => {
+    it("renders heading with file type", () => {
+      renderComponent();
+      const heading = screen.getByRole("heading");
+      expect(heading).toHaveTextContent(/image/i);
+    });
+
+    it("renders sort component", () => {
+      renderComponent();
+      expect(screen.getByTestId("mock-sort")).toBeInTheDocument();
+    });
+
+    it("renders file cards for each file", () => {
+      renderComponent();
+      const fileCards = screen.getAllByTestId("mock-file-card");
+      expect(fileCards).toHaveLength(mockFiles.length);
+    });
+
+    it("displays formatted total size for type", () => {
+      renderComponent({ type: "images" });
+      const usage = getUsageSummary(mockTotalSpace);
+      const imageSummary = usage.find((u) => u.title.toLowerCase() === "images");
+      const expectedText = imageSummary
+        ? convertFileSize(imageSummary.size)
+        : "0";
+      expect(screen.getByText(expectedText)).toBeInTheDocument();
+    });
   });
 
-  it("renders file cards for each file", () => {
-    render(
-      <FileTypePageContent
-        type="image"
-        files={{ documents: mockFiles }}
-        totalSpace={mockTotalSpace}
-        hasFileError={false}
-        hasSpaceError={false}
-      />,
-    );
-    const fileCards = screen.getAllByTestId("mock-file-card");
-    expect(fileCards).toHaveLength(mockFiles.length);
+  describe("Empty state", () => {
+    it("displays empty state when no files", () => {
+      renderComponent({ type: "document", files: { documents: [] } });
+      expect(screen.getByText(/No files found/i)).toBeInTheDocument();
+    });
   });
 
-  it("displays empty state when no files exist", () => {
-    render(
-      <FileTypePageContent
-        type="document"
-        files={{ documents: [] }}
-        totalSpace={mockTotalSpace}
-        hasFileError={false}
-        hasSpaceError={false}
-      />,
-    );
-    expect(screen.getByText(/No files found/i)).toBeInTheDocument();
+  describe("Accessibility", () => {
+    it("renders section with aria-label", () => {
+      renderComponent({ type: "video" });
+      const section = screen.getByLabelText(/List of video files/i);
+      expect(section).toBeInTheDocument();
+    });
   });
 
-  it("renders section with proper aria-label", () => {
-    render(
-      <FileTypePageContent
-        type="video"
-        files={{ documents: mockFiles }}
-        totalSpace={mockTotalSpace}
-        hasFileError={false}
-        hasSpaceError={false}
-      />,
-    );
-    const section = screen.getByLabelText(/List of video files/i);
-    expect(section).toBeInTheDocument();
-  });
-
-  it("calls usePageErrorToast when errors are present", () => {
-    render(
-      <FileTypePageContent
-        type="image"
-        files={{ documents: mockFiles }}
-        totalSpace={mockTotalSpace}
-        hasFileError={true}
-        hasSpaceError={false}
-      />,
-    );
-    expect(usePageErrorToast).toHaveBeenCalledWith(true, false);
-
-    render(
-      <FileTypePageContent
-        type="image"
-        files={{ documents: mockFiles }}
-        totalSpace={mockTotalSpace}
-        hasFileError={false}
-        hasSpaceError={true}
-      />,
-    );
-    expect(usePageErrorToast).toHaveBeenCalledWith(false, true);
-  });
-
-  it("displays formatted total size for the provided type", () => {
-    render(
-      <FileTypePageContent
-        type="images"
-        files={{ documents: mockFiles }}
-        totalSpace={mockTotalSpace}
-        hasFileError={false}
-        hasSpaceError={false}
-      />,
-    );
-    const usage = getUsageSummary(mockTotalSpace);
-    const imageSummary = usage.find((u) => u.title.toLowerCase() === "images");
-    const expectedText = imageSummary
-      ? convertFileSize(imageSummary.size)
-      : "0";
-    expect(screen.getByText(expectedText)).toBeInTheDocument();
+  describe("Error handling", () => {
+    it.each([
+      [true, false],
+      [false, true],
+    ])("calls usePageErrorToast with hasFileError=%s, hasSpaceError=%s", (fileError, spaceError) => {
+      (usePageErrorToast as jest.Mock).mockClear();
+      renderComponent({ hasFileError: fileError, hasSpaceError: spaceError });
+      expect(usePageErrorToast).toHaveBeenCalledWith(fileError, spaceError);
+    });
   });
 });

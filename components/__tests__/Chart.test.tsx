@@ -2,9 +2,7 @@ import { render, screen } from "@testing-library/react";
 import Chart from "../Chart";
 
 jest.mock("recharts", () => ({
-  Label: () => {
-    return <div data-testid="chart-label" />;
-  },
+  Label: () => <div data-testid="chart-label" />,
   PolarGrid: () => <div data-testid="polar-grid">PolarGrid</div>,
   PolarRadiusAxis: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="polar-radius-axis">{children}</div>
@@ -48,7 +46,7 @@ describe("Chart component", () => {
     expect(screen.getByText(/\/ 1 GB/i)).toBeInTheDocument();
   });
 
-  it("renders chart container with correct test id", () => {
+  it("renders chart container", () => {
     render(<Chart used={100_000_000} />);
     expect(screen.getByTestId("chart-container")).toBeInTheDocument();
   });
@@ -67,27 +65,23 @@ describe("Chart component", () => {
     expect(screen.getByText("Space used")).toBeInTheDocument();
   });
 
-  it("renders card title as 'Space used' when storage is used", () => {
-    render(<Chart used={100_000_000} />);
-    expect(screen.getByText("Space used")).toBeInTheDocument();
+  it.each([
+    [100_000_000, "Space used"],
+    [0, "Available Storage"],
+  ] as const)("renders correct title for used=%i", (used, expectedTitle) => {
+    render(<Chart used={used} />);
+    expect(screen.getByText(expectedTitle)).toBeInTheDocument();
   });
 
-  it("renders card title as 'Available Storage' when no storage is used", () => {
-    render(<Chart used={0} />);
-    expect(screen.getByText("Available Storage")).toBeInTheDocument();
-  });
-
-  it("renders correct CSS classes for chart elements", () => {
+  it("renders correct CSS classes", () => {
     render(<Chart used={100_000_000} />);
     const card =
       screen.getByTestId("chart-container").parentElement?.parentElement;
     expect(card).toHaveClass("chart");
-    const titles = screen.getAllByText("Space used");
-    const cardTitle = titles.find((el) => el.classList.contains("chart-title"));
-    expect(cardTitle).toBeInTheDocument();
+    const cardTitle = screen
+      .getAllByText("Space used")
+      .find((el) => el.classList.contains("chart-title"));
     expect(cardTitle).toHaveClass("chart-title");
-    const description = screen.getByText(/100\.0 MB/i);
-    expect(description).toBeInTheDocument();
-    expect(description).toHaveClass("chart-description");
+    expect(screen.getByText(/100\.0 MB/i)).toHaveClass("chart-description");
   });
 });

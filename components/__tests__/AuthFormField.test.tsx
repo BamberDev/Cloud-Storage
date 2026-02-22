@@ -6,6 +6,12 @@ import { z } from "zod";
 import { Form } from "@/components/ui/form";
 import AuthFormField from "../AuthFormField";
 
+const defaultProps = {
+  name: "testField",
+  label: "Test Label",
+  placeholder: "Enter test value",
+} as const;
+
 const TestWrapper = ({
   children,
   defaultValues = { testField: "" },
@@ -22,13 +28,21 @@ const TestWrapper = ({
 };
 
 describe("AuthFormField", () => {
-  const defaultProps = {
-    name: "testField",
-    label: "Test Label",
-    placeholder: "Enter test value",
-  } as const;
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-  it("applies correct CSS classes to form elements", () => {
+  it("renders label and input", () => {
+    render(
+      <TestWrapper>
+        {(form) => <AuthFormField {...defaultProps} form={form} />}
+      </TestWrapper>,
+    );
+    expect(screen.getByText("Test Label")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Enter test value")).toBeInTheDocument();
+  });
+
+  it("applies correct CSS classes", () => {
     render(
       <TestWrapper>
         {(form) => <AuthFormField {...defaultProps} form={form} />}
@@ -40,41 +54,23 @@ describe("AuthFormField", () => {
     );
   });
 
-  it("renders with label and input", () => {
+  it.each([
+    ["email", "email"],
+    ["password", "password"],
+    ["text", "text"],
+  ] as const)("renders input with type %s", (type, expected) => {
     render(
       <TestWrapper>
-        {(form) => <AuthFormField {...defaultProps} form={form} />}
-      </TestWrapper>,
-    );
-    expect(screen.getByText("Test Label")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Enter test value")).toBeInTheDocument();
-  });
-
-  it("renders input with correct placeholder", () => {
-    render(
-      <TestWrapper>
-        {(form) => <AuthFormField {...defaultProps} form={form} />}
-      </TestWrapper>,
-    );
-    expect(screen.getByPlaceholderText("Enter test value")).toHaveAttribute(
-      "placeholder",
-      "Enter test value",
-    );
-  });
-
-  it("renders input with correct type", () => {
-    render(
-      <TestWrapper>
-        {(form) => <AuthFormField {...defaultProps} form={form} type="email" />}
+        {(form) => <AuthFormField {...defaultProps} form={form} type={type} />}
       </TestWrapper>,
     );
     expect(screen.getByPlaceholderText("Enter test value")).toHaveAttribute(
       "type",
-      "email",
+      expected,
     );
   });
 
-  it("renders input with default type text when not specified", () => {
+  it("renders input with default type text", () => {
     render(
       <TestWrapper>
         {(form) => <AuthFormField {...defaultProps} form={form} />}
@@ -86,26 +82,23 @@ describe("AuthFormField", () => {
     );
   });
 
-  it("renders disabled input when disabled prop is true", () => {
+  it.each([
+    [true, true],
+    [false, false],
+  ])("renders %s disabled input when disabled is %s", (disabled, expected) => {
     render(
       <TestWrapper>
         {(form) => (
-          <AuthFormField {...defaultProps} form={form} disabled={true} />
+          <AuthFormField {...defaultProps} form={form} disabled={disabled} />
         )}
       </TestWrapper>,
     );
-    expect(screen.getByPlaceholderText("Enter test value")).toBeDisabled();
-  });
-
-  it("renders enabled input when disabled prop is false", () => {
-    render(
-      <TestWrapper>
-        {(form) => (
-          <AuthFormField {...defaultProps} form={form} disabled={false} />
-        )}
-      </TestWrapper>,
-    );
-    expect(screen.getByPlaceholderText("Enter test value")).not.toBeDisabled();
+    const input = screen.getByPlaceholderText("Enter test value");
+    if (expected) {
+      expect(input).toBeDisabled();
+    } else {
+      expect(input).not.toBeDisabled();
+    }
   });
 
   it("renders custom component when provided", () => {
@@ -129,6 +122,7 @@ describe("AuthFormField", () => {
 
   it("calls onInputChange when input value changes", async () => {
     const mockOnInputChange = jest.fn();
+    const user = userEvent.setup();
     render(
       <TestWrapper>
         {(form) => (
@@ -140,8 +134,7 @@ describe("AuthFormField", () => {
         )}
       </TestWrapper>,
     );
-    const input = screen.getByPlaceholderText("Enter test value");
-    await userEvent.type(input, "a");
+    await user.type(screen.getByPlaceholderText("Enter test value"), "a");
     expect(mockOnInputChange).toHaveBeenCalled();
   });
 
@@ -152,11 +145,10 @@ describe("AuthFormField", () => {
       </TestWrapper>,
     );
     const description = screen.getByText("Test Label input");
-    expect(description).toBeInTheDocument();
     expect(description).toHaveClass("sr-only");
   });
 
-  it("does not render autocomplete attribute for other types", () => {
+  it("does not render autocomplete attribute for non-email types", () => {
     render(
       <TestWrapper>
         {(form) => (
@@ -164,17 +156,17 @@ describe("AuthFormField", () => {
         )}
       </TestWrapper>,
     );
-    const input = screen.getByPlaceholderText("Enter test value");
-    expect(input).not.toHaveAttribute("autoComplete");
+    expect(screen.getByPlaceholderText("Enter test value")).not.toHaveAttribute(
+      "autoComplete",
+    );
   });
 
-  it("does not render form message element when there is no error", () => {
+  it("does not render form message when no error", () => {
     render(
       <TestWrapper>
         {(form) => <AuthFormField {...defaultProps} form={form} />}
       </TestWrapper>,
     );
-    const formMessage = document.querySelector(".shad-form-message");
-    expect(formMessage).not.toBeInTheDocument();
+    expect(document.querySelector(".shad-form-message")).not.toBeInTheDocument();
   });
 });

@@ -18,10 +18,14 @@ describe("Loader component", () => {
     expect(img).toHaveAttribute("aria-hidden", "true");
   });
 
-  it("renders with custom size", () => {
-    render(<Loader size={40} />);
+  it.each([
+    [24, "24"],
+    [40, "40"],
+    [64, "64"],
+  ])("renders with custom size %d", (size, expected) => {
+    render(<Loader size={size} />);
     const img = screen.getByAltText("");
-    expect(img).toHaveAttribute("width", "40");
-    expect(img).toHaveAttribute("height", "40");
+    expect(img).toHaveAttribute("width", expected);
+    expect(img).toHaveAttribute("height", expected);
   });
 });

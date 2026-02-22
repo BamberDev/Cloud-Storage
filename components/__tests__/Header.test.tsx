@@ -1,38 +1,32 @@
-import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import Header from "@/components/Header";
 
-jest.mock("@/components/Search", () => {
-  return function MockSearch() {
-    return <div data-testid="search">Search Component</div>;
-  };
-});
+jest.mock("@/components/Search", () => ({
+  __esModule: true,
+  default: () => <div data-testid="search">Search Component</div>,
+}));
 
-jest.mock("@/components/FileUploader", () => {
-  return function MockFileUploader() {
-    return <div data-testid="file-uploader">File Uploader</div>;
-  };
-});
+jest.mock("@/components/FileUploader", () => ({
+  __esModule: true,
+  default: () => <div data-testid="file-uploader">File Uploader</div>,
+}));
 
-jest.mock("@/components/SignOutButton", () => {
-  return function MockSignOutButton() {
-    return <div data-testid="sign-out">Sign Out Button</div>;
-  };
-});
+jest.mock("@/components/SignOutButton", () => ({
+  __esModule: true,
+  default: () => <div data-testid="sign-out">Sign Out Button</div>,
+}));
 
 describe("Header component", () => {
   it("renders as banner element", () => {
     render(<Header />);
-    const header = screen.getByRole("banner");
-    expect(header).toBeInTheDocument();
+    expect(screen.getByRole("banner")).toBeInTheDocument();
   });
 
   it("renders with correct styling classes", () => {
     render(<Header />);
     const header = screen.getByRole("banner");
     expect(header).toHaveClass("header");
-    const wrapper = header.querySelector(".header-wrapper");
-    expect(wrapper).toBeInTheDocument();
+    expect(header.querySelector(".header-wrapper")).toBeInTheDocument();
   });
 
   it("renders all child components", () => {
