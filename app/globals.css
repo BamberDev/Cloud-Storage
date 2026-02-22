@@ -370,7 +370,7 @@
     @apply invert-0 opacity-100;
   }
   .sidebar-user-info {
-    @apply flex items-center justify-center gap-2 rounded-full bg-brand p-1 text-white lg:justify-start lg:p-2 lg:h-[52px];
+    @apply flex items-center justify-center mt-6 rounded-full bg-brand p-1 text-white lg:justify-start lg:p-2 lg:h-[52px];
   }
   .sidebar-user-avatar {
     @apply aspect-square w-11 lg:w-10 rounded-full object-cover;
