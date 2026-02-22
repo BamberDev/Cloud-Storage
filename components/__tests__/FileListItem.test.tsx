@@ -20,55 +20,63 @@ jest.mock("@/components/ActionDropdown", () => {
   };
 });
 
+const mockFile: Models.Document = {
+  $id: "file-123",
+  $collectionId: "files",
+  $databaseId: "main",
+  $createdAt: new Date().toISOString(),
+  $updatedAt: new Date().toISOString(),
+  $permissions: [],
+  name: "test-document.pdf",
+  size: 1024 * 1024,
+  type: "pdf",
+  extension: "pdf",
+  url: "https://example.com/test-document.pdf",
+  owner: { username: "user1", $id: "user-1" },
+} as Models.Document;
+
+const renderComponent = (file: Models.Document = mockFile) => {
+  return render(<FileListItem file={file} />);
+};
+
 describe("FileListItem component", () => {
-  const mockFile: Models.Document = {
-    $id: "file-123",
-    $collectionId: "files",
-    $databaseId: "main",
-    $createdAt: new Date().toISOString(),
-    $updatedAt: new Date().toISOString(),
-    $permissions: [],
-    name: "test-document.pdf",
-    size: 1024 * 1024,
-    type: "pdf",
-    extension: "pdf",
-    url: "https://example.com/test-document.pdf",
-    owner: { username: "user1", $id: "user-1" },
-  } as Models.Document;
+  describe("Basic rendering", () => {
+    it("displays file name", () => {
+      renderComponent();
+      expect(screen.getByText(mockFile.name)).toBeInTheDocument();
+    });
 
-  it("renders file list item with link", () => {
-    render(<FileListItem file={mockFile} />);
-    const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", mockFile.url);
-    expect(link).toHaveAttribute("target", "_blank");
+    it("renders thumbnail", () => {
+      renderComponent();
+      expect(screen.getByTestId("mock-thumbnail")).toBeInTheDocument();
+    });
+
+    it("renders formatted date", () => {
+      renderComponent();
+      expect(screen.getByTestId("mock-date")).toBeInTheDocument();
+    });
+
+    it("renders action dropdown", () => {
+      renderComponent();
+      expect(screen.getByTestId("mock-action-dropdown")).toBeInTheDocument();
+    });
   });
 
-  it("displays file name", () => {
-    render(<FileListItem file={mockFile} />);
-    expect(screen.getByText(mockFile.name)).toBeInTheDocument();
-  });
+  describe("Link behavior", () => {
+    it("renders link with correct href and target", () => {
+      renderComponent();
+      const link = screen.getByRole("link");
+      expect(link).toHaveAttribute("href", mockFile.url);
+      expect(link).toHaveAttribute("target", "_blank");
+    });
 
-  it("renders thumbnail component", () => {
-    render(<FileListItem file={mockFile} />);
-    expect(screen.getByTestId("mock-thumbnail")).toBeInTheDocument();
-  });
-
-  it("renders formatted date component", () => {
-    render(<FileListItem file={mockFile} />);
-    expect(screen.getByTestId("mock-date")).toBeInTheDocument();
-  });
-
-  it("renders action dropdown component", () => {
-    render(<FileListItem file={mockFile} />);
-    expect(screen.getByTestId("mock-action-dropdown")).toBeInTheDocument();
-  });
-
-  it("has proper aria-label for accessibility", () => {
-    render(<FileListItem file={mockFile} />);
-    const link = screen.getByRole("link");
-    expect(link).toHaveAttribute(
-      "aria-label",
-      `Open file ${mockFile.name} in a new tab`,
-    );
+    it("has aria-label for accessibility", () => {
+      renderComponent();
+      const link = screen.getByRole("link");
+      expect(link).toHaveAttribute(
+        "aria-label",
+        `Open file ${mockFile.name} in a new tab`,
+      );
+    });
   });
 });
