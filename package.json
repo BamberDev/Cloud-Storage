@@ -20,7 +20,7 @@
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.11",
-    "@sentry/nextjs": "^8.55.0",
+    "@sentry/nextjs": "^10.40.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "input-otp": "^1.4.1",
