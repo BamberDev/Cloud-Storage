@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cloud Storage App
+
+Store, manage and access your files from anywhere. A modern cloud storage solution built with Next.js and Appwrite.
+
+## Demo
+
+[Live Demo](https://cloud-storage-v1.vercel.app/)
+
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+
+## Features
+
+- User authentication and authorization with [Appwrite](https://appwrite.io/)
+- Upload and manage files with drag-and-drop support using [react-dropzone](https://react-dropzone.js.org/)
+- Visualize storage usage with charts using [Recharts](https://recharts.org/)
+- Error monitoring with [Sentry](https://sentry.io/)
+- Responsive design for seamless use on desktop and mobile devices
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org/) - React framework for server-side rendering and static site generation
+- [TypeScript](https://www.typescriptlang.org/) - Typed superset of JavaScript
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [shadcn/ui](https://ui.shadcn.com/) - Re-usable components built with Radix UI and Tailwind CSS
+- [Appwrite](https://appwrite.io/) - Open-source backend server for web and mobile apps
+- [Sentry](https://sentry.io/) - Error tracking and performance monitoring
+- [Vercel](https://vercel.com/) - Deployment and hosting platform
 
 ## Getting Started
 
-First, run the development server:
+To start using the app, follow these steps:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Sign Up or Log In**
+   - Create an account or log in using the provided test accounts.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Upload Files**
+   - Drag and drop files into the upload area or click to browse and select files from your device.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Manage Your Files**
+   - View, download, rename, share or delete your files.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **View Storage Statistics**
+   - Check your storage usage and statistics on your dashboard.
 
-## Learn More
+## Screenshots
 
-To learn more about Next.js, take a look at the following resources:
+![LoginPage](https://github.com/user-attachments/assets/d5859811-650b-465a-976f-9d0f14b7d0f9)
+_Login Page_
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+![OTPModal](https://github.com/user-attachments/assets/014ea803-5b47-4a8b-b359-188e4114928b)
+_OTP Modal_
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+![Dashboard](https://github.com/user-attachments/assets/5a57bd2f-1c56-4549-ae1c-448a11693c01)
+_Dashboard_
 
-## Deploy on Vercel
+![FileTypePage](https://github.com/user-attachments/assets/be56b99b-7270-49d0-8a01-a4a87bca94ef)
+_File Type Page_
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+![ShareModal](https://github.com/user-attachments/assets/04e27c5c-e7ae-4bae-a7e1-64af011461eb)
+_Share Modal_
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contributing
+
+Contributions are welcome! If you have suggestions or improvements, please follow these steps:
+
+1. **Fork the repository**
+2. **Create a new branch** (`git checkout -b feature-branch`)
+3. **Make your changes**
+4. **Commit your changes** (`git commit -m 'Add some feature'`)
+5. **Push to the branch** (`git push origin feature-branch`)
+6. **Create a Pull Request**
+
+Please ensure your code follows the project's coding standards.
+
+---
+
+For questions, feedback or bug reports feel free to contact me or create an issue on github.
+
+---
