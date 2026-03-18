@@ -346,7 +346,7 @@
     @apply body-2 shad-no-focus placeholder:body-1 w-full border-none p-0 shadow-none placeholder:text-light-200 !important;
   }
   .search-result {
-    @apply absolute drop-shadow-lg left-0 top-16 z-50 flex w-full flex-col gap-3 rounded-[20px] bg-white p-4;
+    @apply absolute drop-shadow-lg left-0 top-16 z-50 flex w-full flex-col gap-3 rounded-[20px] bg-white p-4 overflow-auto max-h-80 remove-scrollbar;
   }
   .empty-result {
     @apply body-2 p-4 text-center h-[50px];
