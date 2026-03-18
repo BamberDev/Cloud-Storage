@@ -288,6 +288,14 @@
     @apply flex items-center w-full max-w-[85%] md:max-w-[350px] subtitle-2;
   }
 
+  /* Drag and Drop Overlay */
+  .dropzone-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/60;
+  }
+  .dropzone-overlay-content {
+    @apply flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white bg-brand p-10 text-white;
+  }
+
   /* Header */
   .header {
     @apply hidden items-center justify-between gap-5 p-5 sm:flex sm:pl-0 sm:pr-7 sm:py-7 xl:gap-10;
