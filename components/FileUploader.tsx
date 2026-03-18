@@ -22,7 +22,7 @@ export default function FileUploader({ className }: { className?: string }) {
 
   const clearUploads = (fileName: string) => {
     setFiles((prevFiles) =>
-      prevFiles.filter((prevFile) => prevFile.name !== fileName)
+      prevFiles.filter((prevFile) => prevFile.name !== fileName),
     );
   };
 
@@ -52,7 +52,7 @@ export default function FileUploader({ className }: { className?: string }) {
     await uploadFiles(validFiles);
   };
 
-  const { getRootProps, getInputProps, open } = useDropzone({
+  const { getRootProps, getInputProps, open, isDragGlobal } = useDropzone({
     onDrop,
     noClick: true,
   });
@@ -60,6 +60,21 @@ export default function FileUploader({ className }: { className?: string }) {
   return (
     <div {...getRootProps()}>
       <input {...getInputProps()} aria-label="File upload input" />
+      {isDragGlobal && (
+        <div className="dropzone-overlay">
+          <div className="dropzone-overlay-content">
+            <Image
+              src="/assets/icons/upload.svg"
+              alt=""
+              width={40}
+              height={40}
+              aria-hidden="true"
+            />
+            <p className="h3">Drop files here to upload</p>
+            <p className="text-light-500">or click the upload button</p>
+          </div>
+        </div>
+      )}
       <Button
         type="button"
         className={cn("uploader-button", className)}
