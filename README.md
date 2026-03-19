@@ -21,6 +21,7 @@ Store, manage and access your files from anywhere. A modern cloud storage soluti
 - Visualize storage usage with charts using [Recharts](https://recharts.org/)
 - Error monitoring with [Sentry](https://sentry.io/)
 - Responsive design for seamless use on desktop and mobile devices
+- Unit tests for components with [Jest](https://jestjs.io/)
 
 ## Tech Stack
 
@@ -30,6 +31,7 @@ Store, manage and access your files from anywhere. A modern cloud storage soluti
 - [shadcn/ui](https://ui.shadcn.com/) - Re-usable components built with Radix UI and Tailwind CSS
 - [Appwrite](https://appwrite.io/) - Open-source backend server for web and mobile apps
 - [Sentry](https://sentry.io/) - Error tracking and performance monitoring
+- [Jest](https://jestjs.io/) - JavaScript testing framework
 - [Vercel](https://vercel.com/) - Deployment and hosting platform
 
 ## Getting Started
@@ -64,6 +66,20 @@ _File Type Page_
 
 ![ShareModal](https://github.com/user-attachments/assets/04e27c5c-e7ae-4bae-a7e1-64af011461eb)
 _Share Modal_
+
+## Testing
+
+Unit tests are located in `components/__tests__/`. Run tests with:
+
+```bash
+npm test
+```
+
+For coverage report:
+
+```bash
+npx jest --coverage
+```
 
 ## Contributing
 
