@@ -94,6 +94,7 @@ export default function Search({ className }: { className?: string }) {
           alt="Search icon"
           width={24}
           height={24}
+          className="flex-shrink-0"
         />
         <Input
           value={query}
