@@ -149,7 +149,7 @@ export const formatDateTime = (isoString: string | null | undefined) => {
 
 export const getFileIcon = (
   extension: string | undefined,
-  type: FileType | string
+  type: FileType | string,
 ) => {
   switch (extension) {
     // Document
@@ -208,6 +208,13 @@ export const getFileIcon = (
       }
   }
 };
+
+export const VALID_TYPES = ["documents", "images", "media", "others"] as const;
+
+export type ValidType = (typeof VALID_TYPES)[number];
+
+export const isValidType = (type: string): type is ValidType =>
+  VALID_TYPES.includes(type as ValidType);
 
 export const getFileTypesParams = (type: string) => {
   switch (type) {
