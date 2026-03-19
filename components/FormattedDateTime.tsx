@@ -11,6 +11,7 @@ export default function FormattedDateTime({
     <p
       className={cn("caption text-light-200", className)}
       aria-label={`Date and time: ${formatDateTime(date)}`}
+      suppressHydrationWarning
     >
       {formatDateTime(date)}
     </p>
