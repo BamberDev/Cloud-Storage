@@ -1,9 +1,12 @@
+import { notFound } from "next/navigation";
 import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.actions";
 import { getCurrentUser } from "@/lib/actions/user.actions";
 import {
   getFileTypesParams,
   fallbackFiles,
   fallbackTotalSpace,
+  isValidType,
+  VALID_TYPES,
 } from "@/lib/utils";
 import FileTypePageContent from "@/components/FileTypePageContent";
 
@@ -14,12 +17,21 @@ export async function generateMetadata({
 }) {
   const resolvedParams = await params;
   const type = resolvedParams?.type || "Files";
+
+  if (!isValidType(type)) {
+    return {};
+  }
+
   const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
 
   return {
     title: `${capitalizedType} | Cloud Storage`,
     description: `View and manage your ${type} files on Cloud Storage. Upload, sort, delete and organize your files with ease.`,
   };
+}
+
+export function generateStaticParams() {
+  return VALID_TYPES.map((type) => ({ type }));
 }
 
 async function FileTypeData({
@@ -67,6 +79,11 @@ export default async function FileTypePage({
   params,
 }: SearchParamProps) {
   const type = ((await params)?.type as string) || "";
+
+  if (!isValidType(type)) {
+    notFound();
+  }
+
   const searchText = ((await searchParams)?.query as string) || "";
   const sort = ((await searchParams)?.sort as string) || "";
   const currentUser = await getCurrentUser();
