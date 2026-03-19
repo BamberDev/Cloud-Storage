@@ -25,9 +25,11 @@ import Loader from "./Loader";
 export default function OTPModal({
   email,
   accountId,
+  onClose,
 }: {
   email: string;
   accountId: string;
+  onClose: () => void;
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(true);
@@ -45,13 +47,12 @@ export default function OTPModal({
       const sessionId = await verifySecret({ accountId, password });
       if (sessionId) router.push("/");
     } catch (error) {
+      setIsLoading(false);
       if (error instanceof Error && error.message.includes("Invalid token")) {
         setErrorMessage("Invalid OTP code. Please try again.");
       } else {
         setErrorMessage("Failed to verify OTP. Please try again.");
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -75,8 +76,13 @@ export default function OTPModal({
     }
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    onClose();
+  };
+
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+    <AlertDialog open={isOpen} onOpenChange={handleClose}>
       <AlertDialogContent className="shad-alert-dialog">
         <AlertDialogHeader className="relative">
           <AlertDialogTitle className="h2 text-center text-brand">
@@ -86,7 +92,7 @@ export default function OTPModal({
               alt="Close icon"
               width={20}
               height={20}
-              onClick={() => setIsOpen(false)}
+              onClick={handleClose}
               className="otp-close-button"
             />
           </AlertDialogTitle>

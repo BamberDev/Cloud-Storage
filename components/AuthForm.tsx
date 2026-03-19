@@ -76,6 +76,7 @@ export default function AuthForm({ type }: { type: FormType }) {
         }
       }
     } catch (error) {
+      setIsLoading(false);
       if (error instanceof Error) {
         if (error.message === "Account already exists") {
           setErrorMessage("Account already exists.");
@@ -87,14 +88,12 @@ export default function AuthForm({ type }: { type: FormType }) {
               type === "sign-in"
                 ? "Failed to sign in."
                 : type === "sign-up"
-                ? "Failed to create account."
-                : "Failed to sign in to test account."
-            } Please try again.`
+                  ? "Failed to create account."
+                  : "Failed to sign in to test account."
+            } Please try again.`,
           );
         }
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -190,7 +189,14 @@ export default function AuthForm({ type }: { type: FormType }) {
         </form>
       </Form>
       {accountId && type !== "test-account" && (
-        <OTPModal email={form.getValues("email")} accountId={accountId} />
+        <OTPModal
+          email={form.getValues("email")}
+          accountId={accountId}
+          onClose={() => {
+            setIsLoading(false);
+            setAccountId(null);
+          }}
+        />
       )}
     </>
   );
