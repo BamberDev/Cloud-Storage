@@ -82,6 +82,6 @@ export const sortTypes = [
 ];
 
 export const avatarPlaceholderUrl =
-  "https://aui.atlassian.com/aui/latest/docs/images/avatar-person.svg";
+  "https://cloud.appwrite.io/v1/storage/buckets/675120ca002cece11e6e/files/6a0121fe002bb7ab69da/view?project=67511d0700200538b5c6";
 
 export const MAX_FILE_SIZE = 45 * 1024 * 1024; // 45MB
